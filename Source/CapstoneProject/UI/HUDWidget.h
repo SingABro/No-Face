@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Stat/CharacterDataStat.h"
+#include "Interface/PlayerHUDInterface.h"
 #include "HUDWidget.generated.h"
 
 /**
@@ -18,13 +18,18 @@ class CAPSTONEPROJECT_API UHUDWidget : public UUserWidget
 public:
 	UHUDWidget(const FObjectInitializer& OnjectInitializer);
 
+protected:
+	virtual void NativeConstruct() override;
+
 public:
 	void UpdateHpBar(float NewCurrentHp);
 	void UpdateExpBar(float NewCurrentExp);
 	void SetMaxHp(float NewMaxHp);
 
-protected:
-	virtual void NativeConstruct() override;
+	void SetMaxCooldown(float InMaxCooldownTime, ESkillType SkillType);
+	void StartCooldown(ESkillType SkillType);
+	void UpdateCooldownBar(float CurrentTime, ESkillType SkillType);
+
 
 protected:
 	UPROPERTY()
@@ -32,5 +37,11 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UPlayerExpBarWidget> ExpBar;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> SkillCooldownBar_Q;
+	TObjectPtr<class USkillCooldownUserWidget> SkillCooldownBar_W;
+	TObjectPtr<class USkillCooldownUserWidget> SkillCooldownBar_E;
+	TObjectPtr<class USkillCooldownUserWidget> SkillCooldownBar_R;
 
 };

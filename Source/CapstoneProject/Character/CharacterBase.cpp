@@ -24,6 +24,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Interface/PlayerHUDInterface.h"
 #include "UI/HUDWidget.h"
+#include "Interface/PlayerSkillUIInterface.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -450,6 +451,11 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 		Stat->OnExpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateExpBar);
 	}
 
+	IPlayerSkillUIInterface* SkillUIInterface = Cast<IPlayerSkillUIInterface>(SkillComponent);
+	if (SkillUIInterface)
+	{
+		SkillUIInterface->SetupSkillUIWidget(InHUDWidget);
+	}
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const
