@@ -5,12 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/BowSkillInterface.h"
+#include "Interface/PlayerHUDInterface.h"
+#include "Interface/PlayerSkillUIInterface.h"
 #include "SkillComponent.generated.h"
 
 DECLARE_DELEGATE(FParryingSign)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public IBowSkillInterface
+class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public IBowSkillInterface, public IPlayerSkillUIInterface
 {
 	GENERATED_BODY()
 
@@ -31,6 +33,8 @@ public:
 	FORCEINLINE bool CanChangeWeapon() { return bCanChangeWeapon; }
 
 public:
+	virtual void SetupSkillUIWidget(class UHUDWidget* InHUDWidget) override;
+
 	/* 패링 스킬이 실행되면 패링 플래그를 토글한다. */
 	FParryingSign ParryingSign;
 
@@ -46,6 +50,7 @@ public:
 	/* 현재 무기 상태 바꿈 -> CharacterBase에서 실행 */
 	void SetWeaponType(const int32& InCurrentWeaponType);
 
+	
 private:
 	//Sword Skill Montage
 	void BeginSwordSting();	//검 Q - 찌르기 시작
@@ -123,7 +128,11 @@ private:
 
 /* 쿨타임 섹션 */
 private:
-	void StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill);
+	void StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType);
+
+	UPROPERTY()
+	TObjectPtr<class UHUDWidget> Widget;
+
 
 	FTimerHandle CooldownTimerHandle_Sword_Q;
 	FTimerHandle CooldownTimerHandle_Sword_W;
@@ -155,41 +164,43 @@ private:
 	bool bCanUseSkill_Staff_E = true;
 	bool bCanUseSkill_Staff_R = true;
 
-	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Sword_Q = 1.f;
+	float Timer = 0.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Sword_W = 1.f;
+	float CooldownDuration_Sword_Q = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Sword_E = 1.f;
+	float CooldownDuration_Sword_W = 3.f;
+
+	UPROPERTY(EditAnywhere, Category = "Cooldown")
+	float CooldownDuration_Sword_E = 3.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Sword_R = 1.f;
+	float CooldownDuration_Sword_R = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Bow_Q = 1.f;
+	float CooldownDuration_Bow_Q = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Bow_W = 1.f;
+	float CooldownDuration_Bow_W = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Bow_E = 1.f;
+	float CooldownDuration_Bow_E = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Bow_R = 1.f;
+	float CooldownDuration_Bow_R = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Staff_Q = 1.f;
+	float CooldownDuration_Staff_Q = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Staff_W = 1.f;
+	float CooldownDuration_Staff_W = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Staff_E = 1.f;
+	float CooldownDuration_Staff_E = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
-	float CooldownDuration_Staff_R = 1.f;
+	float CooldownDuration_Staff_R = 3.f;
 
 /* 유틸리티 */
 private:

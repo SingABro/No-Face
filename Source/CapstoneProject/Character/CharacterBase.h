@@ -51,7 +51,6 @@ public:
 /* Getter */
 
 public:
-
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
 
