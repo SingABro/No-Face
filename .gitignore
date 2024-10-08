@@ -16,22 +16,11 @@
 # Only allow .uasset and .umap files from /Content dir.
 # They're tracked by git-lfs, don't forget to track other
 # files if adding them here.
-/Content/**/*.uasset
-/Content/**/*.umap
+!/Content/**/*.uasset
+!/Content/**/*.umap
 
 # 임시 ignore
-/Content/ParagonKallari
-/Content/ParagonAurora
-/Content/InfinityBladeWeapons
-/Content/SKnight_modular
 /Content/MRPGT
-/Content/DARK_C_KNIGHT
-/Content/DF_DRAGON_KNIGHT
-/Content/ParagonKwang
-/Content/ParagonSparrow
-/Content/ParagonSerath
-/Content/ParagonGideon
-/Content/Assets
 
 # Any file in /RawContent dir will be managed by git lfs.
 !/RawContent/**/*
