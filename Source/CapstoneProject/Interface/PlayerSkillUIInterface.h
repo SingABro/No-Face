@@ -6,6 +6,15 @@
 #include "UObject/Interface.h"
 #include "PlayerSkillUIInterface.generated.h"
 
+UENUM()
+enum class ESkillType : uint8
+{
+	Q = 0,
+	W,
+	E,
+	R
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UPlayerSkillUIInterface : public UInterface

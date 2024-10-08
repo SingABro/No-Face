@@ -22,7 +22,6 @@
 #include "Character/CharacterDefaultAttackComponent.h"
 #include "Interface/BowInterface.h"
 #include "Components/CapsuleComponent.h"
-#include "Interface/PlayerHUDInterface.h"
 #include "UI/HUDWidget.h"
 #include "Interface/PlayerSkillUIInterface.h"
 
@@ -379,6 +378,7 @@ void ACharacterBase::ChangeWeapon()
 	AttackComponent->SetWeaponType(WeaponIndex);
 	TakeItemDelegateArray[WeaponIndex].TakeItemDelegate.ExecuteIfBound();
 	CurrentWeaponType = static_cast<EWeaponType>(WeaponIndex);
+	SignedChangeWeapon.Broadcast(WeaponIndex);
 }
 
 void ACharacterBase::EquipSword()

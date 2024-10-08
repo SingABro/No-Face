@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/BowSkillInterface.h"
-#include "Interface/PlayerHUDInterface.h"
 #include "Interface/PlayerSkillUIInterface.h"
 #include "SkillComponent.generated.h"
 
@@ -128,11 +127,10 @@ private:
 
 /* 쿨타임 섹션 */
 private:
-	void StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType);
+	void StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType, int32 WeaponType, float& Timer);
 
 	UPROPERTY()
 	TObjectPtr<class UHUDWidget> Widget;
-
 
 	FTimerHandle CooldownTimerHandle_Sword_Q;
 	FTimerHandle CooldownTimerHandle_Sword_W;
@@ -164,7 +162,18 @@ private:
 	bool bCanUseSkill_Staff_E = true;
 	bool bCanUseSkill_Staff_R = true;
 
-	float Timer = 0.f;
+	float Sword_Q_Timer = 0.f;
+	float Sword_W_Timer = 0.f;
+	float Sword_E_Timer = 0.f;
+	float Sword_R_Timer = 0.f;
+	float Bow_Q_Timer = 0.f;
+	float Bow_W_Timer = 0.f;
+	float Bow_E_Timer = 0.f;
+	float Bow_R_Timer = 0.f;
+	float Staff_Q_Timer = 0.f;
+	float Staff_W_Timer = 0.f;
+	float Staff_E_Timer = 0.f;
+	float Staff_R_Timer = 0.f;
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
 	float CooldownDuration_Sword_Q = 3.f;

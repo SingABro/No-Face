@@ -126,7 +126,7 @@ void USkillComponent::SetWeaponType(const int32& InCurrentWeaponType)
 void USkillComponent::BeginSwordSting()
 {
 	if (!bCanUseSkill_Sword_Q) return;
-	else StartCooldown(CooldownDuration_Sword_Q, CooldownTimerHandle_Sword_Q, bCanUseSkill_Sword_Q, ESkillType::Q);
+	else StartCooldown(CooldownDuration_Sword_Q, CooldownTimerHandle_Sword_Q, bCanUseSkill_Sword_Q, ESkillType::Q, CurrentWeaponType, Sword_Q_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -148,7 +148,7 @@ void USkillComponent::EndSwordSting(UAnimMontage* Target, bool IsProperlyEnded)
 void USkillComponent::BeginSwordWhirlwind()
 {
 	if (!bCanUseSkill_Sword_W) return;
-	else StartCooldown(CooldownDuration_Sword_W, CooldownTimerHandle_Sword_W, bCanUseSkill_Sword_W, ESkillType::W);
+	else StartCooldown(CooldownDuration_Sword_W, CooldownTimerHandle_Sword_W, bCanUseSkill_Sword_W, ESkillType::W, CurrentWeaponType, Sword_W_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -170,7 +170,7 @@ void USkillComponent::EndSwordWhirlwind(UAnimMontage* Target, bool IsProperlyEnd
 void USkillComponent::BeginSwordParrying()
 {
 	if (!bCanUseSkill_Sword_E) return;
-	else StartCooldown(CooldownDuration_Sword_E, CooldownTimerHandle_Sword_E, bCanUseSkill_Sword_E, ESkillType::E);
+	else StartCooldown(CooldownDuration_Sword_E, CooldownTimerHandle_Sword_E, bCanUseSkill_Sword_E, ESkillType::E, CurrentWeaponType, Sword_E_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -210,7 +210,7 @@ void USkillComponent::ParryingSuccess(AActor* Attacker)
 void USkillComponent::BeginSwordAura()
 {
 	if (!bCanUseSkill_Sword_R) return;
-	else StartCooldown(CooldownDuration_Sword_R, CooldownTimerHandle_Sword_R, bCanUseSkill_Sword_R, ESkillType::R);
+	else StartCooldown(CooldownDuration_Sword_R, CooldownTimerHandle_Sword_R, bCanUseSkill_Sword_R, ESkillType::R, CurrentWeaponType, Sword_R_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -232,7 +232,7 @@ void USkillComponent::EndSwordAura(UAnimMontage* Target, bool IsProperlyEnded)
 void USkillComponent::BeginBowSeveralArrows()
 {
 	if (!bCanUseSkill_Bow_Q) return;
-	else StartCooldown(CooldownDuration_Bow_Q, CooldownTimerHandle_Bow_Q, bCanUseSkill_Bow_Q, ESkillType::Q);
+	else StartCooldown(CooldownDuration_Bow_Q, CooldownTimerHandle_Bow_Q, bCanUseSkill_Bow_Q, ESkillType::Q, CurrentWeaponType, Bow_Q_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -276,7 +276,7 @@ void USkillComponent::BeginBowExplosionArrow()
 	else
 	{
 		if (!bCanUseSkill_Bow_W) return;
-		else StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W);
+		else StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W, CurrentWeaponType, Bow_W_Timer);
 
 		bCasting = true;
 
@@ -299,7 +299,7 @@ void USkillComponent::EndBowExplosionArrow(UAnimMontage* Target, bool IsProperly
 void USkillComponent::BeginBowBackstep()
 {
 	if (!bCanUseSkill_Bow_E) return;
-	else StartCooldown(CooldownDuration_Bow_E, CooldownTimerHandle_Bow_E, bCanUseSkill_Bow_E, ESkillType::E);
+	else StartCooldown(CooldownDuration_Bow_E, CooldownTimerHandle_Bow_E, bCanUseSkill_Bow_E, ESkillType::E, CurrentWeaponType, Bow_E_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -323,7 +323,7 @@ void USkillComponent::EndBowBackstep(UAnimMontage* Target, bool IsProperlyEnded)
 void USkillComponent::BeginBowOneShot()
 {
 	if (!bCanUseSkill_Bow_R) return;
-	else StartCooldown(CooldownDuration_Bow_R, CooldownTimerHandle_Bow_R, bCanUseSkill_Bow_R, ESkillType::R);
+	else StartCooldown(CooldownDuration_Bow_R, CooldownTimerHandle_Bow_R, bCanUseSkill_Bow_R, ESkillType::R, CurrentWeaponType, Bow_R_Timer);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -417,7 +417,7 @@ void USkillComponent::BeginStaffMeteor()
 	else
 	{
 		if (!bCanUseSkill_Staff_Q) return;
-		else StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q);
+		else StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q, CurrentWeaponType, Staff_Q_Timer);
 
 		bCasting = true;
 
@@ -447,7 +447,7 @@ void USkillComponent::BeginStaffArea()
 	else
 	{
 		if (!bCanUseSkill_Staff_W) return;
-		else StartCooldown(CooldownDuration_Staff_W, CooldownTimerHandle_Staff_W, bCanUseSkill_Staff_W, ESkillType::W);
+		else StartCooldown(CooldownDuration_Staff_W, CooldownTimerHandle_Staff_W, bCanUseSkill_Staff_W, ESkillType::W, CurrentWeaponType, Staff_W_Timer);
 
 		bCasting = true;
 
@@ -478,7 +478,7 @@ void USkillComponent::BeginStaffUpGround()
 	else
 	{
 		if (!bCanUseSkill_Staff_E) return;
-		else StartCooldown(CooldownDuration_Staff_E, CooldownTimerHandle_Staff_E, bCanUseSkill_Staff_E, ESkillType::E);
+		else StartCooldown(CooldownDuration_Staff_E, CooldownTimerHandle_Staff_E, bCanUseSkill_Staff_E, ESkillType::E, CurrentWeaponType, Staff_E_Timer);
 
 		bCasting = true;
 
@@ -497,7 +497,7 @@ void USkillComponent::EndStaffUpGround(UAnimMontage* Target, bool IsProperlyEnde
 void USkillComponent::BeginStaffThunderbolt()
 {
 	if (!bCanUseSkill_Staff_R) return;
-	else StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R);
+	else StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
 
 	FVector SpawnLocation = Character->GetMesh()->GetSocketLocation(TEXT("root")) + FVector(0.f, 0.f, 5.f);
 	FRotator SpawnRotation = Character->GetActorRotation();
@@ -510,30 +510,11 @@ void USkillComponent::EndStaffThunderbolt(UAnimMontage* Target, bool IsProperlyE
 {
 }
 
-void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType)
+void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType, int32 WeaponType, float& Timer)
 {
 	bCanUseSkill = false;
 
-	Widget->SetMaxCooldown(CooldownDuration, SkillType);
-	Widget->StartCooldown(SkillType);
-
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-		[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
-		{
-			float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
-			Timer += ElapsedTime;
-
-			Widget->UpdateCooldownBar(Timer, SkillType);
-			
-			if (Timer >= CooldownDuration)
-			{
-				GetWorld()->GetTimerManager().ClearTimer(CooldownTimerHandle);
-				bCanUseSkill = true;
-				Timer = 0.f;
-			}
-		}, 0.01f, true);
+	Widget->SetMaxCooldown(CooldownDuration, CurrentWeaponType, SkillType);
+	Widget->StartCooldown(CurrentWeaponType, SkillType);
+	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType,Timer);
 }
-
-
-
-
