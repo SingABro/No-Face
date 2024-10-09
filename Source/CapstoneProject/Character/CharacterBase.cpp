@@ -281,6 +281,7 @@ bool ACharacterBase::TraceAttack()
 	return GetPlayerController()->GetHitResultUnderCursor(ECC_Visibility, true, AttackHitResult);
 }
 
+/* 캐릭터 돌아가는 함수 실행 */
 void ACharacterBase::RotateToTarget()
 {
 	if (RotateTimer.IsValid())
@@ -292,6 +293,7 @@ void ACharacterBase::RotateToTarget()
 
 }
 
+/* 캐릭터 돌아가는 함수, 현재 마우스 커서 위치로 캐릭터가 회전함 */
 void ACharacterBase::UpdateRotate()
 {
 	FHitResult TargetHitResult;
