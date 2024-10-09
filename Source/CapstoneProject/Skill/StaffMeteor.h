@@ -33,11 +33,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TObjectPtr<class UBoxComponent> Box;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> Meteor;
-
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> MeteorSpline;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")

@@ -29,8 +29,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USceneComponent> Root;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> Area;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
 
 	TArray<FOverlapResult> OverlapResults;
 

@@ -3,7 +3,6 @@
 
 #include "Skill/ProjectileBase.h"
 #include "Stat/CharacterDataStat.h"
-#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -13,12 +12,5 @@ AProjectileBase::AProjectileBase()
 	{
 		Stat = StatRef.Object;
 	}
-	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
-	ParticleComponent->SetupAttachment(RootComponent);
-}
 
-void AProjectileBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }

@@ -9,6 +9,7 @@
 #include "SkillComponent.generated.h"
 
 DECLARE_DELEGATE(FParryingSign)
+DECLARE_DELEGATE(FShieldSign)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public IBowSkillInterface, public IPlayerSkillUIInterface
@@ -40,7 +41,10 @@ public:
 	/* 패링 성공시 실행될 함수, Attacker라는 공격을 한 적의 포인터를 인자로 받는다. */
 	void ParryingSuccess(AActor* Attacker);
 
-	/**/
+	/* 방어막 델리게이트 */
+	FShieldSign ShieldSign;
+
+	/* 스킬 함수들 */
 	void PlaySkill_Q();
 	void PlaySkill_W();
 	void PlaySkill_E();
@@ -48,6 +52,9 @@ public:
 
 	/* 현재 무기 상태 바꿈 -> CharacterBase에서 실행 */
 	void SetWeaponType(const int32& InCurrentWeaponType);
+
+	/* 현재 캐스팅되는 스킬을 담을 컨테이너 */
+	TQueue<TFunction<void()>> SkillQueue;
 
 	
 private:
@@ -94,9 +101,6 @@ private:
 	FHitResult Cursor;
 	bool bCasting = false;
 
-public:
-	//현재 캐스팅되는 스킬을 담을 컨테이너
-	TQueue<TFunction<void()>> SkillQueue;
 
 /* Bow 데이터 */
 private:
@@ -113,17 +117,17 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Staff")
 	TSubclassOf<class AStaffMeteor> MeteorClass;
 
-	UPROPERTY(EditAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystem> MeteorEffect;
+	UPROPERTY(EditAnywhere, Category = "Staff")
+	TObjectPtr<class UParticleSystem> MeteorCastingEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Staff")
 	TSubclassOf<class AStaffArea> AreaClass;
 
 	UPROPERTY(EditAnywhere, Category = "Staff")
-	TSubclassOf<class AStaffUpGround> UpGroundClass;
+	TSubclassOf<class AStaffThunderbolt> ThunderboltClass;
 
 	UPROPERTY(EditAnywhere, Category = "Staff")
-	TSubclassOf<class AStaffThunderbolt> ThunderboltClass;
+	TObjectPtr<class UParticleSystem> ThunderboltCastingEffect;
 
 /* 쿨타임 섹션 */
 private:

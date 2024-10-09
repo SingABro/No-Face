@@ -15,13 +15,9 @@ public:
 	AProjectileBase();
 
 protected:
-	virtual void BeginPlay() override;
-
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	TObjectPtr<class UCharacterDataStat> Stat;
 
-	UPROPERTY(VisibleAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
-
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> Particle;
 };

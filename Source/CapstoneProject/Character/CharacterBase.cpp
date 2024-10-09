@@ -24,6 +24,8 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/HUDWidget.h"
 #include "Interface/PlayerSkillUIInterface.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -133,10 +135,14 @@ ACharacterBase::ACharacterBase()
 	/* 컴포넌트 */
 	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("Skill"));
 	SkillComponent->ParryingSign.BindUObject(this, &ACharacterBase::ToggleParrying);
+	SkillComponent->ShieldSign.BindUObject(this, &ACharacterBase::StaffCreateShield);
 
 	HitCheckComponent = CreateDefaultSubobject<UCharacterHitCheckComponent>(TEXT("Hit Checker"));
 
 	AttackComponent = CreateDefaultSubobject<UCharacterDefaultAttackComponent>(TEXT("Attack"));
+	
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ParticleComponent->SetupAttachment(GetMesh());
 
 	/* 태그 */
 	Tags.Add(TEXT("Player"));
@@ -458,6 +464,11 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 	{
 		SkillUIInterface->SetupSkillUIWidget(InHUDWidget);
 	}
+}
+
+void ACharacterBase::StaffCreateShield()
+{
+	ParticleComponent->SetTemplate(ShieldEffect);
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const
