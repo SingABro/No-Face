@@ -22,8 +22,8 @@
 #include "Character/CharacterDefaultAttackComponent.h"
 #include "Interface/BowInterface.h"
 #include "Components/CapsuleComponent.h"
-#include "Interface/PlayerHUDInterface.h"
 #include "UI/HUDWidget.h"
+#include "Interface/PlayerSkillUIInterface.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -281,6 +281,7 @@ bool ACharacterBase::TraceAttack()
 	return GetPlayerController()->GetHitResultUnderCursor(ECC_Visibility, true, AttackHitResult);
 }
 
+/* 캐릭터 돌아가는 함수 실행 */
 void ACharacterBase::RotateToTarget()
 {
 	if (RotateTimer.IsValid())
@@ -292,6 +293,7 @@ void ACharacterBase::RotateToTarget()
 
 }
 
+/* 캐릭터 돌아가는 함수, 현재 마우스 커서 위치로 캐릭터가 회전함 */
 void ACharacterBase::UpdateRotate()
 {
 	FHitResult TargetHitResult;
@@ -378,6 +380,7 @@ void ACharacterBase::ChangeWeapon()
 	AttackComponent->SetWeaponType(WeaponIndex);
 	TakeItemDelegateArray[WeaponIndex].TakeItemDelegate.ExecuteIfBound();
 	CurrentWeaponType = static_cast<EWeaponType>(WeaponIndex);
+	SignedChangeWeapon.Broadcast(WeaponIndex);
 }
 
 void ACharacterBase::EquipSword()
@@ -450,6 +453,11 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 		Stat->OnExpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateExpBar);
 	}
 
+	IPlayerSkillUIInterface* SkillUIInterface = Cast<IPlayerSkillUIInterface>(SkillComponent);
+	if (SkillUIInterface)
+	{
+		SkillUIInterface->SetupSkillUIWidget(InHUDWidget);
+	}
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const

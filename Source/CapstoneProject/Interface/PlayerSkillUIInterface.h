@@ -4,11 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "PlayerHUDInterface.generated.h"
+#include "PlayerSkillUIInterface.generated.h"
+
+UENUM()
+enum class ESkillType : uint8
+{
+	Q = 0,
+	W,
+	E,
+	R
+};
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UPlayerHUDInterface : public UInterface
+class UPlayerSkillUIInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,11 +25,11 @@ class UPlayerHUDInterface : public UInterface
 /**
  * 
  */
-class CAPSTONEPROJECT_API IPlayerHUDInterface
+class CAPSTONEPROJECT_API IPlayerSkillUIInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void SetupHUDWidget(class UHUDWidget* InHUDWidget) = 0;
+	virtual void SetupSkillUIWidget(class UHUDWidget* InHUDWidget) = 0;
 };
