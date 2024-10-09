@@ -56,6 +56,8 @@ void UHUDWidget::NativeConstruct()
 		Character->SignedChangeWeapon.AddUObject(this, &UHUDWidget::SetSkillUI);
 		Character->SetupHUDWidget(this);
 	}
+
+	SetSwordSkillUI();
 }
 
 void UHUDWidget::SetMaxHp(float NewMaxHp)
@@ -251,7 +253,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::R:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -275,7 +277,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 		{
 		case ESkillType::Q:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -292,7 +294,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::W:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]() 
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -309,7 +311,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::E:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -326,7 +328,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::R:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -350,7 +352,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 		{
 		case ESkillType::Q:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -367,7 +369,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::W:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -384,7 +386,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::E:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]()
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;
@@ -401,7 +403,7 @@ void UHUDWidget::UpdateCooldownBar(float CooldownDuration, FTimerHandle& Cooldow
 			break;
 		case ESkillType::R:
 			GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle,
-				[&, SkillType, CooldownDuration]() //캡처절에 인수를 포함시켜 줘야해 C++ 지식 부족으로 시간 날렸네;
+				[&, SkillType, CooldownDuration]() 
 				{
 					float ElapsedTime = GetWorld()->GetTimerManager().GetTimerElapsed(CooldownTimerHandle);
 					Timer += ElapsedTime;

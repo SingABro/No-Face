@@ -52,39 +52,39 @@ public:
 	
 private:
 	//Sword Skill Montage
-	void BeginSwordSting();	//검 Q - 찌르기 시작
-	void EndSwordSting(class UAnimMontage* Target, bool IsProperlyEnded);	//검 Q - 찌르기 끝
-	void BeginSwordWhirlwind(); //검 W - 휠윈드 시작
-	void EndSwordWhirlwind(class UAnimMontage* Target, bool IsProperlyEnded); //검 W - 휠윈드 끝
-	void BeginSwordParrying(); //검 E - 패링 시작
-	void EndSwordParrying(class UAnimMontage* Target, bool IsProperlyEnded); //검 E - 패링 끝
-	void BeginSwordAura(); //검 R - 검기 시작
-	void EndSwordAura(class UAnimMontage* Target, bool IsProperlyEnded); //검 R - 검기 끝
+	void BeginSword_Q();	//검 Q - 찌르기 시작
+	void EndSword_Q(class UAnimMontage* Target, bool IsProperlyEnded);	//검 Q - 찌르기 끝
+	void BeginSword_W(); //검 W - 휠윈드 시작
+	void EndSword_W(class UAnimMontage* Target, bool IsProperlyEnded); //검 W - 휠윈드 끝
+	void BeginSword_E(); //검 E - 패링 시작
+	void EndSword_E(class UAnimMontage* Target, bool IsProperlyEnded); //검 E - 패링 끝
+	void BeginSword_R(); //검 R - 검기 시작
+	void EndSword_R(class UAnimMontage* Target, bool IsProperlyEnded); //검 R - 검기 끝
 
 	//Bow Skill Montage
-	void BeginBowSeveralArrows();
-	void EndBowSeveralArrows(class UAnimMontage* Target, bool IsProperlyEnded);
-	void BeginBowExplosionArrow();
-	void EndBowExplosionArrow(class UAnimMontage* Target, bool IsProperlyEnded);
-	void BeginBowBackstep();
-	void EndBowBackstep(class UAnimMontage* Target, bool IsProperlyEnded);
-	void BeginBowOneShot();
-	void EndBowOneShot(class UAnimMontage* Target, bool IsProperlyEnded);
-	void FireOneShot();
+	void BeginBow_Q(); //활 Q - 전방에 여러발 날리기 (애쉬 W) 시작
+	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
+	void BeginBow_W(); //활 W - 범위에 화살 뿌리기
+	void EndBow_W(class UAnimMontage* Target, bool IsProperlyEnded);
+	void BeginBow_E(); //활 E - 백스텝
+	void EndBow_E(class UAnimMontage* Target, bool IsProperlyEnded);
+	void BeginBow_R(); //활 R - 기 모았다가 쏘기
+	void EndBow_R(class UAnimMontage* Target, bool IsProperlyEnded);
+	void FireBow_R();
 
 	virtual void Bow_Q_Skill() override; //활 Q 화살 소환 로직
 	virtual void Bow_W_Skill() override; //활 W 애니메이션 중간에 멈추기
 
 
 	//Staff Skill Montage
-	void BeginStaffMeteor(); //스태프 Q - 메테오 시작
-	void EndStaffMeteor(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 Q - 메테오 끝
-	void BeginStaffArea(); //스태프 W - 범위 바인딩 시작
-	void EndStaffArea(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 W - 범위 바인딩 끝
-	void BeginStaffUpGround(); //스태프 E - 범위 쉴?드 시작
-	void EndStaffUpGround(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 E - 쉴?드 끝
-	void BeginStaffThunderbolt(); //스태프 R - 주위 번개 공격 시작
-	void EndStaffThunderbolt(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 R - 주위 번개 공격 끝
+	void BeginStaff_Q(); //스태프 Q - 메테오 시작
+	void EndStaff_Q(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 Q - 메테오 끝
+	void BeginStaff_W(); //스태프 W - 범위 바인딩 시작
+	void EndStaff_W(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 W - 범위 바인딩 끝
+	void BeginStaff_E(); //스태프 E - 범위 쉴?드 시작
+	void EndStaff_E(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 E - 쉴?드 끝
+	void BeginStaff_R(); //스태프 R - 주위 번개 공격 시작
+	void EndStaff_R(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 R - 주위 번개 공격 끝
 
 	/* 스킬 몽타주 모아놓은 Primary Asset */
 	UPROPERTY(EditAnywhere, Category = "Montage")
