@@ -4,6 +4,8 @@
 #include "Skill/StaffMeteor.h"
 #include "Components/BoxComponent.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AStaffMeteor::AStaffMeteor()
 {
@@ -16,25 +18,11 @@ AStaffMeteor::AStaffMeteor()
 	Box->SetupAttachment(Root);
 	Box->OnComponentHit.AddDynamic(this, &AStaffMeteor::OnHit);
 
-	Meteor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Meteor"));
-	Meteor->SetupAttachment(Root);
-	Meteor->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeteorRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Meteor.SM_Meteor'"));
-	if (MeteorRef.Object)
-	{
-		Meteor->SetStaticMesh(MeteorRef.Object);
-	}
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Paticle"));
+	ParticleComponent->SetupAttachment(Root);
+	ParticleComponent->SetTemplate(Particle);
 
-	MeteorSpline = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeteorSpline"));
-	MeteorSpline->SetupAttachment(Meteor);
-	MeteorSpline->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeteorSplineRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Meteor_Spline.SM_Meteor_Spline'"));
-	if (MeteorSplineRef.Object)
-	{
-		MeteorSpline->SetStaticMesh(MeteorSplineRef.Object);
-	}
-
-	MoveSpeed = 1500.f;
+	MoveSpeed = 100.f;
 	Damage = Stat->Staff_Q_Damage;
 	Destination = FVector::ZeroVector;
 	bStart = false;

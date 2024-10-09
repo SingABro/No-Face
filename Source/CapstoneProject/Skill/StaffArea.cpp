@@ -5,6 +5,8 @@
 #include "Engine/OverlapResult.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
 
 AStaffArea::AStaffArea()
 {
@@ -13,14 +15,9 @@ AStaffArea::AStaffArea()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
-	Area = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Area->SetupAttachment(Root);
-	Area->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> AreaRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_BigPortal_Space.SM_BigPortal_Space'"));
-	if (AreaRef.Object)
-	{
-		Area->SetStaticMesh(AreaRef.Object);
-	}
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ParticleComponent->SetupAttachment(Root);
+	ParticleComponent->SetTemplate(Particle);
 
 	LifeTime = Stat->Staff_W_LifeTime;
 	DamageTime = 0.f;

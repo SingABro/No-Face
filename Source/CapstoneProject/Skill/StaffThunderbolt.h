@@ -31,11 +31,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<class USceneComponent> Root;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> UpPlane;
-
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> DownPlane;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
 
 	UPROPERTY(EditAnywhere, Category = "LifeTime")
 	float LifeTime;

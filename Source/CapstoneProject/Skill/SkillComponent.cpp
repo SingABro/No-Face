@@ -403,14 +403,15 @@ void USkillComponent::BeginStaff_Q()
 {
 	if (bCasting)
 	{
-		//수정중 
-		/*FVector SpawnLocation = Character->GetActorLocation() + FVector(0.f, 0.f, 150.f);
-		FRotator SpawnRotation = Character->GetActorRotation();
-		AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, SpawnLocation, SpawnRotation);
-		Meteor->Init(Cursor.Location);*/
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorEffect, Cursor.Location + FVector(0.f, 0.f, 500.f), FRotator::ZeroRotator);
-		UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorCastingEffect, Cursor.Location, FRotator::ZeroRotator);
 
+		FTimerHandle StaffQHandle;
+		GetWorld()->GetTimerManager().SetTimer(StaffQHandle,
+			[&]()
+			{
+				AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, Cursor.Location + FVector(0.f, 0.f, 800.f), FRotator::ZeroRotator);
+				Meteor->Init(Cursor.Location);
+			}, 2.f, false);
 
 		bCasting = false;
 	}
@@ -438,8 +439,8 @@ void USkillComponent::BeginStaff_W()
 	if (bCasting)
 	{
 		FVector SpawnLocation = Cursor.Location;
-		FRotator SpawnRotation = Character->GetActorRotation();
-		AStaffArea* Area = GetWorld()->SpawnActor<AStaffArea>(AreaClass, SpawnLocation, SpawnRotation);
+		AStaffArea* Area = GetWorld()->SpawnActor<AStaffArea>(AreaClass, SpawnLocation, FRotator::ZeroRotator);
+		//UE_LOG(LogTemp, Display, TEXT("Spawn Location : %f, %f, %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 		Area->SetOwner(Character);
 
 		bCasting = false;
@@ -465,29 +466,10 @@ void USkillComponent::EndStaff_W(UAnimMontage* Target, bool IsProperlyEnded)
 
 void USkillComponent::BeginStaff_E()
 {
-	if (bCasting)
-	{
-		FVector SpawnLocation = Cursor.Location;
-		FRotator SpawnRotation = Character->GetActorRotation();
-		AStaffUpGround* UpGround = GetWorld()->SpawnActor<AStaffUpGround>(UpGroundClass, SpawnLocation, SpawnRotation);
-		UpGround->SetOwner(Character);
-		UpGround->ActiveGroundUp();
+	if (!bCanUseSkill_Staff_E) return;
+	else StartCooldown(CooldownDuration_Staff_E, CooldownTimerHandle_Staff_E, bCanUseSkill_Staff_E, ESkillType::E, CurrentWeaponType, Staff_E_Timer);
 
-		bCasting = false;
-	}
-	else
-	{
-		if (!bCanUseSkill_Staff_E) return;
-		else StartCooldown(CooldownDuration_Staff_E, CooldownTimerHandle_Staff_E, bCanUseSkill_Staff_E, ESkillType::E, CurrentWeaponType, Staff_E_Timer);
-
-		bCasting = true;
-
-		//컨테이너에 람다형식으로 함수 등록
-		SkillQueue.Enqueue([this]()
-			{
-				BeginStaff_E();
-			});
-	}
+	ShieldSign.ExecuteIfBound();
 }
 
 void USkillComponent::EndStaff_E(UAnimMontage* Target, bool IsProperlyEnded)
@@ -499,11 +481,19 @@ void USkillComponent::BeginStaff_R()
 	if (!bCanUseSkill_Staff_R) return;
 	else StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
 
-	FVector SpawnLocation = Character->GetMesh()->GetSocketLocation(TEXT("root")) + FVector(0.f, 0.f, 5.f);
-	FRotator SpawnRotation = Character->GetActorRotation();
-	AStaffThunderbolt* Thunderbolt = GetWorld()->SpawnActor<AStaffThunderbolt>(ThunderboltClass, SpawnLocation, SpawnRotation);
-	Thunderbolt->SetOwner(Character);
-	Thunderbolt->ActiveThunderbolt();
+	FVector SpawnLocation = Character->GetMesh()->GetSocketLocation(TEXT("root"));
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ThunderboltCastingEffect, Character->GetMesh()->GetSocketLocation(TEXT("root")), FRotator::ZeroRotator);
+
+	FTimerHandle StaffRHandle;
+	GetWorld()->GetTimerManager().SetTimer(StaffRHandle,
+		[&]()
+		{
+			AStaffThunderbolt* Thunderbolt = GetWorld()->SpawnActor<AStaffThunderbolt>(ThunderboltClass, Character->GetMesh()->GetSocketLocation(TEXT("root")), FRotator::ZeroRotator);
+			Thunderbolt->SetOwner(Character);
+			Thunderbolt->ActiveThunderbolt();
+		}, 2.f, false);
+	
 }
 
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)

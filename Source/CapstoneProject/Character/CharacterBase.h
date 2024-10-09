@@ -186,6 +186,16 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	TObjectPtr<class UCharacterStatComponent> Stat;
 
+/* 이펙트 섹션 */
+private:
+	void StaffCreateShield();
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> ShieldEffect;
+
 /* 유틸리티 섹션 */
 private:
 	class ACPlayerController* GetPlayerController() const;

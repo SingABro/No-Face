@@ -5,6 +5,8 @@
 #include "Engine/OverlapResult.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
 
 AStaffThunderbolt::AStaffThunderbolt()
 {
@@ -13,23 +15,9 @@ AStaffThunderbolt::AStaffThunderbolt()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
-	UpPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UpPlane"));
-	UpPlane->SetupAttachment(Root);
-	UpPlane->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> UpPlaneRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Ult_Runes_Inner.SM_Ult_Runes_Inner'"));
-	if (UpPlaneRef.Object)
-	{
-		UpPlane->SetStaticMesh(UpPlaneRef.Object);
-	}
-
-	DownPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DownPlane"));
-	DownPlane->SetupAttachment(Root);
-	DownPlane->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> DownPlaneRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Ult_Runes_Outer.SM_Ult_Runes_Outer'"));
-	if (DownPlaneRef.Object)
-	{
-		DownPlane->SetStaticMesh(DownPlaneRef.Object);
-	}
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ParticleComponent->SetupAttachment(Root);
+	ParticleComponent->SetTemplate(Particle);
 
 	LifeTime = 5.f;
 	Damage = Stat->Staff_R_Damage;
