@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Stat/CharacterDataStat.h"
+#include "Interface/PlayerSkillUIInterface.h"
 #include "HUDWidget.generated.h"
 
 /**
@@ -18,19 +18,67 @@ class CAPSTONEPROJECT_API UHUDWidget : public UUserWidget
 public:
 	UHUDWidget(const FObjectInitializer& OnjectInitializer);
 
+protected:
+	virtual void NativeConstruct() override;
+
 public:
 	void UpdateHpBar(float NewCurrentHp);
 	void UpdateExpBar(float NewCurrentExp);
 	void SetMaxHp(float NewMaxHp);
 
-protected:
-	virtual void NativeConstruct() override;
+	void SetMaxCooldown(float InMaxCooldownTime, int32 WeaponType, ESkillType SkillType);
+	void StartCooldown(int32 WeaponType, ESkillType SkillType);
+	void UpdateCooldownBar(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType, int32 WeaponType, float& Timer);
 
-protected:
+
+private:
+	void SetSkillUI(int32 WeaponType);
+	void SetSwordSkillUI();
+	void SetBowSkillUI();
+	void SetStaffSkillUI();
+
+private:
 	UPROPERTY()
 	TObjectPtr<class UPlayerHpBarWidget> HpBar;
 
 	UPROPERTY()
 	TObjectPtr<class UPlayerExpBarWidget> ExpBar;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Sword_SkillCooldownBar_Q;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Bow_SkillCooldownBar_Q;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Staff_SkillCooldownBar_Q;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Sword_SkillCooldownBar_W;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Bow_SkillCooldownBar_W;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Staff_SkillCooldownBar_W;
+	
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Sword_SkillCooldownBar_E;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Bow_SkillCooldownBar_E;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Staff_SkillCooldownBar_E;
+	
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Sword_SkillCooldownBar_R;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Bow_SkillCooldownBar_R;
+
+	UPROPERTY()
+	TObjectPtr<class USkillCooldownUserWidget> Staff_SkillCooldownBar_R;
+
 
 };
