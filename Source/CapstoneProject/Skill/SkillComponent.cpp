@@ -51,13 +51,13 @@ void USkillComponent::PlaySkill_Q()
 	switch (CurrentWeaponType)
 	{
 	case 0:
-		BeginSwordSting();
+		BeginSword_Q();
 		break;
 	case 1:
-		BeginBowSeveralArrows();
+		BeginBow_Q();
 		break;
 	case 2:
-		BeginStaffMeteor();
+		BeginStaff_Q();
 		break;
 	default:
 		break;
@@ -69,13 +69,13 @@ void USkillComponent::PlaySkill_W()
 	switch (CurrentWeaponType)
 	{
 	case 0:
-		BeginSwordWhirlwind();
+		BeginSword_W();
 		break;
 	case 1:
-		BeginBowExplosionArrow();
+		BeginBow_W();
 		break;
 	case 2:
-		BeginStaffArea();
+		BeginStaff_W();
 		break;
 	default:
 		break;
@@ -87,13 +87,13 @@ void USkillComponent::PlaySkill_E()
 	switch (CurrentWeaponType)
 	{
 	case 0:
-		BeginSwordParrying();
+		BeginSword_E();
 		break;
 	case 1:
-		BeginBowBackstep();
+		BeginBow_E();
 		break;
 	case 2:
-		BeginStaffUpGround();
+		BeginStaff_E();
 		break;
 	default:
 		break;
@@ -105,13 +105,13 @@ void USkillComponent::PlaySkill_R()
 	switch (CurrentWeaponType)
 	{
 	case 0:
-		BeginSwordAura();
+		BeginSword_R();
 		break;
 	case 1:
-		BeginBowOneShot();
+		BeginBow_R();
 		break;
 	case 2:
-		BeginStaffThunderbolt();
+		BeginStaff_R();
 		break;
 	default:
 		break;
@@ -123,7 +123,7 @@ void USkillComponent::SetWeaponType(const int32& InCurrentWeaponType)
 	CurrentWeaponType = InCurrentWeaponType;
 }
 
-void USkillComponent::BeginSwordSting()
+void USkillComponent::BeginSword_Q()
 {
 	if (!bCanUseSkill_Sword_Q) return;
 	else StartCooldown(CooldownDuration_Sword_Q, CooldownTimerHandle_Sword_Q, bCanUseSkill_Sword_Q, ESkillType::Q, CurrentWeaponType, Sword_Q_Timer);
@@ -135,17 +135,17 @@ void USkillComponent::BeginSwordSting()
 	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[0], 1.0f);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndSwordSting);
+	MontageEnd.BindUObject(this, &USkillComponent::EndSword_Q);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->SwordMontages[0]);
 }
 
-void USkillComponent::EndSwordSting(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndSword_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::BeginSwordWhirlwind()
+void USkillComponent::BeginSword_W()
 {
 	if (!bCanUseSkill_Sword_W) return;
 	else StartCooldown(CooldownDuration_Sword_W, CooldownTimerHandle_Sword_W, bCanUseSkill_Sword_W, ESkillType::W, CurrentWeaponType, Sword_W_Timer);
@@ -157,17 +157,17 @@ void USkillComponent::BeginSwordWhirlwind()
 	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[1], 1.0f);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndSwordWhirlwind);
+	MontageEnd.BindUObject(this, &USkillComponent::EndSword_W);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->SwordMontages[1]);
 }
 
-void USkillComponent::EndSwordWhirlwind(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndSword_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::BeginSwordParrying()
+void USkillComponent::BeginSword_E()
 {
 	if (!bCanUseSkill_Sword_E) return;
 	else StartCooldown(CooldownDuration_Sword_E, CooldownTimerHandle_Sword_E, bCanUseSkill_Sword_E, ESkillType::E, CurrentWeaponType, Sword_E_Timer);
@@ -182,11 +182,11 @@ void USkillComponent::BeginSwordParrying()
 	ParryingSign.ExecuteIfBound();
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndSwordParrying);
+	MontageEnd.BindUObject(this, &USkillComponent::EndSword_E);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->SwordMontages[2]);
 }
 
-void USkillComponent::EndSwordParrying(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndSword_E(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	ParryingSign.ExecuteIfBound();
@@ -207,7 +207,7 @@ void USkillComponent::ParryingSuccess(AActor* Attacker)
 	}
 }
 
-void USkillComponent::BeginSwordAura()
+void USkillComponent::BeginSword_R()
 {
 	if (!bCanUseSkill_Sword_R) return;
 	else StartCooldown(CooldownDuration_Sword_R, CooldownTimerHandle_Sword_R, bCanUseSkill_Sword_R, ESkillType::R, CurrentWeaponType, Sword_R_Timer);
@@ -219,17 +219,17 @@ void USkillComponent::BeginSwordAura()
 	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[3], 3.0f);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndSwordAura);
+	MontageEnd.BindUObject(this, &USkillComponent::EndSword_R);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->SwordMontages[3]);
 }
 
-void USkillComponent::EndSwordAura(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::BeginBowSeveralArrows()
+void USkillComponent::BeginBow_Q()
 {
 	if (!bCanUseSkill_Bow_Q) return;
 	else StartCooldown(CooldownDuration_Bow_Q, CooldownTimerHandle_Bow_Q, bCanUseSkill_Bow_Q, ESkillType::Q, CurrentWeaponType, Bow_Q_Timer);
@@ -241,17 +241,17 @@ void USkillComponent::BeginBowSeveralArrows()
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[0]);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndBowSeveralArrows);
+	MontageEnd.BindUObject(this, &USkillComponent::EndBow_Q);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->BowMontages[0]);
 }
 
-void USkillComponent::EndBowSeveralArrows(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndBow_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::BeginBowExplosionArrow()
+void USkillComponent::BeginBow_W()
 {
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	bCanChangeWeapon = false;
@@ -270,7 +270,7 @@ void USkillComponent::BeginBowExplosionArrow()
 		//else 사용자가 입력을 너무 빨리 했을 때 처리 해야함
 
 		FOnMontageEnded MontageEnd;
-		MontageEnd.BindUObject(this, &USkillComponent::EndBowExplosionArrow);
+		MontageEnd.BindUObject(this, &USkillComponent::EndBow_W);
 		AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->BowMontages[1]);
 	}
 	else
@@ -282,7 +282,7 @@ void USkillComponent::BeginBowExplosionArrow()
 
 		SkillQueue.Enqueue([this]()
 			{
-				BeginBowExplosionArrow();
+				BeginBow_W();
 			});
 
 		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
@@ -290,13 +290,13 @@ void USkillComponent::BeginBowExplosionArrow()
 	}
 }
 
-void USkillComponent::EndBowExplosionArrow(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndBow_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::BeginBowBackstep()
+void USkillComponent::BeginBow_E()
 {
 	if (!bCanUseSkill_Bow_E) return;
 	else StartCooldown(CooldownDuration_Bow_E, CooldownTimerHandle_Bow_E, bCanUseSkill_Bow_E, ESkillType::E, CurrentWeaponType, Bow_E_Timer);
@@ -310,17 +310,17 @@ void USkillComponent::BeginBowBackstep()
 	Character->LaunchCharacter(BackstepDirection + FVector(0.f, 0.f, 100.f), true, true);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndBowBackstep);
+	MontageEnd.BindUObject(this, &USkillComponent::EndBow_E);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->BowMontages[2]);
 }
 
-void USkillComponent::EndBowBackstep(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndBow_E(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	bCanChangeWeapon = true;
 }
 
 /* 애니메이션이 천천히 실행되고, 카메라가 줌이 되는 효과 추가 하자 */
-void USkillComponent::BeginBowOneShot()
+void USkillComponent::BeginBow_R()
 {
 	if (!bCanUseSkill_Bow_R) return;
 	else StartCooldown(CooldownDuration_Bow_R, CooldownTimerHandle_Bow_R, bCanUseSkill_Bow_R, ESkillType::R, CurrentWeaponType, Bow_R_Timer);
@@ -332,19 +332,19 @@ void USkillComponent::BeginBowOneShot()
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[3]);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &USkillComponent::EndBowOneShot);
+	MontageEnd.BindUObject(this, &USkillComponent::EndBow_R);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->BowMontages[3]);
 }
 
-void USkillComponent::EndBowOneShot(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndBow_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	FireOneShot();
+	FireBow_R();
 
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::FireOneShot()
+void USkillComponent::FireBow_R()
 {
 	TArray<FHitResult> HitResults;
 
@@ -399,7 +399,7 @@ void USkillComponent::Bow_W_Skill()
 	}
 }
 
-void USkillComponent::BeginStaffMeteor()
+void USkillComponent::BeginStaff_Q()
 {
 	if (bCasting)
 	{
@@ -424,16 +424,16 @@ void USkillComponent::BeginStaffMeteor()
 		//컨테이너에 람다형식으로 함수 등록
 		SkillQueue.Enqueue([this]()
 			{
-				BeginStaffMeteor();
+				BeginStaff_Q();
 			});
 	}
 }
 
-void USkillComponent::EndStaffMeteor(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndStaff_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
 }
 
-void USkillComponent::BeginStaffArea()
+void USkillComponent::BeginStaff_W()
 {
 	if (bCasting)
 	{
@@ -454,16 +454,16 @@ void USkillComponent::BeginStaffArea()
 		//컨테이너에 람다형식으로 함수 등록
 		SkillQueue.Enqueue([this]()
 			{
-				BeginStaffArea();
+				BeginStaff_W();
 			});
 	}
 }
 
-void USkillComponent::EndStaffArea(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndStaff_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
 }
 
-void USkillComponent::BeginStaffUpGround()
+void USkillComponent::BeginStaff_E()
 {
 	if (bCasting)
 	{
@@ -485,16 +485,16 @@ void USkillComponent::BeginStaffUpGround()
 		//컨테이너에 람다형식으로 함수 등록
 		SkillQueue.Enqueue([this]()
 			{
-				BeginStaffUpGround();
+				BeginStaff_E();
 			});
 	}
 }
 
-void USkillComponent::EndStaffUpGround(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndStaff_E(UAnimMontage* Target, bool IsProperlyEnded)
 {
 }
 
-void USkillComponent::BeginStaffThunderbolt()
+void USkillComponent::BeginStaff_R()
 {
 	if (!bCanUseSkill_Staff_R) return;
 	else StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
@@ -506,7 +506,7 @@ void USkillComponent::BeginStaffThunderbolt()
 	Thunderbolt->ActiveThunderbolt();
 }
 
-void USkillComponent::EndStaffThunderbolt(UAnimMontage* Target, bool IsProperlyEnded)
+void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
 }
 
