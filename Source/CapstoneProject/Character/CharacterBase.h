@@ -109,6 +109,19 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> ZoomInOutAction;
 
+	UPROPERTY(VisibleAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> DisplaySkillUIAction;
+
+
+	/* Test 키 */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> TestAction;
+
+	void SkillTest();
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UCharacterDataStat* StatData;
+
 /* 마우스 우클릭을 통해 캐릭터 이동 기능을 실현하는 함수와 변수 */
 	void OnClickStart();	//Mouse Right Click Started
 	void OnClicking();	//Mouse Right Click Triggered
@@ -195,6 +208,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystem> ShieldEffect;
+
+/* UI 섹션 */
+private:
+	void DisplaySkillUI();
 
 /* 유틸리티 섹션 */
 private:

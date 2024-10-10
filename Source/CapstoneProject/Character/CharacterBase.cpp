@@ -110,7 +110,12 @@ ACharacterBase::ACharacterBase()
 	{
 		ZoomInOutAction = ZoomInOutActionRef.Object;
 	}
-	
+	static ConstructorHelpers::FObjectFinder<UInputAction> DisplaySkillUIActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_SkillStatTest.IA_SkillStatTest'"));
+	if (DisplaySkillUIActionRef.Object)
+	{
+		DisplaySkillUIAction = DisplaySkillUIActionRef.Object;
+	}
+
 	/* Mesh */
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/No-Face/Character/Mesh/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
 	if (MainMeshRef.Object)
@@ -182,6 +187,12 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	EnhancedInputComponent->BindAction(ZoomInOutAction, ETriggerEvent::Triggered, this, &ACharacterBase::ZoomInOut);
 
 	EnhancedInputComponent->BindAction(CancelAction, ETriggerEvent::Started, this, &ACharacterBase::CancelCasting);
+	EnhancedInputComponent->BindAction(DisplaySkillUIAction, ETriggerEvent::Started, this, &ACharacterBase::DisplaySkillUI);
+
+
+
+
+	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &ACharacterBase::SkillTest);
 }
 
 float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -230,6 +241,12 @@ void ACharacterBase::R_Skill()
 	RotateToTarget();
 	OnClickStart();
 	SkillComponent->PlaySkill_R();
+}
+
+void ACharacterBase::SkillTest()
+{
+	//StatData->Staff_R_Damage += 500;
+	UE_LOG(LogTemp, Display, TEXT("Test Input Key"));
 }
 
 void ACharacterBase::OnClickStart()
@@ -469,6 +486,11 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 void ACharacterBase::StaffCreateShield()
 {
 	ParticleComponent->SetTemplate(ShieldEffect);
+}
+
+void ACharacterBase::DisplaySkillUI()
+{
+	/* 스킬 창 띄우는 로직 */
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const
