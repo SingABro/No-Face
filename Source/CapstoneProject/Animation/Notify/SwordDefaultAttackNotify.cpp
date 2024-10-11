@@ -3,7 +3,7 @@
 
 #include "Animation/Notify/SwordDefaultAttackNotify.h"
 #include "Interface/SwordInterface.h"
-#include "Character/CharacterHitCheckComponent.h"
+#include "Character/CharacterDefaultAttackComponent.h"
 
 USwordDefaultAttackNotify::USwordDefaultAttackNotify()
 {
@@ -13,7 +13,7 @@ void USwordDefaultAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	ISwordInterface* Interface = Cast<ISwordInterface>(MeshComp->GetOwner()->GetComponentByClass<UCharacterHitCheckComponent>());
+	ISwordInterface* Interface = Cast<ISwordInterface>(MeshComp->GetOwner()->GetComponentByClass<UCharacterDefaultAttackComponent>());
 	if (Interface)
 	{
 		Interface->SwordDefaultAttackHitCheck();

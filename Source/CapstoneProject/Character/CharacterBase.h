@@ -187,9 +187,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<class USkillComponent> SkillComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Component")
-	TObjectPtr<class UCharacterHitCheckComponent> HitCheckComponent;
-
 	//패링을 위한 함수와 변수
 	void ToggleParrying();
 	bool bIsParrying = false;

@@ -18,7 +18,6 @@
 #include "Weapon/Bow.h"
 #include "Weapon/Staff.h"
 #include "Skill/SkillComponent.h"
-#include "Character/CharacterHitCheckComponent.h"
 #include "Character/CharacterDefaultAttackComponent.h"
 #include "Interface/BowInterface.h"
 #include "Components/CapsuleComponent.h"
@@ -141,8 +140,6 @@ ACharacterBase::ACharacterBase()
 	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("Skill"));
 	SkillComponent->ParryingSign.BindUObject(this, &ACharacterBase::ToggleParrying);
 	SkillComponent->ShieldSign.BindUObject(this, &ACharacterBase::StaffCreateShield);
-
-	HitCheckComponent = CreateDefaultSubobject<UCharacterHitCheckComponent>(TEXT("Hit Checker"));
 
 	AttackComponent = CreateDefaultSubobject<UCharacterDefaultAttackComponent>(TEXT("Attack"));
 	
