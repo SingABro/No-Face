@@ -2,20 +2,23 @@
 
 
 #include "Skill/SkillComponent.h"
-#include "Animation/AnimInstance.h"
-#include "Animation/AnimMontage.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/PlayerController.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Character/CharacterSkillMontageData.h"
-#include "Kismet/GameplayStatics.h"
-#include "Enemy/EnemyBase.h"
+#include "Skill/SwordAura.h"
 #include "Skill/StaffMeteor.h"
 #include "Skill/StaffArea.h"
 #include "Skill/StaffUpGround.h"
 #include "Skill/StaffThunderbolt.h"
-#include "Weapon/Arrow.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Components/CapsuleComponent.h"
+#include "Character/CharacterSkillMontageData.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Engine/OverlapResult.h"
+#include "Kismet/GameplayStatics.h"
+#include "Enemy/EnemyBase.h"
+#include "Weapon/Arrow.h"
 #include "UI/HUDWidget.h"
 
 USkillComponent::USkillComponent()
@@ -229,6 +232,74 @@ void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 	bCanChangeWeapon = true;
 }
 
+void USkillComponent::Sword_Q_SkillHitCheck()
+{
+	FColor Color = FColor::Red;
+
+	FVector Origin = Character->GetActorLocation() + Character->GetActorForwardVector() * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	FVector End = Origin + (Character->GetActorForwardVector() * 200.f /* 스텟 설정 필요 */);
+	FVector CapsuleExtend = FVector(200.f, 50.f, 50.f);
+	FCollisionQueryParams Params(NAME_None, false, Character);
+	TArray<FHitResult> HitResults;
+
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat(), ECC_GameTraceChannel2, FCollisionShape::MakeCapsule(CapsuleExtend), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& HitResult : HitResults)
+		{
+			HitResult.GetActor()->TakeDamage(100.f, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+			Color = FColor::Green;
+		}
+	}
+
+	DrawDebugCapsule(GetWorld(),
+		(Origin + End) * 0.5f,
+		(End - Origin).Size() * 0.5f,
+		CapsuleExtend.Y,
+		FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat(),
+		Color,
+		false,
+		3.f
+	);
+}
+
+void USkillComponent::Sword_W_SkillHitCheck()
+{
+	const float Damage = 200.f/* 스텟 설정 필요 Stat->Sword_W_Damage*/;
+	const float Radius = 200.f/* 스텟 설정 필요 Stat->Sword_W_Range*/;
+
+	FColor Color = FColor::Red;
+
+	FVector Origin = Character->GetActorLocation();
+	FCollisionQueryParams Params(NAME_None, true, Character);
+	TArray<FOverlapResult> OverlapResults;
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+			Color = FColor::Green;
+		}
+	}
+	DrawDebugSphere(GetWorld(), Origin, Radius, 32, Color, false, 3.f);
+}
+
+void USkillComponent::Sword_R_SkillHitCheck()
+{
+	FVector SpawnLocation = Character->GetActorLocation() + Character->GetActorForwardVector() * 100.f;
+	FRotator SpawnRotation = Character->GetActorRotation();
+
+	ASwordAura* SwordAura = GetWorld()->SpawnActor<ASwordAura>(SwordAuraClass, SpawnLocation, SpawnRotation);
+	SwordAura->SetOwner(Character);
+	SwordAura->Init(Character->GetActorForwardVector());
+}
+
+
+/************* 활 스킬 라인 *************/
 void USkillComponent::BeginBow_Q()
 {
 	if (!bCanUseSkill_Bow_Q) return;

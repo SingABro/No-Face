@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "BowInterface.generated.h"
+#include "SwordSkillInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UBowInterface : public UInterface
+class USwordSkillInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,13 +16,14 @@ class UBowInterface : public UInterface
 /**
  * 
  */
-class CAPSTONEPROJECT_API IBowInterface
+class CAPSTONEPROJECT_API ISwordSkillInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void SetBow(class ABow* InBow) = 0;
-	virtual void StartAnimation() = 0;
-	virtual void EndAnimation() = 0;
+	virtual void Sword_Q_SkillHitCheck() = 0;
+	virtual void Sword_W_SkillHitCheck() = 0;
+	virtual void Sword_R_SkillHitCheck() = 0;
+
 };

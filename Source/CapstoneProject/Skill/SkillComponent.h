@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interface/SwordSkillInterface.h"
 #include "Interface/BowSkillInterface.h"
 #include "Interface/PlayerSkillUIInterface.h"
 #include "SkillComponent.generated.h"
@@ -12,7 +13,7 @@ DECLARE_DELEGATE(FParryingSign)
 DECLARE_DELEGATE(FShieldSign)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public IBowSkillInterface, public IPlayerSkillUIInterface
+class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public ISwordSkillInterface, public IBowSkillInterface, public IPlayerSkillUIInterface
 {
 	GENERATED_BODY()
 
@@ -68,6 +69,13 @@ private:
 	void BeginSword_R(); //검 R - 검기 시작
 	void EndSword_R(class UAnimMontage* Target, bool IsProperlyEnded); //검 R - 검기 끝
 
+	/* 검 히트 체크 */
+	virtual void Sword_Q_SkillHitCheck() override;
+	virtual void Sword_W_SkillHitCheck() override;
+	virtual void Sword_R_SkillHitCheck() override;
+
+	
+
 	//Bow Skill Montage
 	void BeginBow_Q(); //활 Q - 전방에 여러발 날리기 (애쉬 W) 시작
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
@@ -101,6 +109,10 @@ private:
 	FHitResult Cursor;
 	bool bCasting = false;
 
+/* Sword 데이터 */
+private:
+	UPROPERTY(EditAnywhere, Category = "SwordAura")
+	TSubclassOf<class ASwordAura> SwordAuraClass;
 
 /* Bow 데이터 */
 private:

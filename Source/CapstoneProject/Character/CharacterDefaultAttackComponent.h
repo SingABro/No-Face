@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interface/SwordInterface.h"
 #include "Interface/BowInterface.h"
 #include "CharacterDefaultAttackComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAPSTONEPROJECT_API UCharacterDefaultAttackComponent : public UActorComponent, public IBowInterface
+class CAPSTONEPROJECT_API UCharacterDefaultAttackComponent : public UActorComponent, public ISwordInterface, public IBowInterface
 {
 	GENERATED_BODY()
 
@@ -34,7 +35,11 @@ private:
 	void EndSwordDefaultAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 	void SetSwordComboTimer();
 	void CheckSwordCombo();
+	virtual void SwordDefaultAttackHitCheck() override;
 	virtual void SwordDefaultAttackEnd() override;
+
+	bool SwordDefaultAttackRadialRange(AActor* Player, AActor* Target, float RadialAngle);
+	void SwordDefaultAttackHitDebug(const FVector& Start, const FVector& ForwardVector, float AttackRange, const FColor& Color, float Degree);
 
 	FTimerHandle SwordComboTimer;
 
