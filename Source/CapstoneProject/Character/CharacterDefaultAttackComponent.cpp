@@ -124,7 +124,7 @@ void UCharacterDefaultAttackComponent::CheckSwordCombo()
 void UCharacterDefaultAttackComponent::SwordDefaultAttackHitCheck()
 {
 	const float AttackDamage = 100.f /* 수정 필요 Stat->SwordDamage*/;
-	const float AttackRange = 100.f /* 수정 필요 Stat->SwordRange*/;
+	const float AttackRange = 300.f /* 수정 필요 Stat->SwordRange*/;
 	const float AttackDegree = 70.f /* 수정 필요 Stat->SwordDegree*/;
 
 	FColor Color = FColor::Red;

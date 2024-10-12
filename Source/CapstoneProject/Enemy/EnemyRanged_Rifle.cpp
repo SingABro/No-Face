@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AI/Controller/AIControllerRifle.h"
 #include "Engine/DamageEvents.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AEnemyRanged_Rifle::AEnemyRanged_Rifle()
 {
@@ -23,7 +25,8 @@ AEnemyRanged_Rifle::AEnemyRanged_Rifle()
 
 	Stat->OnHpZero.AddUObject(this, &AEnemyRanged_Rifle::SetDead);
 
-	SetRunSpeed();
+	ImpactParticleComponent->SetTemplate(ImpactEffect);
+	ImpactParticleComponent->bAutoActivate = false;
 }
 
 void AEnemyRanged_Rifle::AttackByAI()
@@ -167,6 +170,7 @@ void AEnemyRanged_Rifle::BeginHitAction()
 	}
 
 	AnimInstance->Montage_Play(HitMontage);
+	ImpactParticleComponent->Activate();
 }
 
 void AEnemyRanged_Rifle::EndStun(UAnimMontage* Target, bool IsProperlyEnded)

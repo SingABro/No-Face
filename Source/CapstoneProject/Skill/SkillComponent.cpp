@@ -11,8 +11,8 @@
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "Character/CharacterSkillMontageData.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
@@ -20,6 +20,7 @@
 #include "Enemy/EnemyBase.h"
 #include "Weapon/Arrow.h"
 #include "UI/HUDWidget.h"
+//#include "Player/CPlayerController.h"
 
 USkillComponent::USkillComponent()
 {
@@ -126,10 +127,18 @@ void USkillComponent::SetWeaponType(const int32& InCurrentWeaponType)
 	CurrentWeaponType = InCurrentWeaponType;
 }
 
+/************* 검 스킬 라인 *************/
 void USkillComponent::BeginSword_Q()
 {
-	if (!bCanUseSkill_Sword_Q) return;
-	else StartCooldown(CooldownDuration_Sword_Q, CooldownTimerHandle_Sword_Q, bCanUseSkill_Sword_Q, ESkillType::Q, CurrentWeaponType, Sword_Q_Timer);
+	if (!bCanUseSkill_Sword_Q || CurrentSkillState == ESkillState::Progress) 
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Sword_Q, CooldownTimerHandle_Sword_Q, bCanUseSkill_Sword_Q, ESkillType::Q, CurrentWeaponType, Sword_Q_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -144,14 +153,22 @@ void USkillComponent::BeginSword_Q()
 
 void USkillComponent::EndSword_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
 void USkillComponent::BeginSword_W()
 {
-	if (!bCanUseSkill_Sword_W) return;
-	else StartCooldown(CooldownDuration_Sword_W, CooldownTimerHandle_Sword_W, bCanUseSkill_Sword_W, ESkillType::W, CurrentWeaponType, Sword_W_Timer);
+	if (!bCanUseSkill_Sword_W || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Sword_W, CooldownTimerHandle_Sword_W, bCanUseSkill_Sword_W, ESkillType::W, CurrentWeaponType, Sword_W_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -166,15 +183,22 @@ void USkillComponent::BeginSword_W()
 
 void USkillComponent::EndSword_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
 
 void USkillComponent::BeginSword_E()
 {
-	if (!bCanUseSkill_Sword_E) return;
-	else StartCooldown(CooldownDuration_Sword_E, CooldownTimerHandle_Sword_E, bCanUseSkill_Sword_E, ESkillType::E, CurrentWeaponType, Sword_E_Timer);
-
+	if (!bCanUseSkill_Sword_E || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Sword_E, CooldownTimerHandle_Sword_E, bCanUseSkill_Sword_E, ESkillType::E, CurrentWeaponType, Sword_E_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;
@@ -191,6 +215,7 @@ void USkillComponent::BeginSword_E()
 
 void USkillComponent::EndSword_E(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	ParryingSign.ExecuteIfBound();
 	bCanChangeWeapon = true;
@@ -212,9 +237,15 @@ void USkillComponent::ParryingSuccess(AActor* Attacker)
 
 void USkillComponent::BeginSword_R()
 {
-	if (!bCanUseSkill_Sword_R) return;
-	else StartCooldown(CooldownDuration_Sword_R, CooldownTimerHandle_Sword_R, bCanUseSkill_Sword_R, ESkillType::R, CurrentWeaponType, Sword_R_Timer);
-
+	if (!bCanUseSkill_Sword_R || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Sword_R, CooldownTimerHandle_Sword_R, bCanUseSkill_Sword_R, ESkillType::R, CurrentWeaponType, Sword_R_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;
@@ -228,6 +259,7 @@ void USkillComponent::BeginSword_R()
 
 void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState =	ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
@@ -302,8 +334,18 @@ void USkillComponent::Sword_R_SkillHitCheck()
 /************* 활 스킬 라인 *************/
 void USkillComponent::BeginBow_Q()
 {
-	if (!bCanUseSkill_Bow_Q) return;
-	else StartCooldown(CooldownDuration_Bow_Q, CooldownTimerHandle_Bow_Q, bCanUseSkill_Bow_Q, ESkillType::Q, CurrentWeaponType, Bow_Q_Timer);
+	/* 현재 쿨타임이 돌았는지 or 다른 스킬이 진행중인지 검사 -> 스킬 실행 중 무기 교체 금지 -> 움직임 금지 -> 애니메이션 실행 ->
+		애니메이션 끝난 후 다른 스킬 사용 가능 -> 움직임 허용 -> 무기 교체 가능 */
+
+	if (!bCanUseSkill_Bow_Q || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Bow_Q, CooldownTimerHandle_Bow_Q, bCanUseSkill_Bow_Q, ESkillType::Q, CurrentWeaponType, Bow_Q_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -318,6 +360,7 @@ void USkillComponent::BeginBow_Q()
 
 void USkillComponent::EndBow_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
@@ -329,6 +372,8 @@ void USkillComponent::BeginBow_W()
 
 	if (bCasting)
 	{
+		StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W, CurrentWeaponType, Bow_W_Timer);
+
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RainArrows, Cursor.Location, FRotator::ZeroRotator);
 		UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
 
@@ -347,7 +392,6 @@ void USkillComponent::BeginBow_W()
 	else
 	{
 		if (!bCanUseSkill_Bow_W) return;
-		else StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W, CurrentWeaponType, Bow_W_Timer);
 
 		bCasting = true;
 
@@ -369,8 +413,15 @@ void USkillComponent::EndBow_W(UAnimMontage* Target, bool IsProperlyEnded)
 
 void USkillComponent::BeginBow_E()
 {
-	if (!bCanUseSkill_Bow_E) return;
-	else StartCooldown(CooldownDuration_Bow_E, CooldownTimerHandle_Bow_E, bCanUseSkill_Bow_E, ESkillType::E, CurrentWeaponType, Bow_E_Timer);
+	if (!bCanUseSkill_Bow_E || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Bow_E, CooldownTimerHandle_Bow_E, bCanUseSkill_Bow_E, ESkillType::E, CurrentWeaponType, Bow_E_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -387,15 +438,22 @@ void USkillComponent::BeginBow_E()
 
 void USkillComponent::EndBow_E(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState = ESkillState::CanSkill;
 	bCanChangeWeapon = true;
 }
 
 /* 애니메이션이 천천히 실행되고, 카메라가 줌이 되는 효과 추가 하자 */
 void USkillComponent::BeginBow_R()
 {
-	if (!bCanUseSkill_Bow_R) return;
-	else StartCooldown(CooldownDuration_Bow_R, CooldownTimerHandle_Bow_R, bCanUseSkill_Bow_R, ESkillType::R, CurrentWeaponType, Bow_R_Timer);
-
+	if (!bCanUseSkill_Bow_R || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Bow_R, CooldownTimerHandle_Bow_R, bCanUseSkill_Bow_R, ESkillType::R, CurrentWeaponType, Bow_R_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;
@@ -411,6 +469,7 @@ void USkillComponent::EndBow_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	FireBow_R();
 
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
@@ -470,10 +529,13 @@ void USkillComponent::Bow_W_Skill()
 	}
 }
 
+/************* 지팡이 스킬 라인 *************/
 void USkillComponent::BeginStaff_Q()
 {
 	if (bCasting)
 	{
+		StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q, CurrentWeaponType, Staff_Q_Timer);
+
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorCastingEffect, Cursor.Location, FRotator::ZeroRotator);
 
 		FTimerHandle StaffQHandle;
@@ -489,7 +551,6 @@ void USkillComponent::BeginStaff_Q()
 	else
 	{
 		if (!bCanUseSkill_Staff_Q) return;
-		else StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q, CurrentWeaponType, Staff_Q_Timer);
 
 		bCasting = true;
 
@@ -509,6 +570,9 @@ void USkillComponent::BeginStaff_W()
 {
 	if (bCasting)
 	{
+		StartCooldown(CooldownDuration_Staff_W, CooldownTimerHandle_Staff_W, bCanUseSkill_Staff_W, ESkillType::W, CurrentWeaponType, Staff_W_Timer);
+
+
 		FVector SpawnLocation = Cursor.Location;
 		AStaffArea* Area = GetWorld()->SpawnActor<AStaffArea>(AreaClass, SpawnLocation, FRotator::ZeroRotator);
 		//UE_LOG(LogTemp, Display, TEXT("Spawn Location : %f, %f, %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
@@ -519,7 +583,6 @@ void USkillComponent::BeginStaff_W()
 	else
 	{
 		if (!bCanUseSkill_Staff_W) return;
-		else StartCooldown(CooldownDuration_Staff_W, CooldownTimerHandle_Staff_W, bCanUseSkill_Staff_W, ESkillType::W, CurrentWeaponType, Staff_W_Timer);
 
 		bCasting = true;
 
@@ -579,3 +642,4 @@ void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& Cooldo
 	Widget->StartCooldown(CurrentWeaponType, SkillType);
 	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType,Timer);
 }
+

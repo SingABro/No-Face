@@ -9,6 +9,7 @@
 #include "Stat/EnemyStatComponent.h"
 #include "UI/EnemyHpBarWidget.h"
 #include "UI/EnemyHpBarWidgetComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 FOnDead AEnemyBase::OnDead;
 
@@ -31,6 +32,8 @@ AEnemyBase::AEnemyBase()
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
+	ImpactParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
+	ImpactParticleComponent->SetupAttachment(GetMesh(), TEXT("Impact"));
 }
 
 void AEnemyBase::BeginPlay()

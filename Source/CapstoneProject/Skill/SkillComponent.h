@@ -12,6 +12,13 @@
 DECLARE_DELEGATE(FParryingSign)
 DECLARE_DELEGATE(FShieldSign)
 
+UENUM(BlueprintType)
+enum class ESkillState : uint8
+{
+	Progress = 0,
+	CanSkill
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public ISwordSkillInterface, public IBowSkillInterface, public IPlayerSkillUIInterface
 {
@@ -75,7 +82,6 @@ private:
 	virtual void Sword_R_SkillHitCheck() override;
 
 	
-
 	//Bow Skill Montage
 	void BeginBow_Q(); //활 Q - 전방에 여러발 날리기 (애쉬 W) 시작
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
@@ -237,5 +243,7 @@ private:
 
 	bool bCanChangeWeapon = true;
 	int32 CurrentWeaponType = 0;
-	
+
+	ESkillState CurrentSkillState = ESkillState::CanSkill;
+
 };

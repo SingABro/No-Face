@@ -11,6 +11,8 @@
 #include "Engine/DamageEvents.h"
 #include "AI/Controller/AIControllerCommon.h"
 #include "UI/EnemyHpBarWidget.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AEnemyMelee_Common::AEnemyMelee_Common()
 {
@@ -26,6 +28,9 @@ AEnemyMelee_Common::AEnemyMelee_Common()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Common::SetDead);
+
+	ImpactParticleComponent->SetTemplate(ImpactEffect);
+	ImpactParticleComponent->bAutoActivate = false;
 }
 
 void AEnemyMelee_Common::BeginPlay()
@@ -149,7 +154,9 @@ void AEnemyMelee_Common::BeginHitAction()
 		return;
 	}
 
+	AnimInstance->StopAllMontages(0.5f);
 	AnimInstance->Montage_Play(HitMontage, 0.1f);
+	ImpactParticleComponent->Activate();
 }
 
 void AEnemyMelee_Common::SetDead()
