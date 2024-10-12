@@ -50,7 +50,13 @@ private:
 /* 유틸리티 섹션 */
 private:
 	class AAIControllerCommon* GetMyController();
+	
+/* 파티클 섹션 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> ImpactEffect;
 
+/* 몽타주 섹션 */
 private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> DefaultAttackMontage;

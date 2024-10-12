@@ -62,4 +62,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UEnemyPtrWidget> HpBarClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ImpactParticleComponent;
 };

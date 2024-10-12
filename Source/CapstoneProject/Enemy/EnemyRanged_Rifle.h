@@ -47,6 +47,10 @@ private:
 private:
 	class AAIControllerRifle* GetMyController();
 
+/* 이펙트 섹션 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> ImpactEffect;
 
 /* 몽타주 섹션 */
 private:
