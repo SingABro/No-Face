@@ -274,7 +274,7 @@ void ACharacterBase::OnRelease()
 
 void ACharacterBase::OnAttackStart()
 {
-	if (TraceAttack() == false)
+	if (TraceAttack() == false || SkillComponent->GetSkillState() == ESkillState::Progress)
 	{
 		return;
 	}

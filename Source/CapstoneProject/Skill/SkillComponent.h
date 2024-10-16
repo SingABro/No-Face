@@ -40,6 +40,9 @@ public:
 	/* 스킬 실행 중 무기 교체 방지 */
 	FORCEINLINE bool CanChangeWeapon() { return bCanChangeWeapon; }
 
+	/* 스킬 실행 중 기본 공격 방지 */
+	FORCEINLINE ESkillState& GetSkillState() { return CurrentSkillState; }
+
 public:
 	virtual void SetupSkillUIWidget(class UHUDWidget* InHUDWidget) override;
 
