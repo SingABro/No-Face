@@ -20,11 +20,13 @@
 #include "Enemy/EnemyBase.h"
 #include "Weapon/Arrow.h"
 #include "UI/HUDWidget.h"
+#include "Stat/CharacterStatComponent.h"
 //#include "Player/CPlayerController.h"
 
 USkillComponent::USkillComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
 
 }
 
@@ -274,13 +276,15 @@ void USkillComponent::Sword_Q_SkillHitCheck()
 	FCollisionQueryParams Params(NAME_None, false, Character);
 	TArray<FHitResult> HitResults;
 
+	float UpgradeDamage = GetSword_QLevel() * 50.0f;
+
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat(), ECC_GameTraceChannel2, FCollisionShape::MakeCapsule(CapsuleExtend), Params);
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
 		for (const auto& HitResult : HitResults)
 		{
-			HitResult.GetActor()->TakeDamage(100.f, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+			HitResult.GetActor()->TakeDamage(100.f + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
 			Color = FColor::Green;
 		}
 	}
@@ -307,13 +311,15 @@ void USkillComponent::Sword_W_SkillHitCheck()
 	FCollisionQueryParams Params(NAME_None, true, Character);
 	TArray<FOverlapResult> OverlapResults;
 
+	float UpgradeDamage = GetSword_WLevel() * 50.0f;
+
 	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+			OverlapResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
 			Color = FColor::Green;
 		}
 	}
@@ -370,12 +376,14 @@ void USkillComponent::BeginBow_W()
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	bCanChangeWeapon = false;
 
+	float UpgradeDamage = GetBow_WLevel() * 50.0f;
+
 	if (bCasting)
 	{
 		StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W, CurrentWeaponType, Bow_W_Timer);
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RainArrows, Cursor.Location, FRotator::ZeroRotator);
-		UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
+		UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f + UpgradeDamage, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
 
 		bCasting = false;
 
@@ -428,7 +436,8 @@ void USkillComponent::BeginBow_E()
 	bCanChangeWeapon = false;
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[2], 4.f);
 
-	FVector BackstepDirection = Character->GetActorForwardVector() * -500.f;
+	float Upgrade = GetBow_ELevel() * -100.0f - 500.0f;
+	FVector BackstepDirection = Character->GetActorForwardVector() * Upgrade;
 	Character->LaunchCharacter(BackstepDirection + FVector(0.f, 0.f, 100.f), true, true);
 
 	FOnMontageEnded MontageEnd;
@@ -488,6 +497,8 @@ void USkillComponent::FireBow_R()
 	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
+	float UpgradeDamage = GetBow_RLevel() * 50.0f;
+
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, RootRot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
 	if (bHit)
 	{
@@ -495,7 +506,7 @@ void USkillComponent::FireBow_R()
 		for (const auto& HitResult : HitResults)
 		{
 			UE_LOG(LogTemp, Display, TEXT("HitResult Actor Name : %s"), *HitResult.GetActor()->GetActorNameOrLabel());
-			HitResult.GetActor()->TakeDamage(Damage, DamageEvent, PlayerController, Character);
+			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
 		}
 	}
 

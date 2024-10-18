@@ -11,6 +11,7 @@
 #include "Player/CPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Stat/CharacterStatComponent.h"
+#include "Stat/CharacterDataStat.h"
 #include "Animation/CharacterAnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Character/CharacterComboAttackData.h"
@@ -22,6 +23,7 @@
 #include "Interface/BowInterface.h"
 #include "Components/CapsuleComponent.h"
 #include "UI/HUDWidget.h"
+#include "UI/SkillUIWidget.h"
 #include "Interface/PlayerSkillUIInterface.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
@@ -109,7 +111,7 @@ ACharacterBase::ACharacterBase()
 	{
 		ZoomInOutAction = ZoomInOutActionRef.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UInputAction> DisplaySkillUIActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_SkillStatTest.IA_SkillStatTest'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> DisplaySkillUIActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_DisplaySkillUI.IA_DisplaySkillUI'"));
 	if (DisplaySkillUIActionRef.Object)
 	{
 		DisplaySkillUIAction = DisplaySkillUIActionRef.Object;
@@ -129,6 +131,7 @@ ACharacterBase::ACharacterBase()
 
 	/* 스텟 */
 	Stat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stat"));
+	StatData = CreateDefaultSubobject<UCharacterDataStat>(TEXT("CharacterDataStat"));
 
 
 	/* 무기 */
@@ -145,6 +148,15 @@ ACharacterBase::ACharacterBase()
 	
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(GetMesh());
+
+
+	/* 스킬 UI */
+	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
+
+	if (SkillUIWidgetRef.Class)
+	{
+		SkillUIWidgetClass = SkillUIWidgetRef.Class;
+	}
 
 	/* 태그 */
 	Tags.Add(TEXT("Player"));
@@ -163,6 +175,12 @@ void ACharacterBase::BeginPlay()
 	//초반에 칼들고 시작
 	EquipSword();
 	CurrentWeaponType = EWeaponType::Sword;
+	StatData->SetSword_R_Damage(150.0f);
+	StatData->SetBowDamage(50.0f);
+	StatData->SetBow_Q_Damage(50.0f);
+	StatData->SetStaff_Q_Damage(100.0f);
+	StatData->SetStaff_W_Damage(100.0f);
+	StatData->SetStaff_R_Damage(100.0f);
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -187,9 +205,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	EnhancedInputComponent->BindAction(DisplaySkillUIAction, ETriggerEvent::Started, this, &ACharacterBase::DisplaySkillUI);
 
 
-
-
-	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &ACharacterBase::SkillTest);
 }
 
 float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -211,6 +226,132 @@ int ACharacterBase::GetWeaponType()
 {
 	return WeaponIndex;
 }
+
+int ACharacterBase::GetPlayerLevel()
+{
+	return Stat->GetCurrentLevel();
+}
+
+int ACharacterBase::GetPlayerSkillPoint()
+{
+	return Stat->GetCurrentSkillPoint();
+}
+
+void ACharacterBase::UsePlayerSkillPoint(int WeaponType, int SkillType)
+{
+	int SkillPoint = Stat->GetCurrentSkillPoint();
+	if(SkillPoint > 0)	SkillPoint -= 1;
+	Stat->SetCurrentSkillPoint(SkillPoint);
+	if (WeaponType == 0) {
+		if (SkillType == 1) {
+			SkillComponent->UpgradeSword_Q();
+		}
+		else if (SkillType == 2) {
+			SkillComponent->UpgradeSword_W();
+		}
+		else if (SkillType == 3) {
+			SkillComponent->UpgradeSword_E();
+		}
+		else if (SkillType == 4) {
+			SkillComponent->UpgradeSword_R();
+			int R_level = SkillComponent->GetSword_RLevel();
+			float UpgradeDamage = 150.0f + R_level * 50.0f;
+			StatData->SetSword_R_Damage(UpgradeDamage);
+		}
+	}
+	else if (WeaponType == 1) {
+		if (SkillType == 1) {
+			SkillComponent->UpgradeBow_Q();
+			int Q_level = SkillComponent->GetBow_QLevel();
+			float UpgradeDamage = 50.0f + Q_level * 50.0f;
+			StatData->SetBowDamage(UpgradeDamage);
+		}
+		else if (SkillType == 2) {
+			SkillComponent->UpgradeBow_W();
+		}
+		else if (SkillType == 3) {
+			SkillComponent->UpgradeBow_E();
+		}
+		else if (SkillType == 4) {
+			SkillComponent->UpgradeBow_R();
+		}
+	}
+	else if (WeaponType == 2) {
+		if (SkillType == 1) {
+			SkillComponent->UpgradeStaff_Q();
+			int Q_level = SkillComponent->GetStaff_QLevel();
+			float UpgradeDamage = 100.0f + Q_level * 50.0f;
+			StatData->SetStaff_Q_Damage(UpgradeDamage);
+		}
+		else if (SkillType == 2) {
+			SkillComponent->UpgradeStaff_W();
+			int W_level = SkillComponent->GetStaff_WLevel();
+			float UpgradeDamage = 100.0f + W_level * 50.0f;
+			StatData->SetStaff_W_Damage(UpgradeDamage);
+		}
+		else if (SkillType == 3) {
+			SkillComponent->UpgradeStaff_E();
+		}
+		else if (SkillType == 4) {
+			SkillComponent->UpgradeStaff_R();
+			int R_level = SkillComponent->GetStaff_RLevel();
+			float UpgradeDamage = 100.0f + R_level * 50.0f;
+			StatData->SetStaff_R_Damage(UpgradeDamage);
+		}
+	}
+	UE_LOG(LogTemp, Display, TEXT("Skill Point: %d"), SkillPoint);
+}
+
+int ACharacterBase::GetSkillUpgradeLevel(int WeaponType, int SkillType)
+{
+	int SkillLevel;
+	if (WeaponType == 0) {
+		if (SkillType == 1) {
+			SkillLevel = SkillComponent->GetSword_QLevel();
+		}
+		else if (SkillType == 2) {
+			SkillLevel = SkillComponent->GetSword_WLevel();
+		}
+		else if (SkillType == 3) {
+			SkillLevel = SkillComponent->GetSword_ELevel();
+		}
+		else if (SkillType == 4) {
+			SkillLevel = SkillComponent->GetSword_RLevel();;
+		}
+	}
+	else if (WeaponType == 1) {
+		if (SkillType == 1) {
+			SkillLevel = SkillComponent->GetBow_QLevel();
+		}
+		else if (SkillType == 2) {
+			SkillLevel = SkillComponent->GetBow_WLevel();
+		}
+		else if (SkillType == 3) {
+			SkillLevel = SkillComponent->GetBow_ELevel();
+		}
+		else if (SkillType == 4) {
+			SkillLevel = SkillComponent->GetBow_RLevel();
+		}
+	}
+	else if (WeaponType == 2) {
+		if (SkillType == 1) {
+			SkillLevel = SkillComponent->GetStaff_QLevel();
+		}
+		else if (SkillType == 2) {
+			SkillLevel = SkillComponent->GetStaff_WLevel();
+		}
+		else if (SkillType == 3) {
+			SkillLevel = SkillComponent->GetStaff_ELevel();
+		}
+		else if (SkillType == 4) {
+			SkillLevel = SkillComponent->GetStaff_RLevel();
+		}
+	}
+	return SkillLevel;
+}
+
+
+
 
 void ACharacterBase::Q_Skill()
 {
@@ -240,11 +381,6 @@ void ACharacterBase::R_Skill()
 	SkillComponent->PlaySkill_R();
 }
 
-void ACharacterBase::SkillTest()
-{
-	//StatData->Staff_R_Damage += 500;
-	UE_LOG(LogTemp, Display, TEXT("Test Input Key"));
-}
 
 void ACharacterBase::OnClickStart()
 {
@@ -487,8 +623,25 @@ void ACharacterBase::StaffCreateShield()
 
 void ACharacterBase::DisplaySkillUI()
 {
-	/* 스킬 창 띄우는 로직 */
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		if (SkillUIWidget && SkillUIWidget->IsInViewport())
+		{
+			SkillUIWidget->RemoveFromParent();
+		}
+		else
+		{
+			SkillUIWidget = CreateWidget<USkillUIWidget>(PlayerController, SkillUIWidgetClass);
+			if (SkillUIWidget)
+			{
+				SkillUIWidget->AddToViewport();
+			}
+		}
+	}
+	
 }
+
 
 ACPlayerController* ACharacterBase::GetPlayerController() const
 {

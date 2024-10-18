@@ -115,6 +115,11 @@ private:
 	FHitResult Cursor;
 	bool bCasting = false;
 
+	/* 스텟 섹션(스킬 레벨 참조용) */
+private:
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//TObjectPtr<class UCharacterStatComponent> Stat;
+
 /* Sword 데이터 */
 private:
 	UPROPERTY(EditAnywhere, Category = "SwordAura")
@@ -245,5 +250,81 @@ private:
 	int32 CurrentWeaponType = 0;
 
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
+
+
+	/*스킬 레벨 강화*/
+public:
+	FORCEINLINE void UpgradeSword_Q() { Sword_Q_Upgrade++; }
+	FORCEINLINE void UpgradeSword_W() { Sword_W_Upgrade++; }
+	FORCEINLINE void UpgradeSword_E() { Sword_E_Upgrade++; }
+	FORCEINLINE void UpgradeSword_R() { Sword_R_Upgrade++; }
+
+	FORCEINLINE void UpgradeBow_Q() { Bow_Q_Upgrade++; }
+	FORCEINLINE void UpgradeBow_W() { Bow_W_Upgrade++; }
+	FORCEINLINE void UpgradeBow_E() { Bow_E_Upgrade++; }
+	FORCEINLINE void UpgradeBow_R() { Bow_R_Upgrade++; }
+
+	FORCEINLINE void UpgradeStaff_Q() { Staff_Q_Upgrade++; }
+	FORCEINLINE void UpgradeStaff_W() { Staff_W_Upgrade++; }
+	FORCEINLINE void UpgradeStaff_E() { Staff_E_Upgrade++; }
+	FORCEINLINE void UpgradeStaff_R() { Staff_R_Upgrade++; }
+
+
+	FORCEINLINE int GetSword_QLevel() { return Sword_Q_Upgrade; }
+	FORCEINLINE int GetSword_WLevel() { return Sword_W_Upgrade; }
+	FORCEINLINE int GetSword_ELevel() { return Sword_E_Upgrade; }
+	FORCEINLINE int GetSword_RLevel() { return Sword_R_Upgrade; }
+
+	FORCEINLINE int GetBow_QLevel() { return Bow_Q_Upgrade; }
+	FORCEINLINE int GetBow_WLevel() { return Bow_W_Upgrade; }
+	FORCEINLINE int GetBow_ELevel() { return Bow_E_Upgrade; }
+	FORCEINLINE int GetBow_RLevel() { return Bow_R_Upgrade; }
+
+	FORCEINLINE int GetStaff_QLevel() { return Staff_Q_Upgrade; }
+	FORCEINLINE int GetStaff_WLevel() { return Staff_W_Upgrade; }
+	FORCEINLINE int GetStaff_ELevel() { return Staff_E_Upgrade; }
+	FORCEINLINE int GetStaff_RLevel() { return Staff_R_Upgrade; }
+
+private:
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Sword_Q_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Sword_W_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Sword_E_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Sword_R_Upgrade;
+
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Bow_Q_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Bow_W_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Bow_E_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Bow_R_Upgrade;
+
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Staff_Q_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Staff_W_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+
+	int Staff_E_Upgrade;
+
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
+	int Staff_R_Upgrade;
+
 
 };
