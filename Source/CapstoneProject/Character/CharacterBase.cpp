@@ -623,23 +623,18 @@ void ACharacterBase::StaffCreateShield()
 
 void ACharacterBase::DisplaySkillUI()
 {
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController)
+	if (SkillUIWidget && SkillUIWidget->IsInViewport())
 	{
-		if (SkillUIWidget && SkillUIWidget->IsInViewport())
+		SkillUIWidget->RemoveFromParent();
+	}
+	else
+	{
+		SkillUIWidget = CreateWidget<USkillUIWidget>(GetPlayerController(), SkillUIWidgetClass);
+		if (SkillUIWidget)
 		{
-			SkillUIWidget->RemoveFromParent();
-		}
-		else
-		{
-			SkillUIWidget = CreateWidget<USkillUIWidget>(PlayerController, SkillUIWidgetClass);
-			if (SkillUIWidget)
-			{
-				SkillUIWidget->AddToViewport();
-			}
+			SkillUIWidget->AddToViewport();
 		}
 	}
-	
 }
 
 

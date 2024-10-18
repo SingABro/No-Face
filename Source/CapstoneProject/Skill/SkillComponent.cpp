@@ -21,7 +21,6 @@
 #include "Weapon/Arrow.h"
 #include "UI/HUDWidget.h"
 #include "Stat/CharacterStatComponent.h"
-//#include "Player/CPlayerController.h"
 
 USkillComponent::USkillComponent()
 {
@@ -129,6 +128,11 @@ void USkillComponent::SetWeaponType(const int32& InCurrentWeaponType)
 	CurrentWeaponType = InCurrentWeaponType;
 }
 
+void USkillComponent::SetupSkillUIWidget(UHUDWidget* InHUDWidget)
+{
+	Widget = InHUDWidget;
+}
+
 /************* 검 스킬 라인 *************/
 void USkillComponent::BeginSword_Q()
 {
@@ -221,11 +225,6 @@ void USkillComponent::EndSword_E(UAnimMontage* Target, bool IsProperlyEnded)
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	ParryingSign.ExecuteIfBound();
 	bCanChangeWeapon = true;
-}
-
-void USkillComponent::SetupSkillUIWidget(UHUDWidget* InHUDWidget)
-{
-	Widget = InHUDWidget;
 }
 
 void USkillComponent::ParryingSuccess(AActor* Attacker)
