@@ -273,42 +273,19 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	TObjectPtr<class UCharacterDataStat> StatData;
 
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_Q_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_W_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_E_Upgrade;
-	 
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_R_Upgrade;
 
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Bow_Q_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Bow_W_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Bow_E_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Bow_R_Upgrade;
 
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Staff_Q_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Staff_W_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
-
 	int Staff_E_Upgrade;
-
-	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Staff_R_Upgrade;
 
 
