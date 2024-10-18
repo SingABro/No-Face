@@ -70,7 +70,17 @@ void UCharacterStatComponent::SetExp(float InExp)
 {
 	UE_LOG(LogTemp, Display, TEXT("Get Exp Amount : %f"), InExp);
 	CurrentExp = CurrentExp + InExp;
+	while (CurrentExp >= 100) {
+		CurrentExp -= 100;
+		CurrentLevel++;
+		CurrentSkillPoint++;
+		UE_LOG(LogTemp, Display, TEXT("##### Level Up ##### // Current Level : %d"), CurrentLevel);
+		OnLevelChanged.Broadcast(CurrentLevel);
+	}
 	UE_LOG(LogTemp, Display, TEXT("Current Exp : %f,  //  Current Level : %d"), CurrentExp, CurrentLevel);
 	OnExpChanged.Broadcast(CurrentExp);
 }
+
+
+
 

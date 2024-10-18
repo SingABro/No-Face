@@ -92,8 +92,8 @@ float AEnemyRanged_Rifle::TakeDamage(float Damage, FDamageEvent const& DamageEve
 float AEnemyRanged_Rifle::TakeExp()
 {
 	Super::TakeExp();
-
-	return 60.0f;
+	
+	return 4321.0f;
 }
 
 void AEnemyRanged_Rifle::Stun()

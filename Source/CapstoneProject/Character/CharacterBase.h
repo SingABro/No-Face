@@ -51,10 +51,24 @@ public:
 /* 델리게이트 */
 	FSignedChangeWeapon SignedChangeWeapon;
 
-/* Getter */
+/* UFUNCTION 섹션 */
 public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetPlayerLevel();
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetPlayerSkillPoint();
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	void UsePlayerSkillPoint(int WeaponType, int SkillType);
+
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetSkillUpgradeLevel(int WeaponType, int SkillType);
+
 
 /* 스킬 섹션 */
 protected:
@@ -112,13 +126,7 @@ private:
 	TObjectPtr<class UInputAction> DisplaySkillUIAction;
 
 
-	/* Test 키 */
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> TestAction;
-
-	void SkillTest();
-
-	UPROPERTY(EditAnywhere, Category = "Input")
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	class UCharacterDataStat* StatData;
 
 /* 마우스 우클릭을 통해 캐릭터 이동 기능을 실현하는 함수와 변수 */
@@ -186,6 +194,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<class USkillComponent> SkillComponent;
 
+
 	//패링을 위한 함수와 변수
 	void ToggleParrying();
 	bool bIsParrying = false;
@@ -208,6 +217,15 @@ private:
 /* UI 섹션 */
 private:
 	void DisplaySkillUI();
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI")
+	TSubclassOf<class USkillUIWidget> SkillUIWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI")
+	TObjectPtr<class USkillUIWidget> SkillUIWidget;
+
 
 /* 유틸리티 섹션 */
 private:
