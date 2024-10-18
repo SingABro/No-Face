@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-//#include "Interface/PlayerHUDInterface.h"
 #include "CharacterBase.generated.h"
 
 //Animation Blueprint 에서 무기 애니메이션 값을 바꿀 때 쓰는 ENUM 값
@@ -32,7 +31,7 @@ struct FTakeItemDelegateWrapper
 };
 
 UCLASS()
-class CAPSTONEPROJECT_API ACharacterBase : public ACharacter//, public IPlayerHUDInterface
+class CAPSTONEPROJECT_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
