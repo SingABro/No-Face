@@ -28,12 +28,4 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
 	TObjectPtr<class UHUDWidget> HUDWidget;
 
-	/*
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI")
-	TSubclassOf<class USkillUIWidget> SkillUIWidgetClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI")
-	TObjectPtr<class USkillUIWidget> SkillUIWidget;
-	*/
-
 };

@@ -255,7 +255,7 @@ private:
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
 
 
-	/*스킬 레벨 강화*/
+/*스킬 레벨 강화*/
 public:
 	FORCEINLINE void UpgradeSword_Q() { Sword_Q_Upgrade++; }
 	FORCEINLINE void UpgradeSword_W() { Sword_W_Upgrade++; }
