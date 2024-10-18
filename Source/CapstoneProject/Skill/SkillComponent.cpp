@@ -5,7 +5,6 @@
 #include "Skill/SwordAura.h"
 #include "Skill/StaffMeteor.h"
 #include "Skill/StaffArea.h"
-#include "Skill/StaffUpGround.h"
 #include "Skill/StaffThunderbolt.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -21,14 +20,18 @@
 #include "Weapon/Arrow.h"
 #include "UI/HUDWidget.h"
 #include "Stat/CharacterStatComponent.h"
+#include "Stat/CharacterDataStat.h"
 
 USkillComponent::USkillComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-
+	static ConstructorHelpers::FObjectFinder<UCharacterDataStat> StatDataRef(TEXT("/Script/CapstoneProject.CharacterDataStat'/Game/No-Face/Character/Stat/DA_CharacterStatData.DA_CharacterStatData'"));
+	if (StatDataRef.Object)
+	{
+		StatData = StatDataRef.Object;
+	}
 }
-
 
 void USkillComponent::BeginPlay()
 {
@@ -36,7 +39,7 @@ void USkillComponent::BeginPlay()
 
 	Character = CastChecked<ACharacter>(GetOwner());
 	PlayerController = CastChecked<APlayerController>(Character->GetController());
-
+	StatComponent = Character->GetComponentByClass<UCharacterStatComponent>();
 }
 
 void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -126,6 +129,11 @@ void USkillComponent::PlaySkill_R()
 void USkillComponent::SetWeaponType(const int32& InCurrentWeaponType)
 {
 	CurrentWeaponType = InCurrentWeaponType;
+}
+
+int USkillComponent::GetWeaponType()
+{
+	return CurrentWeaponType;
 }
 
 void USkillComponent::SetupSkillUIWidget(UHUDWidget* InHUDWidget)
@@ -275,7 +283,7 @@ void USkillComponent::Sword_Q_SkillHitCheck()
 	FCollisionQueryParams Params(NAME_None, false, Character);
 	TArray<FHitResult> HitResults;
 
-	float UpgradeDamage = GetSword_QLevel() * 50.0f;
+	float UpgradeDamage = Sword_Q_Upgrade * 50.0f;
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat(), ECC_GameTraceChannel2, FCollisionShape::MakeCapsule(CapsuleExtend), Params);
 	if (bHit)
@@ -310,7 +318,7 @@ void USkillComponent::Sword_W_SkillHitCheck()
 	FCollisionQueryParams Params(NAME_None, true, Character);
 	TArray<FOverlapResult> OverlapResults;
 
-	float UpgradeDamage = GetSword_WLevel() * 50.0f;
+	float UpgradeDamage = Sword_R_Upgrade * 50.0f;
 
 	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
 	if (bHit)
@@ -375,7 +383,7 @@ void USkillComponent::BeginBow_W()
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	bCanChangeWeapon = false;
 
-	float UpgradeDamage = GetBow_WLevel() * 50.0f;
+	float UpgradeDamage = Bow_W_Upgrade * 50.0f;
 
 	if (bCasting)
 	{
@@ -435,7 +443,7 @@ void USkillComponent::BeginBow_E()
 	bCanChangeWeapon = false;
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[2], 4.f);
 
-	float Upgrade = GetBow_ELevel() * -100.0f - 500.0f;
+	float Upgrade = Bow_E_Upgrade * -100.0f - 500.0f;
 	FVector BackstepDirection = Character->GetActorForwardVector() * Upgrade;
 	Character->LaunchCharacter(BackstepDirection + FVector(0.f, 0.f, 100.f), true, true);
 
@@ -496,7 +504,7 @@ void USkillComponent::FireBow_R()
 	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
-	float UpgradeDamage = GetBow_RLevel() * 50.0f;
+	float UpgradeDamage = Bow_R_Upgrade * 50.0f;
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, RootRot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
 	if (bHit)
@@ -651,5 +659,143 @@ void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& Cooldo
 	Widget->SetMaxCooldown(CooldownDuration, CurrentWeaponType, SkillType);
 	Widget->StartCooldown(CurrentWeaponType, SkillType);
 	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType,Timer);
+}
+
+void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
+{
+	int SkillPoint = StatComponent->GetCurrentSkillPoint();
+	if (SkillPoint > 0)	SkillPoint -= 1;
+	StatComponent->SetCurrentSkillPoint(SkillPoint);
+	if (WeaponType == 0)
+	{
+		if (SkillType == 1)
+		{
+			Sword_Q_Upgrade++;
+		}
+		else if (SkillType == 2)
+		{
+			Sword_W_Upgrade++;
+		}
+		else if (SkillType == 3)
+		{
+			Sword_E_Upgrade++;
+		}
+		else if (SkillType == 4)
+		{
+			Sword_R_Upgrade++;
+			float UpgradeDamage = 150.0f + Sword_R_Upgrade * 50.0f;
+			StatData->SetSword_R_Damage(UpgradeDamage);
+		}
+	}
+	else if (WeaponType == 1)
+	{
+		if (SkillType == 1)
+		{
+			Bow_Q_Upgrade++;
+			float UpgradeDamage = 50.0f + Bow_Q_Upgrade * 50.0f;
+			StatData->SetBowDamage(UpgradeDamage);
+		}
+		else if (SkillType == 2)
+		{
+			Bow_W_Upgrade++;
+		}
+		else if (SkillType == 3)
+		{
+			Bow_E_Upgrade++;
+		}
+		else if (SkillType == 4)
+		{
+			Bow_R_Upgrade++;
+		}
+	}
+	else if (WeaponType == 2)
+	{
+		if (SkillType == 1)
+		{
+			Staff_Q_Upgrade++;
+			float UpgradeDamage = 100.0f + Staff_Q_Upgrade * 50.0f;
+			StatData->SetStaff_Q_Damage(UpgradeDamage);
+		}
+		else if (SkillType == 2)
+		{
+			Staff_W_Upgrade++;
+			float UpgradeDamage = 100.0f + Staff_W_Upgrade * 50.0f;
+			StatData->SetStaff_W_Damage(UpgradeDamage);
+		}
+		else if (SkillType == 3)
+		{
+			Staff_E_Upgrade++;
+		}
+		else if (SkillType == 4)
+		{
+			Staff_R_Upgrade++;
+			float UpgradeDamage = 100.0f + Staff_R_Upgrade * 50.0f;
+			StatData->SetStaff_R_Damage(UpgradeDamage);
+		}
+	}
+	UE_LOG(LogTemp, Display, TEXT("Skill Point: %d"), SkillPoint);
+}
+
+int USkillComponent::GetSkillUpgradeLevel(int WeaponType, int SkillType)
+{
+	int SkillLevel;
+	if (WeaponType == 0)
+	{
+		if (SkillType == 1)
+		{
+			SkillLevel = Sword_Q_Upgrade;
+		}
+		else if (SkillType == 2)
+		{
+			SkillLevel = Sword_W_Upgrade;
+		}
+		else if (SkillType == 3)
+		{
+			SkillLevel = Sword_E_Upgrade;
+		}
+		else if (SkillType == 4)
+		{
+			SkillLevel = Sword_R_Upgrade;
+		}
+	}
+	else if (WeaponType == 1)
+	{
+		if (SkillType == 1)
+		{
+			SkillLevel = Bow_Q_Upgrade;
+		}
+		else if (SkillType == 2)
+		{
+			SkillLevel = Bow_W_Upgrade;
+		}
+		else if (SkillType == 3)
+		{
+			SkillLevel = Bow_E_Upgrade;
+		}
+		else if (SkillType == 4)
+		{
+			SkillLevel = Bow_R_Upgrade;
+		}
+	}
+	else if (WeaponType == 2)
+	{
+		if (SkillType == 1)
+		{
+			SkillLevel = Staff_Q_Upgrade;
+		}
+		else if (SkillType == 2)
+		{
+			SkillLevel = Staff_W_Upgrade;
+		}
+		else if (SkillType == 3)
+		{
+			SkillLevel = Staff_E_Upgrade;
+		}
+		else if (SkillType == 4)
+		{
+			SkillLevel = Staff_R_Upgrade;
+		}
+	}
+	return SkillLevel;
 }
 

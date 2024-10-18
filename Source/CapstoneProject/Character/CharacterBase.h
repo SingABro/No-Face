@@ -56,20 +56,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
 
-	UFUNCTION(BlueprintCallable, Category = "Stat")
-	int GetPlayerLevel();
-
-	UFUNCTION(BlueprintCallable, Category = "Stat")
-	int GetPlayerSkillPoint();
-
-	UFUNCTION(BlueprintCallable, Category = "Stat")
-	void UsePlayerSkillPoint(int WeaponType, int SkillType);
-
-
-	UFUNCTION(BlueprintCallable, Category = "Stat")
-	int GetSkillUpgradeLevel(int WeaponType, int SkillType);
-
-
 /* 스킬 섹션 */
 protected:
 	void Q_Skill();

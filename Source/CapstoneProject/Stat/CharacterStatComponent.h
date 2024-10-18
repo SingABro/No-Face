@@ -31,11 +31,14 @@ public:
 	FORCEINLINE int GetCurrentSkillPoint() const { return CurrentSkillPoint; }
 	FORCEINLINE void SetCurrentSkillPoint(int InSkillPoint) { CurrentSkillPoint = InSkillPoint; }
 
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetPlayerLevel();
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetPlayerSkillPoint();
+
 	float ApplyDamage(float InDamage);
 	void SetHp(float ChangeHp);
-
-	
-
 
 private:
 	void SetExp(float InExp);

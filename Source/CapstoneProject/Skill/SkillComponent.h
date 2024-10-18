@@ -43,6 +43,9 @@ public:
 	/* 스킬 실행 중 기본 공격 방지 */
 	FORCEINLINE ESkillState& GetSkillState() { return CurrentSkillState; }
 
+	UFUNCTION(BlueprintCallable, Category = "WeaponType")
+	int GetWeaponType();
+
 public:
 	virtual void SetupSkillUIWidget(class UHUDWidget* InHUDWidget) override;
 
@@ -257,38 +260,18 @@ private:
 
 /*스킬 레벨 강화*/
 public:
-	FORCEINLINE void UpgradeSword_Q() { Sword_Q_Upgrade++; }
-	FORCEINLINE void UpgradeSword_W() { Sword_W_Upgrade++; }
-	FORCEINLINE void UpgradeSword_E() { Sword_E_Upgrade++; }
-	FORCEINLINE void UpgradeSword_R() { Sword_R_Upgrade++; }
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	void UsePlayerSkillPoint(int WeaponType, int SkillType);
 
-	FORCEINLINE void UpgradeBow_Q() { Bow_Q_Upgrade++; }
-	FORCEINLINE void UpgradeBow_W() { Bow_W_Upgrade++; }
-	FORCEINLINE void UpgradeBow_E() { Bow_E_Upgrade++; }
-	FORCEINLINE void UpgradeBow_R() { Bow_R_Upgrade++; }
-
-	FORCEINLINE void UpgradeStaff_Q() { Staff_Q_Upgrade++; }
-	FORCEINLINE void UpgradeStaff_W() { Staff_W_Upgrade++; }
-	FORCEINLINE void UpgradeStaff_E() { Staff_E_Upgrade++; }
-	FORCEINLINE void UpgradeStaff_R() { Staff_R_Upgrade++; }
-
-
-	FORCEINLINE int GetSword_QLevel() { return Sword_Q_Upgrade; }
-	FORCEINLINE int GetSword_WLevel() { return Sword_W_Upgrade; }
-	FORCEINLINE int GetSword_ELevel() { return Sword_E_Upgrade; }
-	FORCEINLINE int GetSword_RLevel() { return Sword_R_Upgrade; }
-
-	FORCEINLINE int GetBow_QLevel() { return Bow_Q_Upgrade; }
-	FORCEINLINE int GetBow_WLevel() { return Bow_W_Upgrade; }
-	FORCEINLINE int GetBow_ELevel() { return Bow_E_Upgrade; }
-	FORCEINLINE int GetBow_RLevel() { return Bow_R_Upgrade; }
-
-	FORCEINLINE int GetStaff_QLevel() { return Staff_Q_Upgrade; }
-	FORCEINLINE int GetStaff_WLevel() { return Staff_W_Upgrade; }
-	FORCEINLINE int GetStaff_ELevel() { return Staff_E_Upgrade; }
-	FORCEINLINE int GetStaff_RLevel() { return Staff_R_Upgrade; }
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetSkillUpgradeLevel(int WeaponType, int SkillType);
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	TObjectPtr<class UCharacterStatComponent> StatComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	TObjectPtr<class UCharacterDataStat> StatData;
 
 	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_Q_Upgrade;
@@ -298,10 +281,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_E_Upgrade;
-
+	 
 	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Sword_R_Upgrade;
-
 
 	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	int Bow_Q_Upgrade;

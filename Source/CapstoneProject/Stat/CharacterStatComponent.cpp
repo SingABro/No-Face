@@ -45,6 +45,16 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 }
 
+int UCharacterStatComponent::GetPlayerLevel()
+{
+	return CurrentLevel;
+}
+
+int UCharacterStatComponent::GetPlayerSkillPoint()
+{
+	return CurrentSkillPoint;
+}
+
 float UCharacterStatComponent::ApplyDamage(float InDamage)
 {
 	float ActualDamage = FMath::Clamp(InDamage, 0, InDamage);
