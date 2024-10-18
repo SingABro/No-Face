@@ -27,6 +27,9 @@ public:
 	void RunAI();
 	void StopAI();
 
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamId) override;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -38,4 +41,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAIPerceptionComponent> AIPerception;
+
+	FGenericTeamId TeamId;
 };

@@ -50,3 +50,17 @@ void AAIControllerBase::StopAI()
 		BTComponent->StopTree();
 	}
 }
+
+FGenericTeamId AAIControllerBase::GetGenericTeamId() const
+{
+	Super::GetGenericTeamId();
+
+	return TeamId;
+}
+
+void AAIControllerBase::SetGenericTeamId(const FGenericTeamId& NewTeamId)
+{
+	Super::SetGenericTeamId(NewTeamId);
+
+	TeamId = NewTeamId;
+}
