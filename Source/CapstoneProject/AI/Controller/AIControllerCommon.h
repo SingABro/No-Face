@@ -20,7 +20,6 @@ public:
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
-	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamId) override;
 
 /* Perception Sense 섹션 */
 private:

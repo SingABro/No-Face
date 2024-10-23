@@ -51,16 +51,3 @@ void AAIControllerBase::StopAI()
 	}
 }
 
-FGenericTeamId AAIControllerBase::GetGenericTeamId() const
-{
-	Super::GetGenericTeamId();
-
-	return TeamId;
-}
-
-void AAIControllerBase::SetGenericTeamId(const FGenericTeamId& NewTeamId)
-{
-	Super::SetGenericTeamId(NewTeamId);
-
-	TeamId = NewTeamId;
-}
