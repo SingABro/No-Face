@@ -23,10 +23,16 @@ AEnemyRanged_Rifle::AEnemyRanged_Rifle()
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
+	/* 죽을 때 */
 	Stat->OnHpZero.AddUObject(this, &AEnemyRanged_Rifle::SetDead);
 
+	/* 파티클 설정 */
 	ImpactParticleComponent->SetTemplate(ImpactEffect);
 	ImpactParticleComponent->bAutoActivate = false;
+
+	FireEffectComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Fire Effect"));
+	FireEffectComponent->SetupAttachment(GetMesh(), TEXT("Muzzle_02"));
+	FireEffectComponent->bAutoActivate = false;
 }
 
 void AEnemyRanged_Rifle::AttackByAI()
@@ -146,6 +152,7 @@ void AEnemyRanged_Rifle::BeginAttack()
 
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	Anim->Montage_Play(DefaultAttackMontage);
+	FireEffectComponent->Activate();
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &AEnemyRanged_Rifle::EndAttack);
@@ -156,6 +163,7 @@ void AEnemyRanged_Rifle::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 
+	FireEffectComponent->Deactivate();
 	EnemyAttackFinished.ExecuteIfBound();
 }
 
