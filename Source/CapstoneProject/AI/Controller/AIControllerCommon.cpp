@@ -55,11 +55,6 @@ void AAIControllerCommon::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulu
 	}
 }
 
-void AAIControllerCommon::SetGenericTeamId(const FGenericTeamId& NewTeamId)
-{
-	Super::SetGenericTeamId(1);
-}
-
 FAIStimulus AAIControllerCommon::CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense)
 {
 	FActorPerceptionBlueprintInfo ActorPerceptionBlueprintInfo;
