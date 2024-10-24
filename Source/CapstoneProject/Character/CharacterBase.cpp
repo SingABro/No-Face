@@ -116,6 +116,11 @@ ACharacterBase::ACharacterBase()
 	{
 		DisplaySkillUIAction = DisplaySkillUIActionRef.Object;
 	}
+	static ConstructorHelpers::FObjectFinder<UInputAction> DashActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_Dash.IA_Dash'"));
+	if (DashActionRef.Object)
+	{
+		DashAction = DashActionRef.Object;
+	}
 
 	/* Mesh */
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/No-Face/Character/Mesh/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
@@ -200,6 +205,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	EnhancedInputComponent->BindAction(NextWeaponAction, ETriggerEvent::Started, this, &ACharacterBase::NextWeapon);
 	EnhancedInputComponent->BindAction(PrevWeaponAction, ETriggerEvent::Started, this, &ACharacterBase::PrevWeapon);
 	EnhancedInputComponent->BindAction(ZoomInOutAction, ETriggerEvent::Triggered, this, &ACharacterBase::ZoomInOut);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &ACharacterBase::Dash);
 
 	EnhancedInputComponent->BindAction(CancelAction, ETriggerEvent::Started, this, &ACharacterBase::CancelCasting);
 	EnhancedInputComponent->BindAction(DisplaySkillUIAction, ETriggerEvent::Started, this, &ACharacterBase::DisplaySkillUI);
@@ -463,6 +469,11 @@ void ACharacterBase::EquipStaff()
 void ACharacterBase::StopInput()
 {
 	GetPlayerController()->DisableInput(GetPlayerController());
+}
+
+void ACharacterBase::Dash()
+{
+	SkillComponent->BeginDash();
 }
 
 void ACharacterBase::ToggleParrying()

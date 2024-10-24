@@ -163,7 +163,13 @@ void AEnemyMelee_Common::BeginHitAction()
 		AnimInstance->Montage_Stop(0.1f, HitMontage);
 	}
 
-	AnimInstance->Montage_Play(HitMontage);
+	/* 파티클도 바로바로 재시작 */
+	if (ImpactParticleComponent->IsActive())
+	{
+		ImpactParticleComponent->Deactivate();
+	}
+
+	AnimInstance->Montage_Play(HitMontage, 0.5f);
 	ImpactParticleComponent->Activate();
 
 	FOnMontageEnded MontageEnd;

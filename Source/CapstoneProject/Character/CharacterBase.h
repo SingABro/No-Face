@@ -111,6 +111,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> DisplaySkillUIAction;
 
+	UPROPERTY(VisibleAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> DashAction;
 
 	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	class UCharacterDataStat* StatData;
@@ -179,6 +181,9 @@ private:
 private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<class USkillComponent> SkillComponent;
+
+	//대쉬
+	void Dash();
 
 
 	//패링을 위한 함수와 변수

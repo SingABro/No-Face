@@ -177,8 +177,32 @@ void AEnemyRanged_Rifle::BeginHitAction()
 		return;
 	}
 
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
+	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
+	if (AnimInstance->Montage_IsPlaying(HitMontage))
+	{
+		AnimInstance->Montage_Stop(0.1f, HitMontage);
+	}
+
+	/* 파티클도 바로바로 재시작 */
+	if (ImpactParticleComponent->IsActive())
+	{
+		ImpactParticleComponent->Deactivate();
+	}
+
 	AnimInstance->Montage_Play(HitMontage);
 	ImpactParticleComponent->Activate();
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyRanged_Rifle::EndHitAction);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, HitMontage);
+}
+
+void AEnemyRanged_Rifle::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	GetMyController()->RunAI();
 }
 
 void AEnemyRanged_Rifle::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
