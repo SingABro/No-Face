@@ -48,8 +48,6 @@ void AStaffThunderbolt::ActiveThunderbolt()
 		FDamageEvent DamageEvent;
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			
-			UE_LOG(LogTemp, Display, TEXT("Staff_Q_Damage : %f"), Stat->Staff_R_Damage);
 			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, OverlapResult.GetActor()->GetInstigatorController(), GetOwner());
 		}
 		DrawDebugSphere(GetWorld(), GetActorLocation(), 350.f, 32, FColor::Green, false, 3.f);

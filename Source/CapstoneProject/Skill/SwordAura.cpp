@@ -2,6 +2,7 @@
 
 
 #include "Skill/SwordAura.h"
+#include "Skill/SkillComponent.h"
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
@@ -20,6 +21,7 @@ ASwordAura::ASwordAura()
 	LifeTime = Stat->Sword_R_LifeTime;
 
 	Color = FColor::Red;
+
 }
 
 void ASwordAura::BeginPlay()
@@ -49,7 +51,8 @@ void ASwordAura::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherActor && OtherActor != this)
 	{
 		FDamageEvent DamageEvent;
-		OtherActor->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+		float UpgradeDamage = 0.0f;
+		OtherActor->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
 		Color = FColor::Green;
 	}
 }

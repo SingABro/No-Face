@@ -507,5 +507,3 @@ void UHUDWidget::UpdateExpBar(float NewCurrentExp)
 	ExpBar->UpdateExpBar(NewCurrentExp);
 }
 
-
-

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-//#include "Interface/PlayerHUDInterface.h"
 #include "CharacterBase.generated.h"
 
 //Animation Blueprint 에서 무기 애니메이션 값을 바꿀 때 쓰는 ENUM 값
@@ -32,7 +31,7 @@ struct FTakeItemDelegateWrapper
 };
 
 UCLASS()
-class CAPSTONEPROJECT_API ACharacterBase : public ACharacter//, public IPlayerHUDInterface
+class CAPSTONEPROJECT_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -52,7 +51,7 @@ public:
 /* 델리게이트 */
 	FSignedChangeWeapon SignedChangeWeapon;
 
-/* Getter */
+/* UFUNCTION 섹션 */
 public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
@@ -113,13 +112,7 @@ private:
 	TObjectPtr<class UInputAction> DisplaySkillUIAction;
 
 
-	/* Test 키 */
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> TestAction;
-
-	void SkillTest();
-
-	UPROPERTY(EditAnywhere, Category = "Input")
+	UPROPERTY(EditAnywhere, Category = "Upgrade")
 	class UCharacterDataStat* StatData;
 
 /* 마우스 우클릭을 통해 캐릭터 이동 기능을 실현하는 함수와 변수 */
@@ -187,6 +180,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<class USkillComponent> SkillComponent;
 
+
 	//패링을 위한 함수와 변수
 	void ToggleParrying();
 	bool bIsParrying = false;
@@ -209,6 +203,15 @@ private:
 /* UI 섹션 */
 private:
 	void DisplaySkillUI();
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI")
+	TSubclassOf<class USkillUIWidget> SkillUIWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI")
+	TObjectPtr<class USkillUIWidget> SkillUIWidget;
+
 
 /* 유틸리티 섹션 */
 private:

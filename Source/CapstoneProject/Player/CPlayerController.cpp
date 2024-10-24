@@ -14,6 +14,9 @@ ACPlayerController::ACPlayerController()
 	{
 		HUDWidgetClass = HUDWidgetRef.Class;
 	}
+
+	
+
 	
 }
 
@@ -24,8 +27,13 @@ void ACPlayerController::BeginPlay()
 	{
 		HUDWidget->AddToViewport();
 	}
+
 	
+	
+	
+
 	///* 해당 옵션을 설정해야지 PlayerController에서 인풋시스템을 관리하는듯 하다 -> 아닌가? */
 	//FInputModeGameOnly GameOnlyInputMode;
 	//SetInputMode(GameOnlyInputMode);
 }
+

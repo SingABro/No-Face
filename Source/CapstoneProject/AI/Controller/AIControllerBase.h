@@ -27,6 +27,7 @@ public:
 	void RunAI();
 	void StopAI();
 
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -38,4 +39,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAIPerceptionComponent> AIPerception;
+
 };

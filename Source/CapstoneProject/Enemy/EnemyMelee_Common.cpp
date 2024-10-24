@@ -154,9 +154,26 @@ void AEnemyMelee_Common::BeginHitAction()
 		return;
 	}
 
-	AnimInstance->StopAllMontages(0.5f);
-	AnimInstance->Montage_Play(HitMontage, 0.1f);
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
+	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
+	if (AnimInstance->Montage_IsPlaying(HitMontage))
+	{
+		AnimInstance->Montage_Stop(0.1f, HitMontage);
+	}
+
+	AnimInstance->Montage_Play(HitMontage);
 	ImpactParticleComponent->Activate();
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndHitAction);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, HitMontage);
+}
+
+void AEnemyMelee_Common::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	GetMyController()->RunAI();
 }
 
 void AEnemyMelee_Common::SetDead()
