@@ -40,6 +40,12 @@ public:
 	/* 스킬 실행 중 무기 교체 방지 */
 	FORCEINLINE bool CanChangeWeapon() { return bCanChangeWeapon; }
 
+	/* 스킬 실행 중 기본 공격 방지 */
+	FORCEINLINE ESkillState& GetSkillState() { return CurrentSkillState; }
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponType")
+	int GetWeaponType();
+
 public:
 	virtual void SetupSkillUIWidget(class UHUDWidget* InHUDWidget) override;
 
@@ -114,6 +120,11 @@ private:
 	/* 스킬 시전할 곳 표시 하기 위한 데이터 */
 	FHitResult Cursor;
 	bool bCasting = false;
+
+	/* 스텟 섹션(스킬 레벨 참조용) */
+private:
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//TObjectPtr<class UCharacterStatComponent> Stat;
 
 /* Sword 데이터 */
 private:
@@ -245,5 +256,37 @@ private:
 	int32 CurrentWeaponType = 0;
 
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
+
+
+/*스킬 레벨 강화*/
+public:
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	void UsePlayerSkillPoint(int WeaponType, int SkillType);
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	int GetSkillUpgradeLevel(int WeaponType, int SkillType);
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	TObjectPtr<class UCharacterStatComponent> StatComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	TObjectPtr<class UCharacterDataStat> StatData;
+
+	int Sword_Q_Upgrade;
+	int Sword_W_Upgrade;
+	int Sword_E_Upgrade;
+	int Sword_R_Upgrade;
+
+	int Bow_Q_Upgrade;
+	int Bow_W_Upgrade;
+	int Bow_E_Upgrade;
+	int Bow_R_Upgrade;
+
+	int Staff_Q_Upgrade;
+	int Staff_W_Upgrade;
+	int Staff_E_Upgrade;
+	int Staff_R_Upgrade;
+
 
 };

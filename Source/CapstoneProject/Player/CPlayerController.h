@@ -27,4 +27,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
 	TObjectPtr<class UHUDWidget> HUDWidget;
+
 };

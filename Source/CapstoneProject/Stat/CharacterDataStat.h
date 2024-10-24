@@ -14,6 +14,15 @@ class CAPSTONEPROJECT_API UCharacterDataStat : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
+public:
+
+	FORCEINLINE void SetSword_R_Damage(float UpgradeDamage) { Sword_R_Damage = UpgradeDamage; }
+	FORCEINLINE void SetBowDamage(float UpgradeDamage) { BowDamage = UpgradeDamage; }
+	FORCEINLINE void SetBow_Q_Damage(float UpgradeDamage) { BowDamage = UpgradeDamage; }
+	FORCEINLINE void SetStaff_Q_Damage(float UpgradeDamage) { Staff_Q_Damage = UpgradeDamage; }
+	FORCEINLINE void SetStaff_W_Damage(float UpgradeDamage) { Staff_W_Damage = UpgradeDamage; }
+	FORCEINLINE void SetStaff_R_Damage(float UpgradeDamage) { Staff_R_Damage = UpgradeDamage; }
+
 /* 일반 스텟 */
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
@@ -27,6 +36,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
 	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
+	int32 SkillPoint;
 
 /* 검 스텟 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
@@ -70,6 +82,9 @@ public:
 	float BowLifeTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
+	float Bow_Q_Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
 	float Bow_Q_Degree;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
@@ -108,6 +123,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
 	float Staff_R_Damage;
+
 
 };
 

@@ -11,6 +11,7 @@
 #include "Player/CPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Stat/CharacterStatComponent.h"
+#include "Stat/CharacterDataStat.h"
 #include "Animation/CharacterAnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Character/CharacterComboAttackData.h"
@@ -22,6 +23,7 @@
 #include "Interface/BowInterface.h"
 #include "Components/CapsuleComponent.h"
 #include "UI/HUDWidget.h"
+#include "UI/SkillUIWidget.h"
 #include "Interface/PlayerSkillUIInterface.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
@@ -109,7 +111,7 @@ ACharacterBase::ACharacterBase()
 	{
 		ZoomInOutAction = ZoomInOutActionRef.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UInputAction> DisplaySkillUIActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_SkillStatTest.IA_SkillStatTest'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> DisplaySkillUIActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_DisplaySkillUI.IA_DisplaySkillUI'"));
 	if (DisplaySkillUIActionRef.Object)
 	{
 		DisplaySkillUIAction = DisplaySkillUIActionRef.Object;
@@ -129,6 +131,7 @@ ACharacterBase::ACharacterBase()
 
 	/* 스텟 */
 	Stat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stat"));
+	StatData = CreateDefaultSubobject<UCharacterDataStat>(TEXT("CharacterDataStat"));
 
 
 	/* 무기 */
@@ -145,6 +148,15 @@ ACharacterBase::ACharacterBase()
 	
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(GetMesh());
+
+
+	/* 스킬 UI */
+	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
+
+	if (SkillUIWidgetRef.Class)
+	{
+		SkillUIWidgetClass = SkillUIWidgetRef.Class;
+	}
 
 	/* 태그 */
 	Tags.Add(TEXT("Player"));
@@ -163,6 +175,12 @@ void ACharacterBase::BeginPlay()
 	//초반에 칼들고 시작
 	EquipSword();
 	CurrentWeaponType = EWeaponType::Sword;
+	StatData->SetSword_R_Damage(150.0f);
+	StatData->SetBowDamage(50.0f);
+	StatData->SetBow_Q_Damage(50.0f);
+	StatData->SetStaff_Q_Damage(100.0f);
+	StatData->SetStaff_W_Damage(100.0f);
+	StatData->SetStaff_R_Damage(100.0f);
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -187,9 +205,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	EnhancedInputComponent->BindAction(DisplaySkillUIAction, ETriggerEvent::Started, this, &ACharacterBase::DisplaySkillUI);
 
 
-
-
-	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &ACharacterBase::SkillTest);
 }
 
 float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -240,12 +255,6 @@ void ACharacterBase::R_Skill()
 	SkillComponent->PlaySkill_R();
 }
 
-void ACharacterBase::SkillTest()
-{
-	//StatData->Staff_R_Damage += 500;
-	UE_LOG(LogTemp, Display, TEXT("Test Input Key"));
-}
-
 void ACharacterBase::OnClickStart()
 {
 	GetController()->StopMovement();
@@ -274,7 +283,7 @@ void ACharacterBase::OnRelease()
 
 void ACharacterBase::OnAttackStart()
 {
-	if (TraceAttack() == false)
+	if (TraceAttack() == false || SkillComponent->GetSkillState() == ESkillState::Progress)
 	{
 		return;
 	}
@@ -487,8 +496,20 @@ void ACharacterBase::StaffCreateShield()
 
 void ACharacterBase::DisplaySkillUI()
 {
-	/* 스킬 창 띄우는 로직 */
+	if (SkillUIWidget && SkillUIWidget->IsInViewport())
+	{
+		SkillUIWidget->RemoveFromParent();
+	}
+	else
+	{
+		SkillUIWidget = CreateWidget<USkillUIWidget>(GetPlayerController(), SkillUIWidgetClass);
+		if (SkillUIWidget)
+		{
+			SkillUIWidget->AddToViewport();
+		}
+	}
 }
+
 
 ACPlayerController* ACharacterBase::GetPlayerController() const
 {

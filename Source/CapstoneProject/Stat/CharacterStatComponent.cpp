@@ -45,6 +45,16 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 }
 
+int UCharacterStatComponent::GetPlayerLevel()
+{
+	return CurrentLevel;
+}
+
+int UCharacterStatComponent::GetPlayerSkillPoint()
+{
+	return CurrentSkillPoint;
+}
+
 float UCharacterStatComponent::ApplyDamage(float InDamage)
 {
 	float ActualDamage = FMath::Clamp(InDamage, 0, InDamage);
@@ -70,7 +80,17 @@ void UCharacterStatComponent::SetExp(float InExp)
 {
 	UE_LOG(LogTemp, Display, TEXT("Get Exp Amount : %f"), InExp);
 	CurrentExp = CurrentExp + InExp;
+	while (CurrentExp >= 100) {
+		CurrentExp -= 100;
+		CurrentLevel++;
+		CurrentSkillPoint++;
+		UE_LOG(LogTemp, Display, TEXT("##### Level Up ##### // Current Level : %d"), CurrentLevel);
+		OnLevelChanged.Broadcast(CurrentLevel);
+	}
 	UE_LOG(LogTemp, Display, TEXT("Current Exp : %f,  //  Current Level : %d"), CurrentExp, CurrentLevel);
 	OnExpChanged.Broadcast(CurrentExp);
 }
+
+
+
 
