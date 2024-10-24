@@ -64,6 +64,9 @@ public:
 	void PlaySkill_E();
 	void PlaySkill_R();
 
+	/* 공통 스킬 */
+	void BeginDash();
+
 	/* 현재 무기 상태 바꿈 -> CharacterBase에서 실행 */
 	void SetWeaponType(const int32& InCurrentWeaponType);
 
@@ -121,10 +124,6 @@ private:
 	FHitResult Cursor;
 	bool bCasting = false;
 
-	/* 스텟 섹션(스킬 레벨 참조용) */
-private:
-	//UPROPERTY(VisibleAnywhere, Category = "Component")
-	//TObjectPtr<class UCharacterStatComponent> Stat;
 
 /* Sword 데이터 */
 private:
@@ -157,6 +156,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Staff")
 	TObjectPtr<class UParticleSystem> ThunderboltCastingEffect;
+
+/* 공통 스킬 데이터 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Common")
+	TObjectPtr<class UParticleSystem> DashEffect;
 
 /* 쿨타임 섹션 */
 private:
@@ -273,20 +277,20 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	TObjectPtr<class UCharacterDataStat> StatData;
 
-	int Sword_Q_Upgrade;
-	int Sword_W_Upgrade;
-	int Sword_E_Upgrade;
-	int Sword_R_Upgrade;
+	uint8 Sword_Q_Upgrade;
+	uint8 Sword_W_Upgrade;
+	uint8 Sword_E_Upgrade;
+	uint8 Sword_R_Upgrade;
 
-	int Bow_Q_Upgrade;
-	int Bow_W_Upgrade;
-	int Bow_E_Upgrade;
-	int Bow_R_Upgrade;
+	uint8 Bow_Q_Upgrade;
+	uint8 Bow_W_Upgrade;
+	uint8 Bow_E_Upgrade;
+	uint8 Bow_R_Upgrade;
 
-	int Staff_Q_Upgrade;
-	int Staff_W_Upgrade;
-	int Staff_E_Upgrade;
-	int Staff_R_Upgrade;
+	uint8 Staff_Q_Upgrade;
+	uint8 Staff_W_Upgrade;
+	uint8 Staff_E_Upgrade;
+	uint8 Staff_R_Upgrade;
 
 
 };

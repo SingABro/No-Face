@@ -652,6 +652,22 @@ void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
 }
 
+void USkillComponent::BeginDash()
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DashEffect, Character->GetActorLocation(), FRotator::ZeroRotator);
+	Character->SetActorHiddenInGame(true);
+
+	FVector TargetLocation = Character->GetActorLocation() + Character->GetActorForwardVector() * 500.f;
+	Character->TeleportTo(TargetLocation, Character->GetActorRotation());
+
+	FTimerHandle VisibleHandle;
+	GetWorld()->GetTimerManager().SetTimer(VisibleHandle, [&]()
+		{
+			Character->SetActorHiddenInGame(false);
+		}, 1.0f, false);
+}
+
+
 void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType, int32 WeaponType, float& Timer)
 {
 	bCanUseSkill = false;

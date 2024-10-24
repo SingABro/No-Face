@@ -25,7 +25,7 @@ AAIControllerCommon::AAIControllerCommon()
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 	SightConfig->SightRadius = 800.f;
 	SightConfig->LoseSightRadius = 1200.f;
-	SightConfig->PeripheralVisionAngleDegrees = 60.f;
+	SightConfig->PeripheralVisionAngleDegrees = 180.f;
 	SightConfig->SetMaxAge(5.f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = -1.f;
 

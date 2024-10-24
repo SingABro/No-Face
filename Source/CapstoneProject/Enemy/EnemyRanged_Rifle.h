@@ -39,6 +39,7 @@ private:
 	void EndAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	void BeginHitAction();
+	void EndHitAction(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 스턴 애니메이션 끝날 때 실행되는 함수 */
 	void EndStun(class UAnimMontage* Target, bool IsProperlyEnded);
