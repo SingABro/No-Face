@@ -1,6 +1,6 @@
 #include "MyActorDuplicator.h"
 #include "Engine/World.h"
-#include "Math/UnrealMathUtility.h"  // FMath »ç¿ëÀ» À§ÇØ ÇÊ¿ä
+#include "Math/UnrealMathUtility.h"  // FMath ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 
 AMyActorDuplicator::AMyActorDuplicator()
 {
@@ -13,12 +13,12 @@ void AMyActorDuplicator::BeginPlay()
 
     if (StaticMeshToDuplicate && RoomActorClass)
     {
-        // ½ÃÀÛ ¹æ ¼³Á¤ (¿ùµå Áß½É)
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½)
         FRoom StartRoom;
         StartRoom.Location = GetActorLocation();
         Rooms.Add(StartRoom);
 
-        // ¹æ »ý¼º ½ÃÀÛ (4 ¹æÇâ)
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (4 ï¿½ï¿½ï¿½ï¿½)
         CreateRooms(StartRoom, MaxDepth, EDirection::UP);
         CreateRooms(StartRoom, MaxDepth, EDirection::DOWN);
         CreateRooms(StartRoom, MaxDepth, EDirection::RIGHT);
@@ -48,10 +48,10 @@ void AMyActorDuplicator::CreateRooms(FRoom& CurrentRoom, int32 Depth, EDirection
         return;
     }
 
-    // »õ·Î¿î ¹æÇâ °áÁ¤
+    // ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     EDirection NewDir = GetRandomDirection(CurrentDir);
 
-    // »õ·Î¿î ¹æ »ý¼º ¹× À§Ä¡ °è»ê
+    // ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
     FRoom NextRoom;
     if (CurrentDir == EDirection::UP)
     {
@@ -70,7 +70,7 @@ void AMyActorDuplicator::CreateRooms(FRoom& CurrentRoom, int32 Depth, EDirection
         NextRoom.Location = CurrentRoom.Location + FVector(-OffsetDistance.X, 0.f, 0.f);
     }
 
-    // Áßº¹ ¹æ Ã¼Å© (ÀÌ¹Ì »ý¼ºµÈ À§Ä¡ÀÎÁö È®ÀÎ)
+    // ï¿½ßºï¿½ ï¿½ï¿½ Ã¼Å© (ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½)
     for (const FRoom& Room : Rooms)
     {
         if (Room.Location.Equals(NextRoom.Location))
@@ -79,10 +79,10 @@ void AMyActorDuplicator::CreateRooms(FRoom& CurrentRoom, int32 Depth, EDirection
         }
     }
 
-    // ¹æÀ» ¹è¿­¿¡ Ãß°¡
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ß°ï¿½
     Rooms.Add(NextRoom);
 
-    // »õ·Î¿î Room ¾×ÅÍ »ý¼º
+    // ï¿½ï¿½ï¿½Î¿ï¿½ Room ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     FActorSpawnParameters SpawnParams;
     SpawnParams.Owner = this;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -93,6 +93,6 @@ void AMyActorDuplicator::CreateRooms(FRoom& CurrentRoom, int32 Depth, EDirection
         DuplicatedRoom->MeshComponent->SetStaticMesh(StaticMeshToDuplicate);
     }
 
-    // Àç±ÍÀûÀ¸·Î ´ÙÀ½ ¹æ »ý¼º
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     CreateRooms(NextRoom, Depth - 1, NewDir);
 }

@@ -3,10 +3,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
-#include "RoomActor.h"  // ARoomActor Æ÷ÇÔ
+#include "RoomActor.h"  // ARoomActor ï¿½ï¿½ï¿½ï¿½
 #include "MyActorDuplicator.generated.h"
 
-// ¹æÇâ Á¤ÀÇ
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 UENUM()
 enum class EDirection : uint8 {
     UP = 1,
@@ -15,7 +15,7 @@ enum class EDirection : uint8 {
     LEFT = 8
 };
 
-// Room ±¸Á¶Ã¼
+// Room ï¿½ï¿½ï¿½ï¿½Ã¼
 USTRUCT()
 struct FRoom {
     GENERATED_BODY()
@@ -39,29 +39,29 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    // Static Mesh¸¦ µðÅ×ÀÏ ÆÐ³Î¿¡¼­ ¼³Á¤ÇÒ ¼ö ÀÖµµ·Ï º¯¼ö ¼±¾ð
+    // Static Meshï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
-    UStaticMesh* StaticMeshToDuplicate;  // Static Mesh ¼³Á¤
+    UStaticMesh* StaticMeshToDuplicate;  // Static Mesh ï¿½ï¿½ï¿½ï¿½
 
-    // º¹Á¦µÈ Static MeshÀÇ À§Ä¡¸¦ ÀÌµ¿½ÃÅ°´Â ´ÜÀ§ ±æÀÌ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Static Meshï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
-    FVector OffsetDistance = FVector(200.f, 200.f, 0.f);  // ±âº»°ª: 200 À¯´Ö X, Y ÀÌµ¿
+    FVector OffsetDistance = FVector(200.f, 200.f, 0.f);  // ï¿½âº»ï¿½ï¿½: 200 ï¿½ï¿½ï¿½ï¿½ X, Y ï¿½Ìµï¿½
 
-    // ¹æ »ý¼º ¾Ë°í¸®ÁòÀÇ ÃÖ´ë ±íÀÌ
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
     int32 MaxDepth = 7;
 
-    // ½ºÆùÇÒ ¹æ ¾×ÅÍ Å¬·¡½º
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
     TSubclassOf<ARoomActor> RoomActorClass;
 
 private:
-    // ¹æÀ» ÀúÀåÇÒ ¹è¿­
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
     TArray<FRoom> Rooms;
 
-    // ¹æÀ» Àç±ÍÀûÀ¸·Î »ý¼ºÇÏ´Â ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     void CreateRooms(FRoom& CurrentRoom, int32 Depth, EDirection CurrentDir);
 
-    // ¹æÀÇ ·£´ýÇÑ ¹æÇâÀ» °áÁ¤
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     EDirection GetRandomDirection(EDirection CurrentDir);
 };
