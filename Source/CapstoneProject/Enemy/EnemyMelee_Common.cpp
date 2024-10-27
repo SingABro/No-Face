@@ -13,6 +13,7 @@
 #include "UI/EnemyHpBarWidget.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Perception/AISense_Damage.h"
 
 AEnemyMelee_Common::AEnemyMelee_Common()
 {
@@ -26,6 +27,8 @@ AEnemyMelee_Common::AEnemyMelee_Common()
 	/* 콜리전 설정 */
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
+
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
 
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Common::SetDead);
 
@@ -92,6 +95,16 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 
 	Stat->ApplyDamage(Damage);
 
+	/* 대미지 입으면 감각 활성화 */
+	UAISense_Damage::ReportDamageEvent(
+		GetWorld(),
+		this,
+		DamageCauser,
+		Damage,
+		GetActorLocation(),
+		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
+	);
+
 	return Damage;
 }
 
@@ -154,9 +167,6 @@ void AEnemyMelee_Common::BeginHitAction()
 		return;
 	}
 
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
-
 	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
 	if (AnimInstance->Montage_IsPlaying(HitMontage))
 	{
@@ -168,6 +178,9 @@ void AEnemyMelee_Common::BeginHitAction()
 	{
 		ImpactParticleComponent->Deactivate();
 	}
+	
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
 
 	AnimInstance->Montage_Play(HitMontage, 0.5f);
 	ImpactParticleComponent->Activate();
