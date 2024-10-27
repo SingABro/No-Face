@@ -34,15 +34,12 @@ public:
 	virtual void SetDead() override;
 
 
-	///* 속도 조절, PlayerController 에서 호출 */
-	//void SetWalkSpeed();
-	//void SetRunSpeed();
-
 private:
 	void BeginAttack();
 	void EndAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	void BeginHitAction();
+	void EndHitAction(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 스킬 함수들 */
 	void BeginSkill1();

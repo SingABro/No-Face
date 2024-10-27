@@ -177,9 +177,6 @@ void AEnemyRanged_Rifle::BeginHitAction()
 		return;
 	}
 
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
-
 	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
 	if (AnimInstance->Montage_IsPlaying(HitMontage))
 	{
@@ -191,6 +188,9 @@ void AEnemyRanged_Rifle::BeginHitAction()
 	{
 		ImpactParticleComponent->Deactivate();
 	}
+
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
 
 	AnimInstance->Montage_Play(HitMontage);
 	ImpactParticleComponent->Activate();

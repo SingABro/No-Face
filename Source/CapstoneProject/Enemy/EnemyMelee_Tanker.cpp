@@ -22,14 +22,15 @@ AEnemyMelee_Tanker::AEnemyMelee_Tanker()
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
-	//SetWalkSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+
+	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Tanker::SetDead);
 }
 
 void AEnemyMelee_Tanker::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Tanker::SetDead);
 }
 
 void AEnemyMelee_Tanker::AttackByAI()
@@ -84,6 +85,7 @@ float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEve
 
 	Stat->ApplyDamage(Damage);
 
+	/* 대미지 입으면 감각 활성화 */
 	UAISense_Damage::ReportDamageEvent(
 		GetWorld(),
 		this,
@@ -147,7 +149,25 @@ void AEnemyMelee_Tanker::BeginHitAction()
 		return;
 	}
 
+	/* 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
+	if (AnimInstance->Montage_IsPlaying(HitMontage))
+	{
+		AnimInstance->Montage_Stop(0.1f, HitMontage);
+	}
+
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
 	AnimInstance->Montage_Play(HitMontage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyMelee_Tanker::EndHitAction);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, HitMontage);
+}
+
+void AEnemyMelee_Tanker::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	GetMyController()->RunAI();
 }
 
 void AEnemyMelee_Tanker::BeginSkill1()
@@ -226,16 +246,6 @@ void AEnemyMelee_Tanker::DefaultAttackHitDebug(const FVector& Start, const FVect
 	DrawDebugLine(GetWorld(), Start, LeftEndpoint, Color, false, 3.0f);
 	DrawDebugLine(GetWorld(), Start, RightEndpoint, Color, false, 3.0f);
 }
-
-//void AEnemyMelee_Tanker::SetWalkSpeed()
-//{
-//	GetCharacterMovement()->MaxWalkSpeed = 250.f;
-//}
-//
-//void AEnemyMelee_Tanker::SetRunSpeed()
-//{
-//	GetCharacterMovement()->MaxWalkSpeed = 400.f;
-//}
 
 AAIControllerTanker* AEnemyMelee_Tanker::GetMyController()
 {
