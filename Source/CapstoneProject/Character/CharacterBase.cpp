@@ -151,8 +151,8 @@ ACharacterBase::ACharacterBase()
 
 	AttackComponent = CreateDefaultSubobject<UCharacterDefaultAttackComponent>(TEXT("Attack"));
 	
-	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
-	ParticleComponent->SetupAttachment(GetMesh());
+	ShieldParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ShieldParticleComponent->SetupAttachment(GetMesh());
 
 
 	/* 스킬 UI */
@@ -502,7 +502,7 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 
 void ACharacterBase::StaffCreateShield()
 {
-	ParticleComponent->SetTemplate(ShieldEffect);
+	ShieldParticleComponent->SetTemplate(ShieldEffect);
 }
 
 void ACharacterBase::DisplaySkillUI()
