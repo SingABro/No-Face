@@ -115,7 +115,7 @@ private:
 	TObjectPtr<class UInputAction> DashAction;
 
 	UPROPERTY(EditAnywhere, Category = "Upgrade")
-	class UCharacterDataStat* StatData;
+	TObjectPtr<class UCharacterDataStat> StatData;
 
 /* 마우스 우클릭을 통해 캐릭터 이동 기능을 실현하는 함수와 변수 */
 	void OnClickStart();	//Mouse Right Click Started
@@ -200,7 +200,7 @@ private:
 	void StaffCreateShield();
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
+	TObjectPtr<class UParticleSystemComponent> ShieldParticleComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystem> ShieldEffect;
@@ -209,12 +209,10 @@ private:
 private:
 	void DisplaySkillUI();
 
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class USkillUIWidget> SkillUIWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USkillUIWidget> SkillUIWidget;
 
 
