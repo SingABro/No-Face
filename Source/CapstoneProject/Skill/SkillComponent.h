@@ -38,9 +38,6 @@ public:
 	FORCEINLINE bool GetCastingFlag() { return bCasting; }
 	FORCEINLINE void SetCastingFlag(bool InCasting) { bCasting = InCasting; }
 
-	/* 캐스팅 공격 애니메이션 실행 전 공격 방지 플래그 */
-	FORCEINLINE bool GetCanCastingAttack() { return  bCanCastingAttack; }
-
 	/* 스킬 실행 중 무기 교체 방지 */
 	FORCEINLINE bool CanChangeWeapon() { return bCanChangeWeapon; }
 	FORCEINLINE void SetCanChangeWeapon(bool InCanChangeWeapon) { bCanChangeWeapon = InCanChangeWeapon; }
@@ -274,7 +271,6 @@ private:
 	TObjectPtr<class APlayerController> PlayerController;
 
 	bool bCanChangeWeapon = true;
-	bool bCanCastingAttack = false;
 	int32 CurrentWeaponType = 0;
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
 
