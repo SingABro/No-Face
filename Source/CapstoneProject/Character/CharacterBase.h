@@ -215,6 +215,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USkillUIWidget> SkillUIWidget;
 
+/* 모션 워핑 섹션 */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
+	TObjectPtr<class UMotionWarpingComponent> MotionWarpComponent;
 
 /* 유틸리티 섹션 */
 private:

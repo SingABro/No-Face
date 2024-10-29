@@ -24,4 +24,5 @@ class CAPSTONEPROJECT_API IBowSkillInterface
 public:
 	virtual void Bow_Q_Skill() = 0;
 	virtual void Bow_W_Skill() = 0;
+	virtual void Bow_R_Skill() = 0;
 };

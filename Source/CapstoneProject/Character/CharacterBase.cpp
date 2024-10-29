@@ -27,6 +27,7 @@
 #include "Interface/PlayerSkillUIInterface.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
+#include "MotionWarpingComponent.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -154,6 +155,7 @@ ACharacterBase::ACharacterBase()
 	ShieldParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ShieldParticleComponent->SetupAttachment(GetMesh());
 
+	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarp"));
 
 	/* 스킬 UI */
 	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
@@ -295,7 +297,7 @@ void ACharacterBase::OnAttackStart()
 	}
 
 	/* 스킬 캐스팅 중이면 해당 스킬 싱행 */
-	if (SkillComponent->GetCastingFlag() /*&& SkillComponent->GetCanCastingAttack()*/)
+	if (SkillComponent->GetCastingFlag())
 	{
 		TFunction<void()> SkillAction;
 		if (SkillComponent->SkillQueue.Dequeue(SkillAction))
