@@ -267,7 +267,7 @@ void UCharacterDefaultAttackComponent::BeginStaffDefaultAttack()
 	CurrentCombo = 1;
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	AnimInstance->Montage_Play(StaffDefaultAttackMontage);
+	AnimInstance->Montage_Play(StaffDefaultAttackMontage, 1.5f);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &UCharacterDefaultAttackComponent::EndStaffDefaultAttack);
@@ -291,7 +291,7 @@ void UCharacterDefaultAttackComponent::SetStaffComboTimer()
 	int32 Index = CurrentCombo - 1;
 	ensure(StaffComboData->EffectiveFrameCount.IsValidIndex(Index));
 
-	float EffectiveTime = (StaffComboData->EffectiveFrameCount[Index] / StaffComboData->FrameRate);
+	float EffectiveTime = (StaffComboData->EffectiveFrameCount[Index] / StaffComboData->FrameRate) / 1.5f;
 	if (EffectiveTime >= 0.f)
 	{
 		GetWorld()->GetTimerManager().SetTimer(StaffComboTimer, this, &UCharacterDefaultAttackComponent::CheckStaffCombo, EffectiveTime, false);

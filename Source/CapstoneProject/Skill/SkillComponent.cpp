@@ -556,6 +556,7 @@ void USkillComponent::BeginStaff_Q()
 	if (bCasting)
 	{
 		StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q, CurrentWeaponType, Staff_Q_Timer);
+		CurrentSkillState = ESkillState::Progress;
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorCastingEffect, Cursor.Location, FRotator::ZeroRotator);
 
@@ -598,6 +599,7 @@ void USkillComponent::BeginStaff_Q()
 void USkillComponent::EndStaff_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	CurrentSkillState = ESkillState::CanSkill;
 	bCanChangeWeapon = true;
 }
 
@@ -611,34 +613,60 @@ void USkillComponent::Staff_Q_Skill()
 
 void USkillComponent::BeginStaff_W()
 {
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	bCanChangeWeapon = false;
+
 	if (bCasting)
 	{
 		StartCooldown(CooldownDuration_Staff_W, CooldownTimerHandle_Staff_W, bCanUseSkill_Staff_W, ESkillType::W, CurrentWeaponType, Staff_W_Timer);
-
+		CurrentSkillState = ESkillState::Progress;
 
 		FVector SpawnLocation = Cursor.Location;
 		AStaffArea* Area = GetWorld()->SpawnActor<AStaffArea>(AreaClass, SpawnLocation, FRotator::ZeroRotator);
-		//UE_LOG(LogTemp, Display, TEXT("Spawn Location : %f, %f, %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 		Area->SetOwner(Character);
 
 		bCasting = false;
+
+		if (!AnimInstance->Montage_IsPlaying(SkillMontageData->StaffMontages[1]))
+		{
+			AnimInstance->Montage_Resume(SkillMontageData->StaffMontages[1]);
+		}
+
+		FOnMontageEnded MontageEnd;
+		MontageEnd.BindUObject(this, &USkillComponent::EndStaff_W);
+		AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->StaffMontages[1]);
 	}
 	else
 	{
 		if (!bCanUseSkill_Staff_W) return;
 
-		bCasting = true;
+
+		bCanCastingAttack = true;
 
 		//컨테이너에 람다형식으로 함수 등록
 		SkillQueue.Enqueue([this]()
 			{
 				BeginStaff_W();
 			});
+
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		AnimInstance->Montage_Play(SkillMontageData->StaffMontages[1]);
 	}
 }
 
 void USkillComponent::EndStaff_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	CurrentSkillState = ESkillState::CanSkill;
+	bCanChangeWeapon = true;
+}
+
+void USkillComponent::Staff_W_Skill()
+{
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Pause(SkillMontageData->StaffMontages[1]);
+	bCasting = true;
+	bCanCastingAttack = false;
 }
 
 void USkillComponent::BeginStaff_E()
@@ -646,11 +674,21 @@ void USkillComponent::BeginStaff_E()
 	if (!bCanUseSkill_Staff_E) return;
 	else StartCooldown(CooldownDuration_Staff_E, CooldownTimerHandle_Staff_E, bCanUseSkill_Staff_E, ESkillType::E, CurrentWeaponType, Staff_E_Timer);
 
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	AnimInstance->Montage_Play(SkillMontageData->StaffMontages[2]);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &USkillComponent::EndStaff_E);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->StaffMontages[2]);
+
 	ShieldSign.ExecuteIfBound();
 }
 
 void USkillComponent::EndStaff_E(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void USkillComponent::BeginStaff_R()
@@ -658,10 +696,17 @@ void USkillComponent::BeginStaff_R()
 	if (!bCanUseSkill_Staff_R) return;
 	else StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
 
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	AnimInstance->Montage_Play(SkillMontageData->StaffMontages[3]);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &USkillComponent::EndStaff_R);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->StaffMontages[3]);
+
 	FVector SpawnLocation = Character->GetMesh()->GetSocketLocation(TEXT("root"));
-
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ThunderboltCastingEffect, Character->GetMesh()->GetSocketLocation(TEXT("root")), FRotator::ZeroRotator);
-
 	FTimerHandle StaffRHandle;
 	GetWorld()->GetTimerManager().SetTimer(StaffRHandle,
 		[&]()
@@ -675,6 +720,7 @@ void USkillComponent::BeginStaff_R()
 
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void USkillComponent::BeginDash()
