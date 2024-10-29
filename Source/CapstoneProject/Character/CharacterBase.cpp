@@ -150,7 +150,7 @@ ACharacterBase::ACharacterBase()
 	SkillComponent->ShieldSign.BindUObject(this, &ACharacterBase::StaffCreateShield);
 
 	AttackComponent = CreateDefaultSubobject<UCharacterDefaultAttackComponent>(TEXT("Attack"));
-	
+
 	ShieldParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ShieldParticleComponent->SetupAttachment(GetMesh());
 
@@ -170,7 +170,7 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 	{
@@ -193,7 +193,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	
+
 	EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Started, this, &ACharacterBase::OnClickStart);
 	EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Triggered, this, &ACharacterBase::OnClicking);
 	EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Completed, this, &ACharacterBase::OnRelease);
@@ -216,7 +216,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
+
 	if (bIsParrying)
 	{
 		SkillComponent->ParryingSuccess(DamageCauser);
@@ -295,7 +295,7 @@ void ACharacterBase::OnAttackStart()
 	}
 
 	/* 스킬 캐스팅 중이면 해당 스킬 싱행 */
-	if (SkillComponent->GetCastingFlag())
+	if (SkillComponent->GetCastingFlag() /*&& SkillComponent->GetCanCastingAttack()*/)
 	{
 		TFunction<void()> SkillAction;
 		if (SkillComponent->SkillQueue.Dequeue(SkillAction))
@@ -306,9 +306,12 @@ void ACharacterBase::OnAttackStart()
 		}
 	}
 
-	OnClickStart();
-	RotateToTarget();
-	AttackComponent->BeginAttack();
+	if (!SkillComponent->GetCanCastingAttack())
+	{
+		OnClickStart();
+		RotateToTarget();
+		AttackComponent->BeginAttack();
+	}
 }
 
 bool ACharacterBase::TraceAttack()
@@ -363,6 +366,7 @@ void ACharacterBase::CancelCasting()
 		AnimInstance->StopAllMontages(0.1f);
 
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		SkillComponent->SetCanChangeWeapon(true);
 	}
 }
 
@@ -395,7 +399,7 @@ void ACharacterBase::PrevWeapon()
 	{
 		WeaponIndex = 2;
 	}
-	
+
 	ChangeWeapon();
 	AnimWeaponIndex();
 }
@@ -424,7 +428,7 @@ void ACharacterBase::EquipSword()
 	{
 		WeaponBase->Destroy();
 	}
-	
+
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
 
@@ -484,7 +488,7 @@ void ACharacterBase::ToggleParrying()
 
 void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 {
-	if (InHUDWidget) 
+	if (InHUDWidget)
 	{
 		InHUDWidget->SetMaxHp(Stat->GetMaxHp());
 		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());

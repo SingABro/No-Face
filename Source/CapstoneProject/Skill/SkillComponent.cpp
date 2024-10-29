@@ -144,7 +144,7 @@ void USkillComponent::SetupSkillUIWidget(UHUDWidget* InHUDWidget)
 /************* 검 스킬 라인 *************/
 void USkillComponent::BeginSword_Q()
 {
-	if (!bCanUseSkill_Sword_Q || CurrentSkillState == ESkillState::Progress) 
+	if (!bCanUseSkill_Sword_Q || CurrentSkillState == ESkillState::Progress)
 	{
 		return;
 	}
@@ -268,7 +268,7 @@ void USkillComponent::BeginSword_R()
 
 void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	CurrentSkillState =	ESkillState::CanSkill;
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
 }
@@ -373,12 +373,29 @@ void USkillComponent::BeginBow_Q()
 
 void USkillComponent::EndBow_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	CurrentSkillState = ESkillState::CanSkill;
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::BeginBow_W()
+void USkillComponent::Bow_Q_Skill()
+{
+	FVector ForwardVector = Character->GetActorForwardVector();
+
+	for (int32 Degree = -60; Degree <= 60; Degree += 20)
+	{
+		FVector SpawnVector = ForwardVector.RotateAngleAxis(Degree, FVector::UpVector);
+
+		FVector SpawnLocation = Character->GetActorLocation() + FVector(10.f, 0.f, 0.f);
+		FRotator SpawnRotator = SpawnVector.Rotation();
+
+		AArrow* Arrow = GetWorld()->SpawnActor<AArrow>(ArrowClass, SpawnLocation, SpawnRotator);
+		Arrow->SetOwner(Character);
+		Arrow->Init(SpawnVector, SpawnLocation, SpawnRotator);
+	}
+}
+
+void USkillComponent::BeginBow_W() //bCanChangeWeapon, bCanCastingAttack, bCasting
 {
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	bCanChangeWeapon = false;
@@ -388,6 +405,7 @@ void USkillComponent::BeginBow_W()
 	if (bCasting)
 	{
 		StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W, CurrentWeaponType, Bow_W_Timer);
+		CurrentSkillState = ESkillState::Progress;
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RainArrows, Cursor.Location, FRotator::ZeroRotator);
 		UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f + UpgradeDamage, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
@@ -398,7 +416,6 @@ void USkillComponent::BeginBow_W()
 		{
 			AnimInstance->Montage_Resume(SkillMontageData->BowMontages[1]);
 		}
-		//else 사용자가 입력을 너무 빨리 했을 때 처리 해야함
 
 		FOnMontageEnded MontageEnd;
 		MontageEnd.BindUObject(this, &USkillComponent::EndBow_W);
@@ -406,9 +423,9 @@ void USkillComponent::BeginBow_W()
 	}
 	else
 	{
-		if (!bCanUseSkill_Bow_W) return;
+		if (!bCanUseSkill_Bow_W || CurrentSkillState == ESkillState::Progress) return;
 
-		bCasting = true;
+		bCanCastingAttack = true;
 
 		SkillQueue.Enqueue([this]()
 			{
@@ -423,7 +440,16 @@ void USkillComponent::BeginBow_W()
 void USkillComponent::EndBow_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	CurrentSkillState = ESkillState::CanSkill;
 	bCanChangeWeapon = true;
+}
+
+void USkillComponent::Bow_W_Skill()
+{
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Pause(SkillMontageData->BowMontages[1]);
+	bCasting = true;
+	bCanCastingAttack = false;
 }
 
 void USkillComponent::BeginBow_E()
@@ -521,32 +547,6 @@ void USkillComponent::FireBow_R()
 	DrawDebugBox(GetWorld(), End, BoxExtent, RootRot, FColor::Green, false, 5.f);
 }
 
-void USkillComponent::Bow_Q_Skill()
-{
-	FVector ForwardVector = Character->GetActorForwardVector();
-
-	for (int32 Degree = -60; Degree <= 60; Degree += 20)
-	{
-		FVector SpawnVector = ForwardVector.RotateAngleAxis(Degree, FVector::UpVector);
-
-		FVector SpawnLocation = Character->GetActorLocation() + FVector(10.f, 0.f, 0.f);
-		FRotator SpawnRotator = SpawnVector.Rotation();
-
-		AArrow* Arrow = GetWorld()->SpawnActor<AArrow>(ArrowClass, SpawnLocation, SpawnRotator);
-		Arrow->SetOwner(Character);
-		Arrow->Init(SpawnVector, SpawnLocation, SpawnRotator);
-	}
-}
-
-void USkillComponent::Bow_W_Skill()
-{
-	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-	if (AnimInstance->Montage_IsPlaying(SkillMontageData->BowMontages[1]))
-	{
-		AnimInstance->Montage_Pause(SkillMontageData->BowMontages[1]);
-	}
-}
-
 /************* 지팡이 스킬 라인 *************/
 void USkillComponent::BeginStaff_Q()
 {
@@ -568,23 +568,45 @@ void USkillComponent::BeginStaff_Q()
 			}, 2.f, false);
 
 		bCasting = false;
+
+		if (!AnimInstance->Montage_IsPlaying(SkillMontageData->StaffMontages[0]))
+		{
+			AnimInstance->Montage_Resume(SkillMontageData->StaffMontages[0]);
+		}
+
+		FOnMontageEnded MontageEnd;
+		MontageEnd.BindUObject(this, &USkillComponent::EndStaff_Q);
+		AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->StaffMontages[0]);
 	}
 	else
 	{
 		if (!bCanUseSkill_Staff_Q) return;
 
-		bCasting = true;
+		bCanCastingAttack = true;
 
 		//컨테이너에 람다형식으로 함수 등록
 		SkillQueue.Enqueue([this]()
 			{
 				BeginStaff_Q();
 			});
+
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		AnimInstance->Montage_Play(SkillMontageData->StaffMontages[0]);
 	}
 }
 
 void USkillComponent::EndStaff_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	bCanChangeWeapon = true;
+}
+
+void USkillComponent::Staff_Q_Skill()
+{
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Pause(SkillMontageData->StaffMontages[0]);
+	bCasting = true;
+	bCanCastingAttack = false;
 }
 
 void USkillComponent::BeginStaff_W()
@@ -648,14 +670,10 @@ void USkillComponent::BeginStaff_R()
 			Thunderbolt->SetOwner(Character);
 			Thunderbolt->ActiveThunderbolt();
 		}, 2.f, false);
-	
+
 }
 
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
-{
-}
-
-void USkillComponent::Staff_Q_Skill()
 {
 }
 
@@ -681,7 +699,7 @@ void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& Cooldo
 
 	Widget->SetMaxCooldown(CooldownDuration, CurrentWeaponType, SkillType);
 	Widget->StartCooldown(CurrentWeaponType, SkillType);
-	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType,Timer);
+	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType, Timer);
 }
 
 void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
