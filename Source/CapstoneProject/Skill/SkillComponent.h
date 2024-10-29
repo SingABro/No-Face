@@ -77,12 +77,12 @@ public:
 
 /* 스킬 섹션 */
 // 캐스팅 스킬 실행 순서
-// 1. bCanChangeWeapon Flag true로 변환 -> 스킬 실행 중 무기 교체 불가능
-// 2. bCanCastingAttack Flag true로 변환 -> 변환시 CharacterBase 클래스에서 기본 공격을 실행할 수 없음
-// 3. SkillQueue에 함수를 넣고 움직임 금지 후 애니메이션 몽타주 실행
-// 4. 애니메이션 몽타주 중간 Notify를 통해 몽타주를 멈추고 bCasting을 활성화함으로써 스킬 시전 이미지가 나옴
-// 5. bCasting이 활성화 된 후 좌클릭 클릭시 스킬이 실행되며 쿨타임과 ESkillState가 Progress 상태가 된다.
-// 6. 스킬 실행이 끝나면 움직임 활성화 -> 스킬 사용 가능 -> 무기 교체 가능 상태가 된다.
+// 1. bCanWeaponChange = false -> 스킬 시전 중 무기 교체 불가능
+// 2. 스킬이 쿨타임인지 || 현재 스킬 실행중이 아닌지 검사
+// 3. bCasting = true -> 스킬 시전 범위 표시 및 캐스팅 상태로 좌클릭시 스킬 나가는 형태 그 후 함수 자기 자신을 람다 함수로 Queue에 넣음
+// 4. 좌클릭을 통해 함수가 한번 더 호출 되면 bCasting이 true인 분기로 빠지며 쿨타임과 현재 스킬 실행 중 상태로 변경한다.
+// 5. bCasting = false 후 애니메이션 실행
+// 6. 애니메이션 중 이펙트가 생성될 타이밍에 Notify를 넣고, Notify에서 실행시킬 함수로 이펙트를 소환한다.
 private:
 	//Sword Skill Montage
 	void BeginSword_Q();	//검 Q - 찌르기 시작
