@@ -12,6 +12,7 @@
 
 DECLARE_DELEGATE(FParryingSign)
 DECLARE_DELEGATE(FShieldSign)
+DECLARE_DELEGATE(FOnCastingSign)
 
 UENUM(BlueprintType)
 enum class ESkillState : uint8
@@ -38,8 +39,12 @@ public:
 	FORCEINLINE bool GetCastingFlag() { return bCasting; }
 	FORCEINLINE void SetCastingFlag(bool InCasting) { bCasting = InCasting; }
 
+	/* 캐스팅 공격 애니메이션 실행 전 공격 방지 플래그 */
+	FORCEINLINE bool GetCanCastingAttack() { return  bCanCastingAttack; }
+
 	/* 스킬 실행 중 무기 교체 방지 */
 	FORCEINLINE bool CanChangeWeapon() { return bCanChangeWeapon; }
+	FORCEINLINE void SetCanChangeWeapon(bool InCanChangeWeapon) { bCanChangeWeapon = InCanChangeWeapon; }
 
 	/* 스킬 실행 중 기본 공격 방지 */
 	FORCEINLINE ESkillState& GetSkillState() { return CurrentSkillState; }
@@ -74,7 +79,14 @@ public:
 	/* 현재 캐스팅되는 스킬을 담을 컨테이너 */
 	TQueue<TFunction<void()>> SkillQueue;
 
-	
+/* 스킬 섹션 */
+// 캐스팅 스킬 실행 순서
+// 1. bCanChangeWeapon Flag true로 변환 -> 스킬 실행 중 무기 교체 불가능
+// 2. bCanCastingAttack Flag true로 변환 -> 변환시 CharacterBase 클래스에서 기본 공격을 실행할 수 없음
+// 3. SkillQueue에 함수를 넣고 움직임 금지 후 애니메이션 몽타주 실행
+// 4. 애니메이션 몽타주 중간 Notify를 통해 몽타주를 멈추고 bCasting을 활성화함으로써 스킬 시전 이미지가 나옴
+// 5. bCasting이 활성화 된 후 좌클릭 클릭시 스킬이 실행되며 쿨타임과 ESkillState가 Progress 상태가 된다.\
+// 6. 스킬 실행이 끝나면 움직임 활성화 -> 스킬 사용 가능 -> 무기 교체 가능 상태가 된다.
 private:
 	//Sword Skill Montage
 	void BeginSword_Q();	//검 Q - 찌르기 시작
@@ -95,21 +107,24 @@ private:
 	//Bow Skill Montage
 	void BeginBow_Q(); //활 Q - 전방에 여러발 날리기 (애쉬 W) 시작
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
+	virtual void Bow_Q_Skill() override; //활 Q 화살 소환 로직
+	
 	void BeginBow_W(); //활 W - 범위에 화살 뿌리기
 	void EndBow_W(class UAnimMontage* Target, bool IsProperlyEnded);
+	virtual void Bow_W_Skill() override; //활 W 애니메이션 중간에 멈추기
+
 	void BeginBow_E(); //활 E - 백스텝
 	void EndBow_E(class UAnimMontage* Target, bool IsProperlyEnded);
 	void BeginBow_R(); //활 R - 기 모았다가 쏘기
 	void EndBow_R(class UAnimMontage* Target, bool IsProperlyEnded);
 	void FireBow_R();
 
-	virtual void Bow_Q_Skill() override; //활 Q 화살 소환 로직
-	virtual void Bow_W_Skill() override; //활 W 애니메이션 중간에 멈추기
-
-
+	
 	//Staff Skill Montage
 	void BeginStaff_Q(); //스태프 Q - 메테오 시작
 	void EndStaff_Q(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 Q - 메테오 끝
+	virtual void Staff_Q_Skill() override;
+
 	void BeginStaff_W(); //스태프 W - 범위 바인딩 시작
 	void EndStaff_W(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 W - 범위 바인딩 끝
 	void BeginStaff_E(); //스태프 E - 범위 쉴?드 시작
@@ -117,7 +132,6 @@ private:
 	void BeginStaff_R(); //스태프 R - 주위 번개 공격 시작
 	void EndStaff_R(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 R - 주위 번개 공격 끝
 
-	virtual void Staff_Q_Skill() override;
 
 	/* 스킬 몽타주 모아놓은 Primary Asset */
 	UPROPERTY(EditAnywhere, Category = "Montage")
@@ -126,7 +140,6 @@ private:
 	/* 스킬 시전할 곳 표시 하기 위한 데이터 */
 	FHitResult Cursor;
 	bool bCasting = false;
-
 
 /* Sword 데이터 */
 private:
@@ -260,8 +273,8 @@ private:
 	TObjectPtr<class APlayerController> PlayerController;
 
 	bool bCanChangeWeapon = true;
+	bool bCanCastingAttack = false;
 	int32 CurrentWeaponType = 0;
-
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
 
 
