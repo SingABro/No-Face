@@ -550,6 +550,9 @@ void USkillComponent::Bow_W_Skill()
 /************* 지팡이 스킬 라인 *************/
 void USkillComponent::BeginStaff_Q()
 {
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	bCanChangeWeapon = false;
+
 	if (bCasting)
 	{
 		StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q, CurrentWeaponType, Staff_Q_Timer);
@@ -649,6 +652,10 @@ void USkillComponent::BeginStaff_R()
 }
 
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
+{
+}
+
+void USkillComponent::Staff_Q_Skill()
 {
 }
 

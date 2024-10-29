@@ -42,6 +42,7 @@ private:
 	void SwordDefaultAttackHitDebug(const FVector& Start, const FVector& ForwardVector, float AttackRange, const FColor& Color, float Degree);
 
 	FTimerHandle SwordComboTimer;
+	bool SwordHasNextComboCommand = false;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UCharacterComboAttackData> SwordComboData;
@@ -85,6 +86,7 @@ private:
 	void CheckStaffCombo();
 
 	FTimerHandle StaffComboTimer;
+	bool StaffHasNextComboCommand = false;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UCharacterComboAttackData> StaffComboData;
@@ -94,9 +96,8 @@ private:
 
 /* 유틸리티 */
 private:
-	int32 CurrentCombo = 0;
 	int32 CurrentWeaponType;
-	bool HasNextComboCommand = false;
+	int32 CurrentCombo = 0;
 
 	bool bCanChangeWeapon = true;
 
