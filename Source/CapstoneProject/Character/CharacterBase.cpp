@@ -306,12 +306,9 @@ void ACharacterBase::OnAttackStart()
 		}
 	}
 
-	if (!SkillComponent->GetCanCastingAttack())
-	{
-		OnClickStart();
-		RotateToTarget();
-		AttackComponent->BeginAttack();
-	}
+	OnClickStart();
+	RotateToTarget();
+	AttackComponent->BeginAttack();
 }
 
 bool ACharacterBase::TraceAttack()
