@@ -12,7 +12,6 @@
 
 DECLARE_DELEGATE(FParryingSign)
 DECLARE_DELEGATE(FShieldSign)
-DECLARE_DELEGATE(FOnCastingSign)
 
 UENUM(BlueprintType)
 enum class ESkillState : uint8
@@ -127,6 +126,8 @@ private:
 
 	void BeginStaff_W(); //스태프 W - 범위 바인딩 시작
 	void EndStaff_W(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 W - 범위 바인딩 끝
+	virtual void Staff_W_Skill() override;
+
 	void BeginStaff_E(); //스태프 E - 범위 쉴?드 시작
 	void EndStaff_E(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 E - 쉴?드 끝
 	void BeginStaff_R(); //스태프 R - 주위 번개 공격 시작

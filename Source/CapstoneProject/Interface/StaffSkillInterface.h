@@ -23,4 +23,5 @@ class CAPSTONEPROJECT_API IStaffSkillInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void Staff_Q_Skill() = 0;
+	virtual void Staff_W_Skill() = 0;
 };
