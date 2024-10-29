@@ -58,14 +58,29 @@ void UCharacterDefaultAttackComponent::BeginAttack()
 		}
 	}
 
-	if (!SwordComboTimer.IsValid())
+	if (CurrentWeaponType == 0)
 	{
-		HasNextComboCommand = false;
+		if (!SwordComboTimer.IsValid())
+		{
+			SwordHasNextComboCommand = false;
+		}
+		else
+		{
+			SwordHasNextComboCommand = true;
+		}
 	}
-	else
+	else if (CurrentWeaponType == 2)
 	{
-		HasNextComboCommand = true;
+		if (!StaffComboTimer.IsValid())
+		{
+			StaffHasNextComboCommand = false;
+		}
+		else
+		{
+			StaffHasNextComboCommand = true;
+		}
 	}
+	
 }
 
 void UCharacterDefaultAttackComponent::BeginSwordDefaultAttack()
@@ -109,7 +124,7 @@ void UCharacterDefaultAttackComponent::SetSwordComboTimer()
 void UCharacterDefaultAttackComponent::CheckSwordCombo()
 {
 	SwordComboTimer.Invalidate();
-	if (HasNextComboCommand)
+	if (SwordHasNextComboCommand)
 	{
 		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -117,7 +132,7 @@ void UCharacterDefaultAttackComponent::CheckSwordCombo()
 		FName NextSection = *FString::Printf(TEXT("%s%d"), *SwordComboData->MontageSectionNamePrefix, CurrentCombo);
 		AnimInstance->Montage_JumpToSection(NextSection, SwordDefaultAttackMontage);
 		SetSwordComboTimer();
-		HasNextComboCommand = false;
+		SwordHasNextComboCommand = false;
 	}
 }
 
@@ -248,18 +263,53 @@ void UCharacterDefaultAttackComponent::EndAnimation()
 
 void UCharacterDefaultAttackComponent::BeginStaffDefaultAttack()
 {
-	UE_LOG(LogTemp, Display, TEXT("지팡이 기본 공격"));
+	bCanChangeWeapon = false;
+	CurrentCombo = 1;
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	AnimInstance->Montage_Play(StaffDefaultAttackMontage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &UCharacterDefaultAttackComponent::EndStaffDefaultAttack);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, StaffDefaultAttackMontage);
+
+	StaffComboTimer.Invalidate();
+	SetStaffComboTimer();
 }
 
 void UCharacterDefaultAttackComponent::EndStaffDefaultAttack(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	ensure(CurrentCombo != 0);
+	
+	CurrentCombo = 0;
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	bCanChangeWeapon = true;
 }
 
 void UCharacterDefaultAttackComponent::SetStaffComboTimer()
 {
+	int32 Index = CurrentCombo - 1;
+	ensure(StaffComboData->EffectiveFrameCount.IsValidIndex(Index));
+
+	float EffectiveTime = (StaffComboData->EffectiveFrameCount[Index] / StaffComboData->FrameRate);
+	if (EffectiveTime >= 0.f)
+	{
+		GetWorld()->GetTimerManager().SetTimer(StaffComboTimer, this, &UCharacterDefaultAttackComponent::CheckStaffCombo, EffectiveTime, false);
+	}
 }
 
 void UCharacterDefaultAttackComponent::CheckStaffCombo()
 {
+	StaffComboTimer.Invalidate();
+	if (StaffHasNextComboCommand)
+	{
+		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+
+		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, StaffComboData->MaxComboCount);
+		FName NextSection = *FString::Printf(TEXT("%s%d"), *StaffComboData->MontageSectionNamePrefix, CurrentCombo);
+		AnimInstance->Montage_JumpToSection(NextSection, StaffDefaultAttackMontage);
+		SetStaffComboTimer();
+		StaffHasNextComboCommand = false;	
+	}
 }
 

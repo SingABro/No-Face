@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Interface/SwordSkillInterface.h"
 #include "Interface/BowSkillInterface.h"
+#include "Interface/StaffSkillInterface.h"
 #include "Interface/PlayerSkillUIInterface.h"
 #include "SkillComponent.generated.h"
 
@@ -20,7 +21,7 @@ enum class ESkillState : uint8
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public ISwordSkillInterface, public IBowSkillInterface, public IPlayerSkillUIInterface
+class CAPSTONEPROJECT_API USkillComponent : public UActorComponent, public ISwordSkillInterface, public IBowSkillInterface, public IStaffSkillInterface, public IPlayerSkillUIInterface
 {
 	GENERATED_BODY()
 
@@ -115,6 +116,8 @@ private:
 	void EndStaff_E(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 E - 쉴?드 끝
 	void BeginStaff_R(); //스태프 R - 주위 번개 공격 시작
 	void EndStaff_R(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 R - 주위 번개 공격 끝
+
+	virtual void Staff_Q_Skill() override;
 
 	/* 스킬 몽타주 모아놓은 Primary Asset */
 	UPROPERTY(EditAnywhere, Category = "Montage")
