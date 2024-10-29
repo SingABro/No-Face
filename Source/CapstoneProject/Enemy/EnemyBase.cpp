@@ -74,7 +74,6 @@ void AEnemyBase::SetEnemySkill1Delegate(const FEnemySkill1Finished& InEnemySkill
 
 void AEnemyBase::AttackByAI()
 {
-	UE_LOG(LogTemp, Display, TEXT("몬스터 공격"));
 
 }
 

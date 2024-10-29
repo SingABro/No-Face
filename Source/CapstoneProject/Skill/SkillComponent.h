@@ -87,19 +87,20 @@ private:
 	//Sword Skill Montage
 	void BeginSword_Q();	//검 Q - 찌르기 시작
 	void EndSword_Q(class UAnimMontage* Target, bool IsProperlyEnded);	//검 Q - 찌르기 끝
+	virtual void Sword_Q_SkillHitCheck() override;
+
 	void BeginSword_W(); //검 W - 휠윈드 시작
 	void EndSword_W(class UAnimMontage* Target, bool IsProperlyEnded); //검 W - 휠윈드 끝
+	virtual void Sword_W_SkillHitCheck() override;
+
 	void BeginSword_E(); //검 E - 패링 시작
 	void EndSword_E(class UAnimMontage* Target, bool IsProperlyEnded); //검 E - 패링 끝
+
 	void BeginSword_R(); //검 R - 검기 시작
 	void EndSword_R(class UAnimMontage* Target, bool IsProperlyEnded); //검 R - 검기 끝
-
-	/* 검 히트 체크 */
-	virtual void Sword_Q_SkillHitCheck() override;
-	virtual void Sword_W_SkillHitCheck() override;
 	virtual void Sword_R_SkillHitCheck() override;
-
 	
+
 	//Bow Skill Montage
 	void BeginBow_Q(); //활 Q - 전방에 여러발 날리기 (애쉬 W) 시작
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
@@ -113,7 +114,7 @@ private:
 	void EndBow_E(class UAnimMontage* Target, bool IsProperlyEnded);
 	void BeginBow_R(); //활 R - 기 모았다가 쏘기
 	void EndBow_R(class UAnimMontage* Target, bool IsProperlyEnded);
-	void FireBow_R();
+	virtual void Bow_R_Skill() override;
 
 	
 	//Staff Skill Montage
@@ -138,6 +139,11 @@ private:
 	/* 스킬 시전할 곳 표시 하기 위한 데이터 */
 	FHitResult Cursor;
 	bool bCasting = false;
+
+	/* 점프 스킬 모션 워핑 */
+	void Bow_R_MotionWarpSet();
+	void Staff_W_MotionWarpSet();
+
 
 /* Sword 데이터 */
 private:
@@ -274,6 +280,7 @@ private:
 	int32 CurrentWeaponType = 0;
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
 
+	class UMotionWarpingComponent* GetMotionWarpComponent();
 
 /*스킬 레벨 강화*/
 public:

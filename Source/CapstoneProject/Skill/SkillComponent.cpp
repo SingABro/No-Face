@@ -21,6 +21,7 @@
 #include "UI/HUDWidget.h"
 #include "Stat/CharacterStatComponent.h"
 #include "Stat/CharacterDataStat.h"
+#include "MotionWarpingComponent.h"
 
 USkillComponent::USkillComponent()
 {
@@ -158,7 +159,7 @@ void USkillComponent::BeginSword_Q()
 
 	bCanChangeWeapon = false;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[0], 1.0f);
+	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[0], 3.f);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndSword_Q);
@@ -170,6 +171,16 @@ void USkillComponent::EndSword_Q(UAnimMontage* Target, bool IsProperlyEnded)
 	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
+}
+
+void USkillComponent::Sword_Q_SkillHitCheck()
+{
+	FVector SpawnLocation = Character->GetActorLocation() + Character->GetActorForwardVector() * 100.f;
+	FRotator SpawnRotation = Character->GetActorRotation();
+
+	ASwordAura* SwordAura = GetWorld()->SpawnActor<ASwordAura>(SwordAuraClass, SpawnLocation, SpawnRotation);
+	SwordAura->SetOwner(Character);
+	SwordAura->Init(Character->GetActorForwardVector());
 }
 
 void USkillComponent::BeginSword_W()
@@ -188,7 +199,7 @@ void USkillComponent::BeginSword_W()
 
 	bCanChangeWeapon = false;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[1], 1.0f);
+	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[1], 1.5f);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndSword_W);
@@ -200,6 +211,32 @@ void USkillComponent::EndSword_W(UAnimMontage* Target, bool IsProperlyEnded)
 	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
+}
+
+void USkillComponent::Sword_W_SkillHitCheck()
+{
+	const float Damage = 200.f/* 스텟 설정 필요 Stat->Sword_W_Damage*/;
+	const float Radius = 200.f/* 스텟 설정 필요 Stat->Sword_W_Range*/;
+
+	FColor Color = FColor::Red;
+
+	FVector Origin = Character->GetActorLocation();
+	FCollisionQueryParams Params(NAME_None, true, Character);
+	TArray<FOverlapResult> OverlapResults;
+
+	float UpgradeDamage = Sword_R_Upgrade * 50.0f;
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			OverlapResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+			Color = FColor::Green;
+		}
+	}
+	DrawDebugSphere(GetWorld(), Origin, Radius, 32, Color, false, 3.f);
 }
 
 void USkillComponent::BeginSword_E()
@@ -273,74 +310,9 @@ void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::Sword_Q_SkillHitCheck()
-{
-	FColor Color = FColor::Red;
-
-	FVector Origin = Character->GetActorLocation() + Character->GetActorForwardVector() * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
-	FVector End = Origin + (Character->GetActorForwardVector() * 200.f /* 스텟 설정 필요 */);
-	FVector CapsuleExtend = FVector(200.f, 50.f, 50.f);
-	FCollisionQueryParams Params(NAME_None, false, Character);
-	TArray<FHitResult> HitResults;
-
-	float UpgradeDamage = Sword_Q_Upgrade * 50.0f;
-
-	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat(), ECC_GameTraceChannel2, FCollisionShape::MakeCapsule(CapsuleExtend), Params);
-	if (bHit)
-	{
-		FDamageEvent DamageEvent;
-		for (const auto& HitResult : HitResults)
-		{
-			HitResult.GetActor()->TakeDamage(100.f + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
-			Color = FColor::Green;
-		}
-	}
-
-	DrawDebugCapsule(GetWorld(),
-		(Origin + End) * 0.5f,
-		(End - Origin).Size() * 0.5f,
-		CapsuleExtend.Y,
-		FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat(),
-		Color,
-		false,
-		3.f
-	);
-}
-
-void USkillComponent::Sword_W_SkillHitCheck()
-{
-	const float Damage = 200.f/* 스텟 설정 필요 Stat->Sword_W_Damage*/;
-	const float Radius = 200.f/* 스텟 설정 필요 Stat->Sword_W_Range*/;
-
-	FColor Color = FColor::Red;
-
-	FVector Origin = Character->GetActorLocation();
-	FCollisionQueryParams Params(NAME_None, true, Character);
-	TArray<FOverlapResult> OverlapResults;
-
-	float UpgradeDamage = Sword_R_Upgrade * 50.0f;
-
-	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
-	if (bHit)
-	{
-		FDamageEvent DamageEvent;
-		for (const auto& OverlapResult : OverlapResults)
-		{
-			OverlapResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
-			Color = FColor::Green;
-		}
-	}
-	DrawDebugSphere(GetWorld(), Origin, Radius, 32, Color, false, 3.f);
-}
-
 void USkillComponent::Sword_R_SkillHitCheck()
 {
-	FVector SpawnLocation = Character->GetActorLocation() + Character->GetActorForwardVector() * 100.f;
-	FRotator SpawnRotation = Character->GetActorRotation();
-
-	ASwordAura* SwordAura = GetWorld()->SpawnActor<ASwordAura>(SwordAuraClass, SpawnLocation, SpawnRotation);
-	SwordAura->SetOwner(Character);
-	SwordAura->Init(Character->GetActorForwardVector());
+	
 }
 
 
@@ -460,7 +432,7 @@ void USkillComponent::BeginBow_E()
 
 	float Upgrade = Bow_E_Upgrade * -100.0f - 500.0f;
 	FVector BackstepDirection = Character->GetActorForwardVector() * Upgrade;
-	Character->LaunchCharacter(BackstepDirection + FVector(0.f, 0.f, 100.f), true, true);
+	Character->LaunchCharacter(BackstepDirection * 10.f, true, false);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndBow_E);
@@ -488,7 +460,9 @@ void USkillComponent::BeginBow_R()
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;
-	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	Bow_R_MotionWarpSet();
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[3]);
 
 	FOnMontageEnded MontageEnd;
@@ -498,24 +472,28 @@ void USkillComponent::BeginBow_R()
 
 void USkillComponent::EndBow_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	FireBow_R();
-
 	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMotionWarpComponent()->RemoveAllWarpTargets();
 	bCanChangeWeapon = true;
 }
 
-void USkillComponent::FireBow_R()
+void USkillComponent::Bow_R_Skill()
 {
 	TArray<FHitResult> HitResults;
 
 	const float Damage = 100.f;
 	const float Range = 500.f;
 	FVector Origin = Character->GetActorLocation();
-	FVector End = Origin + (Character->GetActorForwardVector() * Range);
-
 	FVector ForwardVector = Character->GetActorForwardVector() * Range;
-	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
+
+	//사선 -45도 각도로 꽂히도록 설정
+	FVector End = ForwardVector.RotateAngleAxis(-45.f, FVector::RightVector);
+
+
+	FQuat RootRot = FQuat::MakeFromEuler(FVector(-45.f, 0.f, 0.f));
+
+
 	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
@@ -527,7 +505,6 @@ void USkillComponent::FireBow_R()
 		FDamageEvent DamageEvent;
 		for (const auto& HitResult : HitResults)
 		{
-			UE_LOG(LogTemp, Display, TEXT("HitResult Actor Name : %s"), *HitResult.GetActor()->GetActorNameOrLabel());
 			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
 		}
 	}
@@ -601,8 +578,9 @@ void USkillComponent::BeginStaff_W()
 		CurrentSkillState = ESkillState::Progress;
 
 		bCasting = false;
-
-		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+		Staff_W_MotionWarpSet();
 		AnimInstance->Montage_Play(SkillMontageData->StaffMontages[1]);
 
 		FOnMontageEnded MontageEnd;
@@ -625,8 +603,9 @@ void USkillComponent::BeginStaff_W()
 
 void USkillComponent::EndStaff_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	CurrentSkillState = ESkillState::CanSkill;
+	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMotionWarpComponent()->RemoveAllWarpTargets();
 	bCanChangeWeapon = true;
 }
 
@@ -691,6 +670,20 @@ void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
+void USkillComponent::Bow_R_MotionWarpSet()
+{
+	FVector Origin = Character->GetActorLocation();
+	FVector Target = (Origin + FVector(0.f, 0.f, 70.f)) + Character->GetActorForwardVector() * -250.f;
+	GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocation(TEXT("BowR"), Target);
+}
+
+void USkillComponent::Staff_W_MotionWarpSet()
+{
+	FVector Origin = Character->GetActorLocation();
+	FVector Target = Origin + Character->GetActorUpVector() * 200.f;
+	GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocation(TEXT("StaffW"), Target);
+}
+
 void USkillComponent::BeginDash()
 {
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DashEffect, Character->GetActorLocation(), FRotator::ZeroRotator);
@@ -714,6 +707,11 @@ void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& Cooldo
 	Widget->SetMaxCooldown(CooldownDuration, CurrentWeaponType, SkillType);
 	Widget->StartCooldown(CurrentWeaponType, SkillType);
 	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType, Timer);
+}
+
+UMotionWarpingComponent* USkillComponent::GetMotionWarpComponent()
+{
+	return Character->GetComponentByClass<UMotionWarpingComponent>();
 }
 
 void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
