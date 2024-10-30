@@ -290,6 +290,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stat")
 	int GetSkillUpgradeLevel(int WeaponType, int SkillType);
 
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	void PlusSkillPoint();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	TObjectPtr<class UCharacterStatComponent> StatComponent;

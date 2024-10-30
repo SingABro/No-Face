@@ -852,3 +852,10 @@ int USkillComponent::GetSkillUpgradeLevel(int WeaponType, int SkillType)
 	return SkillLevel;
 }
 
+void USkillComponent::PlusSkillPoint()
+{
+	int SkillPoint = StatComponent->GetCurrentSkillPoint();
+	SkillPoint += 1;
+	StatComponent->SetCurrentSkillPoint(SkillPoint);
+}
+
