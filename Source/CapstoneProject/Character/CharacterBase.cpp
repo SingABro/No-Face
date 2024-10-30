@@ -239,6 +239,7 @@ void ACharacterBase::Q_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_Q();
 }
 
@@ -246,6 +247,7 @@ void ACharacterBase::W_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_W();
 }
 
@@ -253,6 +255,7 @@ void ACharacterBase::E_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_E();
 }
 
@@ -260,6 +263,7 @@ void ACharacterBase::R_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_R();
 }
 
@@ -338,7 +342,7 @@ void ACharacterBase::UpdateRotate()
 
 	FRotator TargetRotation = (TargetHitResult.Location - GetActorLocation()).Rotation();
 	TargetRotation.Pitch = 0;
-	SetActorRelativeRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 20.0f));
+	SetActorRelativeRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 50.0f));
 
 	if (FMath::Abs((TargetRotation - GetActorRotation()).Yaw) < 1.0f)
 	{

@@ -99,7 +99,10 @@ void USkillComponent::PlaySkill_E()
 		BeginSword_E();
 		break;
 	case 1:
-		BeginBow_E();
+		GetWorld()->GetTimerManager().SetTimer(TempTimer, [&]()
+			{
+				BeginBow_E();
+			}, 0.1f, false);
 		break;
 	case 2:
 		BeginStaff_E();
@@ -117,7 +120,10 @@ void USkillComponent::PlaySkill_R()
 		BeginSword_R();
 		break;
 	case 1:
-		BeginBow_R();
+		GetWorld()->GetTimerManager().SetTimer(TempTimer, [&]()
+			{
+				BeginBow_R();
+			}, 0.1f, false);
 		break;
 	case 2:
 		BeginStaff_R();
@@ -299,7 +305,7 @@ void USkillComponent::BeginSword_R()
 
 	bCanChangeWeapon = false;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[3], 3.0f);
+	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[3], 1.0f);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndSword_R);
@@ -338,7 +344,7 @@ void USkillComponent::BeginBow_Q()
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;
-	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	Bow_Q_MotionWarpSet();
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[0]);
 
 	FOnMontageEnded MontageEnd;
@@ -348,26 +354,40 @@ void USkillComponent::BeginBow_Q()
 
 void USkillComponent::EndBow_Q(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	CurrentSkillState = ESkillState::CanSkill;
+	GetMotionWarpComponent()->RemoveAllWarpTargets();
 	bCanChangeWeapon = true;
 }
 
 void USkillComponent::Bow_Q_Skill()
 {
-	FVector ForwardVector = Character->GetActorForwardVector();
+	TArray<FHitResult> HitResults;
 
-	for (int32 Degree = -60; Degree <= 60; Degree += 20)
+	const float Damage = 100.f;
+	const float Range = 500.f;
+	FVector Origin = Character->GetActorLocation();
+	FVector End = Origin + (Character->GetActorForwardVector() * Range);
+
+	FVector ForwardVector = Character->GetActorForwardVector() * Range;
+	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
+	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
+	FCollisionQueryParams Params(NAME_None, true, Character);
+
+	float UpgradeDamage = Bow_Q_Upgrade * 50.0f;
+
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, RootRot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
+	if (bHit)
 	{
-		FVector SpawnVector = ForwardVector.RotateAngleAxis(Degree, FVector::UpVector);
-
-		FVector SpawnLocation = Character->GetActorLocation() + FVector(10.f, 0.f, 0.f);
-		FRotator SpawnRotator = SpawnVector.Rotation();
-
-		AArrow* Arrow = GetWorld()->SpawnActor<AArrow>(ArrowClass, SpawnLocation, SpawnRotator);
-		Arrow->SetOwner(Character);
-		Arrow->Init(SpawnVector, SpawnLocation, SpawnRotator);
+		FDamageEvent DamageEvent;
+		for (const auto& HitResult : HitResults)
+		{
+			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+		}
 	}
+
+	DrawDebugBox(GetWorld(), Origin, BoxExtent, RootRot, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, RootRot, FColor::Green, false, 5.f);
+
 }
 
 void USkillComponent::BeginBow_W()
@@ -671,6 +691,13 @@ void USkillComponent::BeginStaff_R()
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+void USkillComponent::Bow_Q_MotionWarpSet()
+{
+	FVector Origin = Character->GetActorLocation();
+	FVector Target = Origin + Character->GetActorForwardVector() * 150.f;
+	GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocation(TEXT("BowQ"), Target);
 }
 
 void USkillComponent::Bow_R_MotionWarpSet()
