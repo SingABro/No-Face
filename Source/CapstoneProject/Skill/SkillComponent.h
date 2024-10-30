@@ -116,8 +116,8 @@ private:
 	void BeginBow_R(); //활 R - 날아서 쏘기
 	void EndBow_R(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Bow_R_Skill() override;
-
 	
+
 	//Staff Skill Montage
 	void BeginStaff_Q(); //스태프 Q - 메테오 시작
 	void EndStaff_Q(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 Q - 메테오 끝
@@ -142,6 +142,7 @@ private:
 	bool bCasting = false;
 
 	/* 점프 스킬 모션 워핑 */
+	void Bow_Q_MotionWarpSet();
 	void Bow_R_MotionWarpSet();
 	void Staff_W_MotionWarpSet();
 
@@ -159,7 +160,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Bow")
 	TSubclassOf<class AArrow> ArrowClass;
 
-	FTimerHandle AutoTargetingTimer;
+	FTimerHandle TempTimer;
+
 
 /* Staff 데이터 */
 private:
