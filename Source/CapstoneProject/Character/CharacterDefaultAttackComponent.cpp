@@ -10,6 +10,7 @@
 #include "Weapon/Bow.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
+#include "Skill/StaffDefaultAttackProjectile.h"
 
 UCharacterDefaultAttackComponent::UCharacterDefaultAttackComponent()
 {
@@ -311,5 +312,14 @@ void UCharacterDefaultAttackComponent::CheckStaffCombo()
 		SetStaffComboTimer();
 		StaffHasNextComboCommand = false;	
 	}
+}
+
+void UCharacterDefaultAttackComponent::StaffDefaultAttack()
+{
+	FVector OriginLoc = Character->GetActorLocation();
+	FRotator OriginRot = Character->GetActorRotation();
+	StaffAttackPtr = GetWorld()->SpawnActor<AStaffDefaultAttackProjectile>(StaffAttackClass, OriginLoc, OriginRot);
+	StaffAttackPtr->SetOwner(Character);
+	StaffAttackPtr->Init(Character->GetActorForwardVector());
 }
 
