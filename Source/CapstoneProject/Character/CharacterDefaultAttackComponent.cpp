@@ -92,7 +92,7 @@ void UCharacterDefaultAttackComponent::BeginSwordDefaultAttack()
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(SwordDefaultAttackMontage);
+	AnimInstance->Montage_Play(SwordDefaultAttackMontage, 1.5f);
 
 	FOnMontageEnded MontageEnded;
 	MontageEnded.BindUObject(this, &UCharacterDefaultAttackComponent::EndSwordDefaultAttack);
@@ -115,7 +115,7 @@ void UCharacterDefaultAttackComponent::SetSwordComboTimer()
 	int32 ComboIndex = CurrentCombo - 1;
 	ensure(SwordComboData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 
-	float ComboEffectiveTime = (SwordComboData->EffectiveFrameCount[ComboIndex] / SwordComboData->FrameRate);
+	float ComboEffectiveTime = (SwordComboData->EffectiveFrameCount[ComboIndex] / SwordComboData->FrameRate) / 1.5f;
 	if (ComboEffectiveTime > 0.0f)
 	{
 		GetWorld()->GetTimerManager().SetTimer(SwordComboTimer, this, &UCharacterDefaultAttackComponent::CheckSwordCombo, ComboEffectiveTime, false);
@@ -316,7 +316,7 @@ void UCharacterDefaultAttackComponent::CheckStaffCombo()
 
 void UCharacterDefaultAttackComponent::StaffDefaultAttack()
 {
-	FVector OriginLoc = Character->GetActorLocation();
+	FVector OriginLoc = Character->GetActorLocation() + Character->GetActorForwardVector() * 100.f;
 	FRotator OriginRot = Character->GetActorRotation();
 	StaffAttackPtr = GetWorld()->SpawnActor<AStaffDefaultAttackProjectile>(StaffAttackClass, OriginLoc, OriginRot);
 	StaffAttackPtr->SetOwner(Character);
