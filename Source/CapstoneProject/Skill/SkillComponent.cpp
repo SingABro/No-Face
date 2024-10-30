@@ -277,7 +277,10 @@ void USkillComponent::ParryingSuccess(AActor* Attacker)
 	if (AEnemyBase* Enemy = Cast<AEnemyBase>(Attacker))
 	{
 		Enemy->Stun();
+		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+		
 		//반격 애니메이션 혹은 추가 공격;
+		AnimInstance->Montage_Play(SkillMontageData->SwordMontages[4]);
 	}
 }
 
@@ -482,7 +485,7 @@ void USkillComponent::Bow_R_Skill()
 {
 	TArray<FHitResult> HitResults;
 
-	const float Damage = 100.f;
+	const float Damage = 1000.f;
 	const float Range = 500.f;
 	FVector Origin = Character->GetActorLocation();
 	FVector ForwardVector = Character->GetActorForwardVector() * Range;
@@ -686,17 +689,17 @@ void USkillComponent::Staff_W_MotionWarpSet()
 
 void USkillComponent::BeginDash()
 {
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DashEffect, Character->GetActorLocation(), FRotator::ZeroRotator);
-	Character->SetActorHiddenInGame(true);
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
-	FVector TargetLocation = Character->GetActorLocation() + Character->GetActorForwardVector() * 500.f;
-	Character->TeleportTo(TargetLocation, Character->GetActorRotation());
+	AnimInstance->Montage_Play(SkillMontageData->DashMontages[0]);
 
-	FTimerHandle VisibleHandle;
-	GetWorld()->GetTimerManager().SetTimer(VisibleHandle, [&]()
-		{
-			Character->SetActorHiddenInGame(false);
-		}, 1.0f, false);
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &USkillComponent::EndDash);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->DashMontages[0]);
+}
+
+void USkillComponent::EndDash(UAnimMontage* Target, bool IsProperlyEnded)
+{
 }
 
 
