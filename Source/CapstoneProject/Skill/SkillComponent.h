@@ -103,7 +103,7 @@ private:
 	
 
 	//Bow Skill Montage
-	void BeginBow_Q(); //활 Q - 전방에 여러발 날리기 (애쉬 W) 시작
+	void BeginBow_Q(); //활 Q - 빵빵빵 쏘기
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
 	virtual void Bow_Q_Skill() override; //활 Q 화살 소환 로직
 	
@@ -113,7 +113,7 @@ private:
 
 	void BeginBow_E(); //활 E - 백스텝
 	void EndBow_E(class UAnimMontage* Target, bool IsProperlyEnded);
-	void BeginBow_R(); //활 R - 기 모았다가 쏘기
+	void BeginBow_R(); //활 R - 날아서 쏘기
 	void EndBow_R(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Bow_R_Skill() override;
 

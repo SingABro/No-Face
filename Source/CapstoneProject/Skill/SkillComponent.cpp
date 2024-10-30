@@ -199,7 +199,7 @@ void USkillComponent::BeginSword_W()
 
 	bCanChangeWeapon = false;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[1], 1.5f);
+	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[1], 1.3f);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndSword_W);
@@ -216,7 +216,7 @@ void USkillComponent::EndSword_W(UAnimMontage* Target, bool IsProperlyEnded)
 void USkillComponent::Sword_W_SkillHitCheck()
 {
 	const float Damage = 200.f/* 스텟 설정 필요 Stat->Sword_W_Damage*/;
-	const float Radius = 200.f/* 스텟 설정 필요 Stat->Sword_W_Range*/;
+	const float Radius = 400.f/* 스텟 설정 필요 Stat->Sword_W_Range*/;
 
 	FColor Color = FColor::Red;
 
