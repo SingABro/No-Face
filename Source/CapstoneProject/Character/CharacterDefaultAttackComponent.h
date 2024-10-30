@@ -6,10 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "Interface/SwordInterface.h"
 #include "Interface/BowInterface.h"
+#include "Interface/StaffInterface.h"
 #include "CharacterDefaultAttackComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAPSTONEPROJECT_API UCharacterDefaultAttackComponent : public UActorComponent, public ISwordInterface, public IBowInterface
+class CAPSTONEPROJECT_API UCharacterDefaultAttackComponent : public UActorComponent, public ISwordInterface, public IBowInterface, public IStaffInterface
 {
 	GENERATED_BODY()
 
@@ -84,6 +85,7 @@ private:
 	void EndStaffDefaultAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 	void SetStaffComboTimer();
 	void CheckStaffCombo();
+	virtual void StaffDefaultAttack() override;
 
 	FTimerHandle StaffComboTimer;
 	bool StaffHasNextComboCommand = false;
@@ -93,6 +95,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> StaffDefaultAttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<class AStaffDefaultAttackProjectile> StaffAttackClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Projectile")
+	TObjectPtr<class AStaffDefaultAttackProjectile> StaffAttackPtr;
 
 /* 유틸리티 */
 private:

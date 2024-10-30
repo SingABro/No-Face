@@ -68,6 +68,7 @@ public:
 
 	/* 공통 스킬 */
 	void BeginDash();
+	void EndDash(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 현재 무기 상태 바꿈 -> CharacterBase에서 실행 */
 	void SetWeaponType(const int32& InCurrentWeaponType);
