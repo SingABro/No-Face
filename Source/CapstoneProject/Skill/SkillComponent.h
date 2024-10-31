@@ -158,6 +158,9 @@ private:
 	TObjectPtr<class UParticleSystem> RainArrows;
 
 	UPROPERTY(EditAnywhere, Category = "Bow")
+	TObjectPtr<class UParticleSystem> Bow_R_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Bow")
 	TSubclassOf<class AArrow> ArrowClass;
 
 	FTimerHandle TempTimer;
@@ -184,6 +187,21 @@ private:
 private:
 	UPROPERTY(EditAnywhere, Category = "Common")
 	TObjectPtr<class UParticleSystem> DashEffect;
+
+/* 유틸리티 */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	TObjectPtr<class ACharacter> Character;
+
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	TObjectPtr<class APlayerController> PlayerController;
+
+	bool bCanChangeWeapon = true;
+	int32 CurrentWeaponType = 0;
+	ESkillState CurrentSkillState = ESkillState::CanSkill;
+
+	class UMotionWarpingComponent* GetMotionWarpComponent();
+	class UParticleSystemComponent* GetParticleComponent();
 
 /* 쿨타임 섹션 */
 private:
@@ -270,20 +288,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
 	float CooldownDuration_Staff_R = 3.f;
-
-/* 유틸리티 */
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Character")
-	TObjectPtr<class ACharacter> Character;
-
-	UPROPERTY(VisibleAnywhere, Category = "Character")
-	TObjectPtr<class APlayerController> PlayerController;
-
-	bool bCanChangeWeapon = true;
-	int32 CurrentWeaponType = 0;
-	ESkillState CurrentSkillState = ESkillState::CanSkill;
-
-	class UMotionWarpingComponent* GetMotionWarpComponent();
 
 /*스킬 레벨 강화*/
 public:

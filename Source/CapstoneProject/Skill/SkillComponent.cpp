@@ -22,6 +22,8 @@
 #include "Stat/CharacterStatComponent.h"
 #include "Stat/CharacterDataStat.h"
 #include "MotionWarpingComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
 
 USkillComponent::USkillComponent()
 {
@@ -468,7 +470,6 @@ void USkillComponent::EndBow_E(UAnimMontage* Target, bool IsProperlyEnded)
 	bCanChangeWeapon = true;
 }
 
-/* 애니메이션이 천천히 실행되고, 카메라가 줌이 되는 효과 추가 하자 */
 void USkillComponent::BeginBow_R()
 {
 	if (!bCanUseSkill_Bow_R || CurrentSkillState == ESkillState::Progress)
@@ -484,6 +485,10 @@ void USkillComponent::BeginBow_R()
 
 	bCanChangeWeapon = false;
 
+	GetParticleComponent()->SetTemplate(Bow_R_Effect);
+	GetParticleComponent()->Activate();
+	GetParticleComponent()->SetRelativeRotation(FRotator(-20.f, 90.f, 0.f));
+	GetParticleComponent()->SetRelativeLocation(FVector(0.f, 50.f, 100.f));
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 	Bow_R_MotionWarpSet();
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[3]);
@@ -495,6 +500,7 @@ void USkillComponent::BeginBow_R()
 
 void USkillComponent::EndBow_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	GetParticleComponent()->Deactivate();
 	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	GetMotionWarpComponent()->RemoveAllWarpTargets();
@@ -729,6 +735,15 @@ void USkillComponent::EndDash(UAnimMontage* Target, bool IsProperlyEnded)
 {
 }
 
+UMotionWarpingComponent* USkillComponent::GetMotionWarpComponent()
+{
+	return Character->GetComponentByClass<UMotionWarpingComponent>();
+}
+
+UParticleSystemComponent* USkillComponent::GetParticleComponent()
+{
+	return Character->GetComponentByClass<UParticleSystemComponent>();
+}
 
 void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType, int32 WeaponType, float& Timer)
 {
@@ -737,11 +752,6 @@ void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& Cooldo
 	Widget->SetMaxCooldown(CooldownDuration, CurrentWeaponType, SkillType);
 	Widget->StartCooldown(CurrentWeaponType, SkillType);
 	Widget->UpdateCooldownBar(CooldownDuration, CooldownTimerHandle, bCanUseSkill, SkillType, WeaponType, Timer);
-}
-
-UMotionWarpingComponent* USkillComponent::GetMotionWarpComponent()
-{
-	return Character->GetComponentByClass<UMotionWarpingComponent>();
 }
 
 void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
@@ -821,7 +831,7 @@ void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
 
 int USkillComponent::GetSkillUpgradeLevel(int WeaponType, int SkillType)
 {
-	int SkillLevel;
+	int SkillLevel = 0;
 	if (WeaponType == 0)
 	{
 		if (SkillType == 1)

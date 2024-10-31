@@ -220,6 +220,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
 	TObjectPtr<class UMotionWarpingComponent> MotionWarpComponent;
 
+/* 파티클 섹션 */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> TestParticleComp; 
+
 /* 유틸리티 섹션 */
 private:
 	class ACPlayerController* GetPlayerController() const;

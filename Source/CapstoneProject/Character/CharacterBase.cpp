@@ -157,6 +157,11 @@ ACharacterBase::ACharacterBase()
 
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarp"));
 
+	TestParticleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Test Particle"));
+	TestParticleComp->SetupAttachment(GetMesh());
+	TestParticleComp->bAutoActivate = false;
+
+
 	/* 스킬 UI */
 	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
 
