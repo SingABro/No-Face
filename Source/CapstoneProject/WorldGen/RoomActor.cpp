@@ -8,7 +8,3 @@ ARoomActor::ARoomActor()
     RootComponent = MeshComponent;
 }
 
-void ARoomActor::BeginPlay()
-{
-    Super::BeginPlay();
-}

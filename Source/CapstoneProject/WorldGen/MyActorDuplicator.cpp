@@ -1,6 +1,8 @@
 #include "MyActorDuplicator.h"
 #include "Engine/World.h"
 #include "Math/UnrealMathUtility.h"  // FMath ����� ���� �ʿ�
+#include "RoomActor.h"  // ARoomActor ����
+
 
 AMyActorDuplicator::AMyActorDuplicator()
 {
@@ -29,13 +31,16 @@ void AMyActorDuplicator::BeginPlay()
 EDirection AMyActorDuplicator::GetRandomDirection(EDirection CurrentDir)
 {
     float RandValue = FMath::FRand();
-    if (RandValue < 0.5f) {
+    if (RandValue < 0.5f) 
+    {
         return CurrentDir;
     }
-    else if (RandValue < 0.75f) {
+    else if (RandValue < 0.75f) 
+    {
         return static_cast<EDirection>((static_cast<uint8>(CurrentDir) * 2) % 15);
     }
-    else {
+    else 
+    {
         return static_cast<EDirection>((static_cast<uint8>(CurrentDir) * 8) % 15);
     }
 }
