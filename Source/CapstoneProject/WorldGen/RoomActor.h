@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
 #include "RoomActor.generated.h"
 
 UCLASS()
@@ -13,10 +12,7 @@ class CAPSTONEPROJECT_API ARoomActor : public AActor
 public:
     ARoomActor();
 
-protected:
-    virtual void BeginPlay() override;
-
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-    UStaticMeshComponent* MeshComponent;
+    TObjectPtr<UStaticMeshComponent> MeshComponent;
 };

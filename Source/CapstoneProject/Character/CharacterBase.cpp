@@ -152,13 +152,14 @@ ACharacterBase::ACharacterBase()
 
 	AttackComponent = CreateDefaultSubobject<UCharacterDefaultAttackComponent>(TEXT("Attack"));
 
-	ShieldParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ShieldParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shiled Particle"));
 	ShieldParticleComponent->SetupAttachment(GetMesh());
 
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarp"));
 
 	TestParticleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Test Particle"));
 	TestParticleComp->SetupAttachment(GetMesh());
+	TestParticleComp->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
 	TestParticleComp->bAutoActivate = false;
 
 
@@ -172,6 +173,7 @@ ACharacterBase::ACharacterBase()
 
 	/* 태그 */
 	Tags.Add(TEXT("Player"));
+
 }
 
 void ACharacterBase::BeginPlay()
@@ -223,6 +225,21 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (CurrentStateType == EPlayerStateType::Shield)
+	{
+		SkillComponent->SetShieldAmount(Damage);
+		if (SkillComponent->GetShieldThreshould() >= SkillComponent->GetShieldAmount())
+		{
+			return Damage;
+		}
+		else
+		{
+			Stat->ApplyDamage(SkillComponent->GetShieldAmount() - SkillComponent->GetShieldThreshould());
+			SkillComponent->SetShieldAmount(-SkillComponent->GetShieldAmount());
+			CurrentStateType = EPlayerStateType::Common;
+		}
+	}
 
 	if (bIsParrying)
 	{
@@ -514,7 +531,7 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 
 void ACharacterBase::StaffCreateShield()
 {
-	ShieldParticleComponent->SetTemplate(ShieldEffect);
+	CurrentStateType = EPlayerStateType::Shield;
 }
 
 void ACharacterBase::DisplaySkillUI()

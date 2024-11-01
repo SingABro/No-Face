@@ -2,13 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
-#include "RoomActor.h"  // ARoomActor ����
 #include "MyActorDuplicator.generated.h"
 
 // ���� ����
 UENUM()
-enum class EDirection : uint8 {
+enum class EDirection : uint8 
+{
     UP = 1,
     RIGHT = 2,
     DOWN = 4,
@@ -17,7 +16,8 @@ enum class EDirection : uint8 {
 
 // Room ����ü
 USTRUCT()
-struct FRoom {
+struct FRoom 
+{
     GENERATED_BODY()
 
     int32 Identity;
@@ -41,7 +41,7 @@ protected:
 public:
     // Static Mesh�� ������ �гο��� ������ �� �ֵ��� ���� ����
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
-    UStaticMesh* StaticMeshToDuplicate;  // Static Mesh ����
+    TObjectPtr<class UStaticMesh> StaticMeshToDuplicate;  // Static Mesh ����
 
     // ������ Static Mesh�� ��ġ�� �̵���Ű�� ���� ����
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
@@ -53,7 +53,7 @@ public:
 
     // ������ �� ���� Ŭ����
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
-    TSubclassOf<ARoomActor> RoomActorClass;
+    TSubclassOf<class ARoomActor> RoomActorClass;
 
 private:
     // ���� ������ �迭

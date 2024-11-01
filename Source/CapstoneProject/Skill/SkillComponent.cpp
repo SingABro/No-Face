@@ -140,6 +140,16 @@ void USkillComponent::SetWeaponType(const int32& InCurrentWeaponType)
 	CurrentWeaponType = InCurrentWeaponType;
 }
 
+void USkillComponent::SetShieldAmount(float InShieldAmount)
+{
+	ShieldAmount += InShieldAmount;
+	if (ShieldAmount <= KINDA_SMALL_NUMBER)
+	{
+		GetParticleComponent(0)->SetTemplate(Staff_E_Effect_Destroy);
+		GetParticleComponent(0)->Activate();
+	}
+}
+
 int USkillComponent::GetWeaponType()
 {
 	return CurrentWeaponType;
@@ -485,10 +495,11 @@ void USkillComponent::BeginBow_R()
 
 	bCanChangeWeapon = false;
 
-	GetParticleComponent()->SetTemplate(Bow_R_Effect);
-	GetParticleComponent()->Activate();
-	GetParticleComponent()->SetRelativeRotation(FRotator(-20.f, 90.f, 0.f));
-	GetParticleComponent()->SetRelativeLocation(FVector(0.f, 50.f, 100.f));
+	GetParticleComponent(1)->SetTemplate(Bow_R_Effect);
+	GetParticleComponent(1)->SetRelativeRotation(FRotator(-20.f, 90.f, 0.f));
+	GetParticleComponent(1)->SetRelativeLocation(FVector(0.f, 50.f, 100.f));
+	GetParticleComponent(1)->SetWorldScale3D(FVector(3.f, 3.f, 3.f));
+	GetParticleComponent(1)->Activate();
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 	Bow_R_MotionWarpSet();
 	AnimInstance->Montage_Play(SkillMontageData->BowMontages[3]);
@@ -500,7 +511,7 @@ void USkillComponent::BeginBow_R()
 
 void USkillComponent::EndBow_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetParticleComponent()->Deactivate();
+	GetParticleComponent(1)->Deactivate();
 	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	GetMotionWarpComponent()->RemoveAllWarpTargets();
@@ -512,23 +523,18 @@ void USkillComponent::Bow_R_Skill()
 	TArray<FHitResult> HitResults;
 
 	const float Damage = 1000.f;
-	const float Range = 500.f;
+	const float Range = 800.f;
 	FVector Origin = Character->GetActorLocation();
 	FVector ForwardVector = Character->GetActorForwardVector() * Range;
 
-	//사선 -45도 각도로 꽂히도록 설정
-	FVector End = ForwardVector.RotateAngleAxis(-45.f, FVector::RightVector);
+	FVector End = Origin + ForwardVector;
 
-
-	FQuat RootRot = FQuat::MakeFromEuler(FVector(-45.f, 0.f, 0.f));
-
-
-	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
+	FVector BoxExtent = FVector(100.f, 200.f, 300.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	float UpgradeDamage = Bow_R_Upgrade * 50.0f;
 
-	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, RootRot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
@@ -538,8 +544,8 @@ void USkillComponent::Bow_R_Skill()
 		}
 	}
 
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, RootRot, FColor::Green, false, 5.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, RootRot, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), Origin, BoxExtent, FQuat::Identity, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, FQuat::Identity, FColor::Green, false, 5.f);
 }
 
 /************* 지팡이 스킬 라인 *************/
@@ -655,6 +661,9 @@ void USkillComponent::BeginStaff_E()
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	AnimInstance->Montage_Play(SkillMontageData->StaffMontages[2]);
 
+	GetParticleComponent(0)->SetTemplate(Staff_E_Effect);
+	GetParticleComponent(0)->Activate();
+
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndStaff_E);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->StaffMontages[2]);
@@ -740,9 +749,11 @@ UMotionWarpingComponent* USkillComponent::GetMotionWarpComponent()
 	return Character->GetComponentByClass<UMotionWarpingComponent>();
 }
 
-UParticleSystemComponent* USkillComponent::GetParticleComponent()
+UParticleSystemComponent* USkillComponent::GetParticleComponent(uint8 Index)
 {
-	return Character->GetComponentByClass<UParticleSystemComponent>();
+	TArray<UParticleSystemComponent*> ParticleComponents;
+	Character->GetComponents(ParticleComponents);
+	return ParticleComponents[Index];
 }
 
 void USkillComponent::StartCooldown(float CooldownDuration, FTimerHandle& CooldownTimerHandle, bool& bCanUseSkill, ESkillType SkillType, int32 WeaponType, float& Timer)

@@ -30,6 +30,15 @@ struct FTakeItemDelegateWrapper
 	FTakeItemDelegate TakeItemDelegate;
 };
 
+UENUM(BlueprintType)
+enum class EPlayerStateType : uint8
+{
+	Common = 0,
+	Shield,
+	Stun,
+	Dead
+};
+
 UCLASS()
 class CAPSTONEPROJECT_API ACharacterBase : public ACharacter
 {
@@ -202,8 +211,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ShieldParticleComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystem> ShieldEffect;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> TestParticleComp;
 
 /* UI 섹션 */
 private:
@@ -220,10 +229,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
 	TObjectPtr<class UMotionWarpingComponent> MotionWarpComponent;
 
-/* 파티클 섹션 */
+/* 상태 섹션 */
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystemComponent> TestParticleComp; 
+	EPlayerStateType CurrentStateType = EPlayerStateType::Common;
 
 /* 유틸리티 섹션 */
 private:

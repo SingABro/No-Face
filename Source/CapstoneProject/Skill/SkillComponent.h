@@ -45,6 +45,12 @@ public:
 	/* 스킬 실행 중 기본 공격 방지 */
 	FORCEINLINE ESkillState& GetSkillState() { return CurrentSkillState; }
 
+	/* 쉴드량 */
+	FORCEINLINE float GetShieldAmount() { return ShieldAmount; }
+	void SetShieldAmount(float InShieldAmount);
+	
+	FORCEINLINE float GetShieldThreshould() { return ShieldThreshould; }
+
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
 
@@ -127,7 +133,7 @@ private:
 	void EndStaff_W(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 W - 범위 바인딩 끝
 	virtual void Staff_W_Skill() override;
 
-	void BeginStaff_E(); //스태프 E - 범위 쉴?드 시작
+	void BeginStaff_E(); //스태프 E - 범위 쉴드 시작
 	void EndStaff_E(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 E - 쉴?드 끝
 	void BeginStaff_R(); //스태프 R - 주위 번개 공격 시작
 	void EndStaff_R(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 R - 주위 번개 공격 끝
@@ -183,6 +189,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Staff")
 	TObjectPtr<class UParticleSystem> ThunderboltCastingEffect;
 
+	UPROPERTY(EditAnywhere, Category = "Staff")
+	TObjectPtr<class UParticleSystem> Staff_E_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Staff")
+	TObjectPtr<class UParticleSystem> Staff_E_Effect_Destroy;
+
+	float ShieldAmount = 0.f;
+	float ShieldThreshould = 500.f;
+
 /* 공통 스킬 데이터 */
 private:
 	UPROPERTY(EditAnywhere, Category = "Common")
@@ -201,7 +216,7 @@ private:
 	ESkillState CurrentSkillState = ESkillState::CanSkill;
 
 	class UMotionWarpingComponent* GetMotionWarpComponent();
-	class UParticleSystemComponent* GetParticleComponent();
+	class UParticleSystemComponent* GetParticleComponent(uint8 Index);
 
 /* 쿨타임 섹션 */
 private:
