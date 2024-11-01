@@ -122,7 +122,10 @@ void USkillComponent::PlaySkill_R()
 	switch (CurrentWeaponType)
 	{
 	case 0:
-		BeginSword_R();
+		GetWorld()->GetTimerManager().SetTimer(TempTimer, [&]()
+			{
+				BeginSword_R();
+			}, 0.1f, false);
 		break;
 	case 1:
 		GetWorld()->GetTimerManager().SetTimer(TempTimer, [&]()
@@ -316,10 +319,13 @@ void USkillComponent::BeginSword_R()
 		StartCooldown(CooldownDuration_Sword_R, CooldownTimerHandle_Sword_R, bCanUseSkill_Sword_R, ESkillType::R, CurrentWeaponType, Sword_R_Timer);
 		CurrentSkillState = ESkillState::Progress;
 	}
+	
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;
-	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	
+	Character->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Dodge"));
+	Sword_R_MotionWarpSet();
 	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[3], 1.0f);
 
 	FOnMontageEnded MontageEnd;
@@ -329,15 +335,39 @@ void USkillComponent::BeginSword_R()
 
 void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	Character->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 	CurrentSkillState = ESkillState::CanSkill;
-	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMotionWarpComponent()->RemoveAllWarpTargets();
 	bCanChangeWeapon = true;
 }
 
 void USkillComponent::Sword_R_SkillHitCheck()
-{
-	
-	UGameplayStatics::ApplyRadialDamage(GetOwner(), 250.f, Character->GetActorLocation(), 300.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
+{	
+	TArray<FHitResult> HitResults;
+
+	const float Damage = 1000.f;
+	const float Range = 500.f;
+	FVector Origin = Character->GetActorLocation();
+	FVector End = Origin + Character->GetActorForwardVector() * Range;
+	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
+
+	FVector BoxExtent = FVector(50.f, 200.f, 100.f);
+	FCollisionQueryParams Params(NAME_None, true, Character);
+
+	float UpgradeDamage = Bow_R_Upgrade * 50.0f;
+
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& HitResult : HitResults)
+		{
+			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+		}
+	}
+
+	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 
@@ -710,6 +740,13 @@ void USkillComponent::BeginStaff_R()
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+void USkillComponent::Sword_R_MotionWarpSet()
+{
+	FVector Origin = Character->GetActorLocation();
+	FVector Target = Origin + Character->GetActorForwardVector() * 450.f;
+	GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocation(TEXT("SwordR"), Target);
 }
 
 void USkillComponent::Bow_Q_MotionWarpSet()

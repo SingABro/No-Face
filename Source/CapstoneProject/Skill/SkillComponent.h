@@ -148,6 +148,7 @@ private:
 	bool bCasting = false;
 
 	/* 점프 스킬 모션 워핑 */
+	void Sword_R_MotionWarpSet();
 	void Bow_Q_MotionWarpSet();
 	void Bow_R_MotionWarpSet();
 	void Staff_W_MotionWarpSet();
