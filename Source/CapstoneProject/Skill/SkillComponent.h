@@ -195,6 +195,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Staff")
 	TObjectPtr<class UParticleSystem> Staff_E_Effect_Destroy;
 
+	/* 쉴드로 막아줄 대미지 */
 	float ShieldAmount = 0.f;
 	float ShieldThreshould = 500.f;
 

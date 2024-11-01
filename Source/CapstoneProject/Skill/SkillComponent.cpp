@@ -65,7 +65,10 @@ void USkillComponent::PlaySkill_Q()
 		BeginSword_Q();
 		break;
 	case 1:
-		BeginBow_Q();
+		GetWorld()->GetTimerManager().SetTimer(TempTimer, [&]()
+			{
+				BeginBow_Q();
+			}, 0.1f, false);
 		break;
 	case 2:
 		BeginStaff_Q();
@@ -334,6 +337,7 @@ void USkillComponent::EndSword_R(UAnimMontage* Target, bool IsProperlyEnded)
 void USkillComponent::Sword_R_SkillHitCheck()
 {
 	
+	UGameplayStatics::ApplyRadialDamage(GetOwner(), 250.f, Character->GetActorLocation(), 300.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
 }
 
 
@@ -525,16 +529,16 @@ void USkillComponent::Bow_R_Skill()
 	const float Damage = 1000.f;
 	const float Range = 800.f;
 	FVector Origin = Character->GetActorLocation();
-	FVector ForwardVector = Character->GetActorForwardVector() * Range;
+	FVector End = Origin + Character->GetActorForwardVector() * Range;
+	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
 
-	FVector End = Origin + ForwardVector;
 
 	FVector BoxExtent = FVector(100.f, 200.f, 300.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	float UpgradeDamage = Bow_R_Upgrade * 50.0f;
 
-	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
@@ -544,8 +548,8 @@ void USkillComponent::Bow_R_Skill()
 		}
 	}
 
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, FQuat::Identity, FColor::Green, false, 5.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, FQuat::Identity, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 /************* 지팡이 스킬 라인 *************/
