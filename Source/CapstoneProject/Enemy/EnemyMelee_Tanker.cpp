@@ -68,6 +68,13 @@ void AEnemyMelee_Tanker::DefaultAttackHitCheck()
 	}
 
 	DefaultAttackHitDebug(Origin, GetActorForwardVector(), Range, Degree, Color);
+
+	if (!AttackInRange())
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+		AnimInstance->Montage_Stop(0.5f, DefaultAttackMontage);
+	}
 }
 
 void AEnemyMelee_Tanker::Skill1ByAI()
@@ -137,6 +144,16 @@ void AEnemyMelee_Tanker::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 
 	EnemyAttackFinished.ExecuteIfBound();
+}
+
+bool AEnemyMelee_Tanker::AttackInRange()
+{
+	const float Range = GetAttackInRange();
+	FVector Origin = GetActorLocation();
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	return GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Range), Params);
 }
 
 void AEnemyMelee_Tanker::BeginHitAction()
