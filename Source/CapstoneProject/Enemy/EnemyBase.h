@@ -41,6 +41,9 @@ public:
 public:
 	static FOnDead OnDead;
 
+/* 대미지 적용 가상함수 */
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 /* Widget */
 	virtual void SetupHpBarWidget(class UEnemyHpBarWidget* InHpBarWidget) override;
 
@@ -58,11 +61,19 @@ protected:
 	TObjectPtr<class UEnemyStatComponent> Stat;
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
-	TObjectPtr<class UWidgetComponent> HpBar;
+	TObjectPtr<class UWidgetComponent> HpBarComponent;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UEnemyPtrWidget> HpBarClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ImpactParticleComponent;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UEnemyDamagedTextWidget> DamagedTextClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TObjectPtr<class UEnemyDamagedTextWidget> DamagedText;
+	
+	TArray<class UEnemyDamagedTextWidget*> DamagedTextArray;
 };
