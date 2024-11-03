@@ -347,8 +347,8 @@ void USkillComponent::Sword_R_SkillHitCheck()
 
 	const float Damage = 1000.f;
 	const float Range = 500.f;
-	FVector Origin = Character->GetActorLocation();
-	FVector End = Origin + Character->GetActorForwardVector() * Range;
+	FVector Origin = Character->GetActorLocation() - Character->GetActorForwardVector() * Range;
+	FVector End = Character->GetActorLocation();
 	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
 
 	FVector BoxExtent = FVector(50.f, 200.f, 100.f);
