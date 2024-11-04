@@ -56,6 +56,7 @@ public:
 /* 경험치 나눠줄 때 SetDead에서 FOnDead 델리게이트 호출하여 송신함 */
 	virtual void SetDead();
 
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	TObjectPtr<class UEnemyStatComponent> Stat;
@@ -74,6 +75,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<class UEnemyDamagedTextWidget> DamagedText;
-	
-	TArray<class UEnemyDamagedTextWidget*> DamagedTextArray;
+
 };
