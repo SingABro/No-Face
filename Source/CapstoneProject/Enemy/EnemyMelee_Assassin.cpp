@@ -1,55 +1,50 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Enemy/EnemyMelee_Common.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Enemy/EnemyMelee_Assassin.h"
 #include "Components/CapsuleComponent.h"
+#include "AI/Controller/AIControllerAssassin.h"
 #include "Stat/EnemyStatComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/DamageEvents.h"
-#include "AI/Controller/AIControllerCommon.h"
-#include "UI/EnemyHpBarWidget.h"
-#include "Particles/ParticleSystem.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "Perception/AISense_Damage.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
-AEnemyMelee_Common::AEnemyMelee_Common()
+AEnemyMelee_Assassin::AEnemyMelee_Assassin()
 {
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ParagonMinions/Characters/Minions/Dusk_Minions/Meshes/Minion_Lane_Melee_Dusk.Minion_Lane_Melee_Dusk'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ParagonMinions/Characters/Minions/Dusk_Minions/Meshes/Minion_Lane_Super_Dusk.Minion_Lane_Super_Dusk'"));
 	if (MeshRef.Object)
 	{
 		GetMesh()->SetSkeletalMesh(MeshRef.Object);
 	}
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-	
+
 	/* 콜리전 설정 */
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
-	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+	/* 죽을 때 */
+	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Assassin::SetDead);
 
-	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Common::SetDead);
-
-	ImpactParticleComponent->SetTemplate(ImpactEffect);
-	ImpactParticleComponent->bAutoActivate = false;
+	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 }
 
-void AEnemyMelee_Common::BeginPlay()
+void AEnemyMelee_Assassin::BeginPlay()
 {
 	Super::BeginPlay();
 
 }
 
-void AEnemyMelee_Common::AttackByAI()
+void AEnemyMelee_Assassin::AttackByAI()
 {
 	Super::AttackByAI();
 
 	BeginAttack();
 }
 
-void AEnemyMelee_Common::DefaultAttackHitCheck()
+void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 {
 	Super::DefaultAttackHitCheck();
 
@@ -75,18 +70,18 @@ void AEnemyMelee_Common::DefaultAttackHitCheck()
 			}
 		}
 	}
-	
+
 	DefaultAttackHitDebug(Origin, GetActorForwardVector(), Range, Degree, Color);
 
 	if (!AttackInRange())
 	{
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		
+
 		AnimInstance->Montage_Stop(0.5f, DefaultAttackMontage);
 	}
 }
 
-float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
@@ -108,27 +103,28 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 	return Damage;
 }
 
-float AEnemyMelee_Common::TakeExp()
+float AEnemyMelee_Assassin::TakeExp()
 {
-	//일반 몬스터 30 경험치
-	return 30.0f;
+	Super::TakeExp();
+
+	return 50.0f;
 }
 
-void AEnemyMelee_Common::Stun()
+void AEnemyMelee_Assassin::Stun()
 {
 	Super::Stun();
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	
+
 	GetMyController()->StopAI();
 	AnimInstance->Montage_Play(StunMontage);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndStun);
+	MontageEnd.BindUObject(this, &AEnemyMelee_Assassin::EndStun);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, StunMontage);
 }
 
-void AEnemyMelee_Common::SetDead()
+void AEnemyMelee_Assassin::SetDead()
 {
 	Super::SetDead();
 
@@ -149,7 +145,7 @@ void AEnemyMelee_Common::SetDead()
 		}, 4.f, false);
 }
 
-void AEnemyMelee_Common::BeginAttack()
+void AEnemyMelee_Assassin::BeginAttack()
 {
 	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 
@@ -157,18 +153,18 @@ void AEnemyMelee_Common::BeginAttack()
 	AnimInstance->Montage_Play(DefaultAttackMontage);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndAttack);
+	MontageEnd.BindUObject(this, &AEnemyMelee_Assassin::EndAttack);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, DefaultAttackMontage);
 }
 
-void AEnemyMelee_Common::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
+void AEnemyMelee_Assassin::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 
 	EnemyAttackFinished.ExecuteIfBound();
 }
 
-bool AEnemyMelee_Common::AttackInRange()
+bool AEnemyMelee_Assassin::AttackInRange()
 {
 	const float Range = GetAttackInRange();
 	FVector Origin = GetActorLocation();
@@ -178,7 +174,7 @@ bool AEnemyMelee_Common::AttackInRange()
 	return GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Range), Params);
 }
 
-void AEnemyMelee_Common::BeginHitAction()
+void AEnemyMelee_Assassin::BeginHitAction()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
@@ -188,40 +184,27 @@ void AEnemyMelee_Common::BeginHitAction()
 		return;
 	}
 
-	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
-	if (AnimInstance->Montage_IsPlaying(HitMontage))
-	{
-		AnimInstance->Montage_Stop(0.1f, HitMontage);
-	}
-
-	/* 파티클도 바로바로 재시작 */
-	if (ImpactParticleComponent->IsActive())
-	{
-		ImpactParticleComponent->Deactivate();
-	}
-	
 	/* 피격 몽타주 실행 중 공격 금지 */
 	GetMyController()->StopAI();
 
 	AnimInstance->Montage_Play(HitMontage, 0.5f);
-	ImpactParticleComponent->Activate();
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndHitAction);
+	MontageEnd.BindUObject(this, &AEnemyMelee_Assassin::EndHitAction);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, HitMontage);
 }
 
-void AEnemyMelee_Common::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
+void AEnemyMelee_Assassin::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	GetMyController()->RunAI();
 }
 
-void AEnemyMelee_Common::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
+void AEnemyMelee_Assassin::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	GetMyController()->RunAI();
 }
 
-bool AEnemyMelee_Common::IsInDegree(AActor* Actor, AActor* Target, float RadialAngle)
+bool AEnemyMelee_Assassin::IsInDegree(AActor* Actor, AActor* Target, float RadialAngle)
 {
 	if (!Actor || !Target) return false;
 
@@ -240,7 +223,7 @@ bool AEnemyMelee_Common::IsInDegree(AActor* Actor, AActor* Target, float RadialA
 	return AngleToTargetDegrees <= (RadialAngle / 2.0f);
 }
 
-void AEnemyMelee_Common::DefaultAttackHitDebug(const FVector& Start, const FVector& ForwardVector, const float AttackRange, const float AttackDegree, const FColor& Color)
+void AEnemyMelee_Assassin::DefaultAttackHitDebug(const FVector& Start, const FVector& ForwardVector, const float AttackRange, const float AttackDegree, const FColor& Color)
 {
 	// 부채꼴의 두 끝점 계산
 	FVector LeftVector = ForwardVector.RotateAngleAxis(-AttackDegree / 2.0f, FVector::UpVector);
@@ -257,7 +240,7 @@ void AEnemyMelee_Common::DefaultAttackHitDebug(const FVector& Start, const FVect
 	DrawDebugLine(GetWorld(), Start, RightEndpoint, Color, false, 3.0f);
 }
 
-AAIControllerCommon* AEnemyMelee_Common::GetMyController()
+AAIControllerAssassin* AEnemyMelee_Assassin::GetMyController()
 {
-	return CastChecked<AAIControllerCommon>(GetController());
+	return CastChecked<AAIControllerAssassin>(GetController());
 }

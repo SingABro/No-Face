@@ -60,6 +60,7 @@ void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* Overlapp
 		if (GetOwner())
 		{
 			OtherActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), GetOwner());
+			Destroy();
 		}
 		UE_LOG(LogTemp, Display, TEXT("Actor Name : %s"), *OtherActor->GetActorNameOrLabel());
 	}
