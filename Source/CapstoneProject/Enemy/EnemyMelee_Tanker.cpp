@@ -207,12 +207,13 @@ void AEnemyMelee_Tanker::SetDead()
 {
 	Super::SetDead();
 
-	GetMyController()->StopAI();
-
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	AnimInstance->StopAllMontages(5.f);
 	AnimInstance->Montage_Play(DeadMontage);
+
+	GetMyController()->StopAI();
+
 	SetActorEnableCollision(false);
 
 	FTimerHandle DestroyHandle;

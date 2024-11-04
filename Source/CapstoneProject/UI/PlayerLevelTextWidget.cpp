@@ -20,5 +20,4 @@ void UPlayerLevelTextWidget::NativeConstruct()
 void UPlayerLevelTextWidget::UpdateLevelText(int NewLevel)
 {
 	FText level = FText::FromString(FString::FromInt(NewLevel));
-	//PlayerLevelText->SetText(level);
 }
