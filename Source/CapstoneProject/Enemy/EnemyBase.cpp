@@ -13,6 +13,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+#include "Animation/WidgetAnimation.h"
 
 FOnDead AEnemyBase::OnDead;
 
@@ -43,6 +44,7 @@ AEnemyBase::AEnemyBase()
 
 	ImpactParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
 	ImpactParticleComponent->SetupAttachment(GetMesh(), TEXT("Impact"));
+
 }
 
 void AEnemyBase::BeginPlay()
@@ -113,21 +115,6 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 			DamagedText->AddToViewport();  // 화면에 추가
 			DamagedText->SetDamagedText(FString::Printf(TEXT("%.2f"), Damage));  // 대미지 값 설정
 			DamagedText->SetPositionInViewport(ScreenPosition); // 스크린 좌표로 위치 설정
-		
-			DamagedTextArray.Add(DamagedText);
-
-			FTimerHandle RemoveTextHandle;
-			GetWorld()->GetTimerManager().SetTimer(RemoveTextHandle, [&]()
-				{
-					for (const auto& Text : DamagedTextArray)
-					{
-						if (Text->IsInViewport())
-						{
-							Text->RemoveFromViewport();
-							DamagedTextArray.RemoveSingle(Text);
-						}
-					}
-				}, 1.f, false);
 		}
 	}
 
@@ -160,6 +147,7 @@ void AEnemyBase::SetDead()
 {
 	OnDead.ExecuteIfBound(TakeExp());
 }
+
 
 
 
