@@ -4,12 +4,20 @@
 #include "Skill/StaffDefaultAttackProjectile.h"
 #include "Components/BoxComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Engine/DamageEvents.h"
 
 AStaffDefaultAttackProjectile::AStaffDefaultAttackProjectile()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	RootComponent = Box;
 	Box->OnComponentBeginOverlap.AddDynamic(this, &AStaffDefaultAttackProjectile::OnBeginOverlap);
+
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetupAttachment(Box);
+	MeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	MeshComponent->SetStaticMesh(Mesh);
 
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(Box);
@@ -46,6 +54,15 @@ void AStaffDefaultAttackProjectile::Tick(float DeltaTime)
 
 void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor != GetOwner() && OtherActor)
+	{
+		FDamageEvent DamageEvent;
+		if (GetOwner())
+		{
+			OtherActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), GetOwner());
+		}
+		UE_LOG(LogTemp, Display, TEXT("Actor Name : %s"), *OtherActor->GetActorNameOrLabel());
+	}
 }
 
 void AStaffDefaultAttackProjectile::Init(const FVector& InMoveDirection)
