@@ -32,6 +32,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TObjectPtr<class UBoxComponent> Box;
 
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMeshComponent> MeshComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMesh> Mesh;
+
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
 

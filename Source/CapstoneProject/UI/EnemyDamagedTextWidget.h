@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UI/EnemyPtrWidget.h"
-//#include "Animation/WidgetAnimationEvents.h"
 #include "EnemyDamagedTextWidget.generated.h"
 
 /**
@@ -34,6 +33,4 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Text", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UTextBlock> TextBlock;
-
-	
 };
