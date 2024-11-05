@@ -102,6 +102,7 @@ private:
 
 	void BeginSword_E(); //검 E - 패링 시작
 	void EndSword_E(class UAnimMontage* Target, bool IsProperlyEnded); //검 E - 패링 끝
+	virtual void Sword_E_SkillHitCheck() override;
 
 	void BeginSword_R(); //검 R - 검기 시작
 	void EndSword_R(class UAnimMontage* Target, bool IsProperlyEnded); //검 R - 검기 끝
@@ -156,8 +157,20 @@ private:
 
 /* Sword 데이터 */
 private:
-	UPROPERTY(EditAnywhere, Category = "SwordAura")
+	UPROPERTY(EditAnywhere, Category = "Sword")
 	TSubclassOf<class ASwordAura> SwordAuraClass;
+
+	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_W_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_E_Defence_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_E_Attack_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_R_Effect;
 
 /* Bow 데이터 */
 private:
