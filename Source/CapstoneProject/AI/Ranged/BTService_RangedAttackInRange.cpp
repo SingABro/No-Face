@@ -38,6 +38,7 @@ void UBTService_RangedAttackInRange::TickNode(UBehaviorTreeComponent& OwnerComp,
 	if (Distance <= Interface->GetAttackInRange())
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanAttack"), true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanSiege"), false);
 		if (Distance <= 200.f)
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("MeleeAttack"), true);
@@ -50,5 +51,6 @@ void UBTService_RangedAttackInRange::TickNode(UBehaviorTreeComponent& OwnerComp,
 	else
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanAttack"), false);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanSiege"), true);
 	}
 }
