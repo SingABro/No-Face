@@ -63,12 +63,19 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 
 float AEnemyRanged_Siege::GetDetectRadius()
 {
-	return 1500.f;
+	return 2000.f;
 }
 
 float AEnemyRanged_Siege::GetAttackInRange()
 {
-	return 1000.f;
+	return 1500.f;
+}
+
+void AEnemyRanged_Siege::Skill1ByAI()
+{
+	Super::Skill1ByAI();
+
+	BeginSkill1();
 }
 
 float AEnemyRanged_Siege::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -173,6 +180,22 @@ void AEnemyRanged_Siege::BeginHitAction()
 void AEnemyRanged_Siege::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	GetMyController()->RunAI();
+}
+
+void AEnemyRanged_Siege::BeginSkill1()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	AnimInstance->Montage_Play(Skill1Montage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyRanged_Siege::EndSkill1);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, Skill1Montage);
+}
+
+void AEnemyRanged_Siege::EndSkill1(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	EnemySkill1Finished.ExecuteIfBound();
 }
 
 void AEnemyRanged_Siege::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
