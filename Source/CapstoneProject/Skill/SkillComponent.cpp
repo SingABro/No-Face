@@ -260,6 +260,9 @@ void USkillComponent::Sword_W_SkillHitCheck()
 			Color = FColor::Green;
 		}
 	}
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_W_Effect, Origin);
+
 	DrawDebugSphere(GetWorld(), Origin, Radius, 32, Color, false, 3.f);
 }
 
@@ -301,11 +304,44 @@ void USkillComponent::ParryingSuccess(AActor* Attacker)
 	if (AEnemyBase* Enemy = Cast<AEnemyBase>(Attacker))
 	{
 		Enemy->Stun();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_E_Defence_Effect, Character->GetActorLocation(), Character->GetActorRotation());
+
 		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 		
 		//반격 애니메이션 혹은 추가 공격;
 		AnimInstance->Montage_Play(SkillMontageData->SwordMontages[4]);
 	}
+}
+
+void USkillComponent::Sword_E_SkillHitCheck()
+{
+	TArray<FHitResult> HitResults;
+
+	const float Damage = 1000.f;
+	const float Range = 300.f;
+	FVector Origin = Character->GetActorLocation() - Character->GetActorForwardVector() * Range;
+	FVector End = Character->GetActorLocation();
+	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
+
+	FVector BoxExtent = FVector(50.f, 300.f, 100.f);
+	FCollisionQueryParams Params(NAME_None, true, Character);
+
+	float UpgradeDamage = Sword_E_Upgrade * 50.0f;
+
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& HitResult : HitResults)
+		{
+			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+		}
+	}
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_E_Attack_Effect, Character->GetActorLocation(), (End - Origin).Rotation());
+
+	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 void USkillComponent::BeginSword_R()
@@ -354,7 +390,7 @@ void USkillComponent::Sword_R_SkillHitCheck()
 	FVector BoxExtent = FVector(50.f, 200.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
-	float UpgradeDamage = Bow_R_Upgrade * 50.0f;
+	float UpgradeDamage = Sword_R_Upgrade * 50.0f;
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
 	if (bHit)
@@ -365,6 +401,8 @@ void USkillComponent::Sword_R_SkillHitCheck()
 			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
 		}
 	}
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_R_Effect, Origin, (End-Origin).Rotation());
 
 	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
 	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
