@@ -764,8 +764,6 @@ void USkillComponent::BeginStaff_R()
 
 	bCanChangeWeapon = false;
 
-	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	AnimInstance->Montage_Play(SkillMontageData->StaffMontages[3]);
 
