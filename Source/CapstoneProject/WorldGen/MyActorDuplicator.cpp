@@ -25,6 +25,33 @@ void AMyActorDuplicator::BeginPlay()
         CreateRooms(StartRoom, MaxDepth, EDirection::DOWN);
         CreateRooms(StartRoom, MaxDepth, EDirection::RIGHT);
         CreateRooms(StartRoom, MaxDepth, EDirection::LEFT);
+
+        // 기존 방 배열을 복제하여 작은 스케일로 다른 위치에 추가 생성
+        FVector NewOrigin = FVector(10000.f, 10000.f, 8000.f);  // 새로운 기준 좌표 설정
+        float ScaleFactor = 0.2f;  // 스케일 조절 (예: 0.5로 절반 크기로 설정)
+        DuplicateRoomsWithScale(NewOrigin, ScaleFactor);
+    }
+}
+
+void AMyActorDuplicator::DuplicateRoomsWithScale(const FVector& NewOrigin, float ScaleFactor)
+{
+    for (const FRoom& Room : Rooms)
+    {
+        // 기존 위치를 기준으로 새로운 위치를 계산
+        FVector ScaledLocation = (Room.Location - GetActorLocation()) * ScaleFactor + NewOrigin;
+
+        // 새로운 방 생성
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+        ARoomActor* ScaledRoom = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ScaledLocation, FRotator::ZeroRotator, SpawnParams);
+        if (ScaledRoom)
+        {
+            // 스케일 적용
+            ScaledRoom->SetActorScale3D(FVector(ScaleFactor));
+            ScaledRoom->MeshComponent->SetStaticMesh(StaticMeshToDuplicate);
+        }
     }
 }
 

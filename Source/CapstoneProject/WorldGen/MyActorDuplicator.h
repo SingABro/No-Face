@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "MyActorDuplicator.generated.h"
 
+
 // ���� ����
 UENUM()
 enum class EDirection : uint8 
@@ -54,6 +55,9 @@ public:
     // ������ �� ���� Ŭ����
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication")
     TSubclassOf<class ARoomActor> RoomActorClass;
+
+    UFUNCTION()
+    void DuplicateRoomsWithScale(const FVector& Newcoordinate ,float ScaleFactor);
 
 private:
     // ���� ������ �迭
