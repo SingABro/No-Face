@@ -750,8 +750,19 @@ void USkillComponent::EndStaff_E(UAnimMontage* Target, bool IsProperlyEnded)
 
 void USkillComponent::BeginStaff_R()
 {
-	if (!bCanUseSkill_Staff_R) return;
-	else StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
+
+	if (!bCanUseSkill_Staff_R || CurrentSkillState == ESkillState::Progress)
+	{
+		return;
+	}
+	else
+	{
+		StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
+		CurrentSkillState = ESkillState::Progress;
+	}
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+
+	bCanChangeWeapon = false;
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
@@ -777,7 +788,9 @@ void USkillComponent::BeginStaff_R()
 
 void USkillComponent::EndStaff_R(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	CurrentSkillState = ESkillState::CanSkill;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	bCanChangeWeapon = true;
 }
 
 void USkillComponent::Sword_R_MotionWarpSet()
