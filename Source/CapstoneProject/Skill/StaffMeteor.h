@@ -22,19 +22,25 @@ public:
 
 public:
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void MeteorDestroy(class UParticleSystemComponent* PSystem);
 
 	void Init(const FVector& InDestination);
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class USceneComponent> Root;
-
 	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TObjectPtr<class UBoxComponent> Box;
 
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMeshComponent> MeshComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> CrashEffect;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
