@@ -16,4 +16,10 @@ class CAPSTONEPROJECT_API AAIControllerHelix : public AAIControllerBase
 	
 public:
 	AAIControllerHelix();
+
+public:
+	class ACharacter* GetTarget();
+
+protected:
+	virtual void BeginPlay() override;
 };

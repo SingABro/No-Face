@@ -17,6 +17,9 @@ class CAPSTONEPROJECT_API AEnemyBoss_Helix : public AEnemyBase
 public:
 	AEnemyBoss_Helix();
 
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	/* AI 인터페이스 구현 섹션 */
 	virtual void AttackByAI() override;
@@ -29,5 +32,29 @@ public:
 	virtual float TakeExp() override;
 	virtual void Stun() override;
 	virtual void SetDead() override;
+
+
+private:
+	void BeginSkillDash();
+	void EndSkillDash(class UAnimMontage* Target, bool IsProperlyEnded);
+	void DashMotionWarpSet();
+
+/* 유틸리티 */
+private:
+	class AAIControllerHelix* GetMyController();
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<ACharacter> Player;
+
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Warp")
+	TObjectPtr<class UMotionWarpingComponent> MotionWarpingComponent;
+
+
+/* 몽타주 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<class UAnimMontage> DashMontage;
 
 };

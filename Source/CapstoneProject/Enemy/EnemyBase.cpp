@@ -140,7 +140,23 @@ float AEnemyBase::TakeExp()
 
 void AEnemyBase::Stun()
 {
-	UE_LOG(LogTemp, Display, TEXT("스턴상태!!!!!!!!!!!"));
+	// 대미지 UI 업데이트
+	FVector2D ScreenPosition;
+	FVector WorldPosition = GetActorLocation() + FVector(30.f, 0.f, 100.f); // 캐릭터 위치에서 약간 위로 띄움
+
+	// 월드 좌표를 스크린 좌표로 변환
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (UGameplayStatics::ProjectWorldToScreen(PlayerController, WorldPosition, ScreenPosition))
+	{
+		// 대미지 UI 위젯 생성
+		DamagedText = CreateWidget<UEnemyDamagedTextWidget>(GetWorld(), DamagedTextClass);
+		if (DamagedText)
+		{
+			DamagedText->AddToViewport();  // 화면에 추가
+			DamagedText->SetDamagedText(TEXT("기절")); 
+			DamagedText->SetPositionInViewport(ScreenPosition); // 스크린 좌표로 위치 설정
+		}
+	}
 }
 
 void AEnemyBase::SetDead()

@@ -65,7 +65,7 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);
 
-	UGameplayStatics::ApplyRadialDamage(GetWorld(), 500.f, GetActorLocation(), 300.f, UDamageType::StaticClass(), TArray<AActor*>(), this);
+	UGameplayStatics::ApplyRadialDamage(GetWorld(), 500.f, GetActorLocation(), 500.f, UDamageType::StaticClass(), TArray<AActor*>(), this);
 }
 
 void AStaffMeteor::MeteorDestroy(UParticleSystemComponent* PSystem)

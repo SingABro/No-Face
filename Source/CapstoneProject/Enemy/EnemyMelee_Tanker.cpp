@@ -81,7 +81,7 @@ void AEnemyMelee_Tanker::Skill1ByAI()
 {
 	Super::Skill1ByAI();
 
-	BeginSkill1();
+	BeginSkillDash();
 }
 
 float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -187,18 +187,18 @@ void AEnemyMelee_Tanker::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded
 	GetMyController()->RunAI();
 }
 
-void AEnemyMelee_Tanker::BeginSkill1()
+void AEnemyMelee_Tanker::BeginSkillDash()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	AnimInstance->Montage_Play(Skill1Montage);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &AEnemyMelee_Tanker::EndSkill1);
+	MontageEnd.BindUObject(this, &AEnemyMelee_Tanker::EndSkillDash);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, Skill1Montage);
 }
 
-void AEnemyMelee_Tanker::EndSkill1(UAnimMontage* Target, bool IsProperlyEnded)
+void AEnemyMelee_Tanker::EndSkillDash(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	EnemySkill1Finished.ExecuteIfBound();
 }
