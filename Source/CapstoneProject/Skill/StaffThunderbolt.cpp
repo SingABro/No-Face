@@ -18,8 +18,8 @@ AStaffThunderbolt::AStaffThunderbolt()
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(Root);
 	ParticleComponent->SetTemplate(Particle);
+	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffThunderbolt::ThunderboltDestory);
 
-	LifeTime = 5.f;
 	Damage = Stat->Staff_R_Damage;
 }
 
@@ -27,18 +27,6 @@ void AStaffThunderbolt::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void AStaffThunderbolt::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	LifeTime -= DeltaTime;
-	if (LifeTime <= 0.f)
-	{
-		Destroy();
-	}
-
 }
 
 void AStaffThunderbolt::ActiveThunderbolt()
@@ -62,5 +50,10 @@ bool AStaffThunderbolt::CheckInArea()
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
 	return GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+}
+
+void AStaffThunderbolt::ThunderboltDestory(UParticleSystemComponent* PSystem)
+{
+	Destroy();
 }
 

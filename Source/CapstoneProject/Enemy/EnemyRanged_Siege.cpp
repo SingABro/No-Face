@@ -186,6 +186,7 @@ void AEnemyRanged_Siege::BeginSkill1()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
+	UE_LOG(LogTemp, Display, TEXT("Skill 실행"));
 	AnimInstance->Montage_Play(Skill1Montage);
 
 	FOnMontageEnded MontageEnd;

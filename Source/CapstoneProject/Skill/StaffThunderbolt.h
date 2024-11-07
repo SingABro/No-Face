@@ -18,12 +18,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void Tick(float DeltaTime) override;
-
 	void ActiveThunderbolt();
 
 private:
 	bool CheckInArea();
+	void ThunderboltDestory(class UParticleSystemComponent* PSystem);
+
 
 	TArray<FOverlapResult> OverlapResults;
 
@@ -33,9 +33,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
-
-	UPROPERTY(EditAnywhere, Category = "LifeTime")
-	float LifeTime;
 
 	float Damage;
 };

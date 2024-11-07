@@ -43,8 +43,8 @@ private:
 	void EndHitAction(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 스킬 함수들 */
-	void BeginSkill1();
-	void EndSkill1(class UAnimMontage* Target, bool IsProperlyEnded);
+	void BeginSkillDash();
+	void EndSkillDash(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 스턴 애니메이션 끝날 때 실행되는 함수 */
 	void EndStun(class UAnimMontage* Target, bool IsProperlyEnded);
