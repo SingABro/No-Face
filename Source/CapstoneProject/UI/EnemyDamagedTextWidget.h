@@ -18,9 +18,10 @@ public:
 	UEnemyDamagedTextWidget(const FObjectInitializer& ObjectInitializer);
 
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 	void SetDamagedText(const FString& Text);
+	void DelayedAction();
+	void ChangeFontSize();
 
 	UFUNCTION()
 	void AnimationFinished();
