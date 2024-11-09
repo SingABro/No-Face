@@ -12,6 +12,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DamageEvents.h"
+#include "Engine/OverlapResult.h"
 
 AEnemyBoss_Helix::AEnemyBoss_Helix()
 {
@@ -107,7 +108,9 @@ float AEnemyBoss_Helix::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	return 0.0f;
+	Stat->ApplyDamage(Damage);
+
+	return Damage;
 }
 
 float AEnemyBoss_Helix::TakeExp()
@@ -197,6 +200,22 @@ void AEnemyBoss_Helix::EndSkill_2(UAnimMontage* Target, bool IsProperlyEnded)
 void AEnemyBoss_Helix::Skill_2_HitCheck()
 {
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_2Effect, GetActorLocation(), GetActorRotation());
+
+	const float Damage = 500.f;
+	const float Range = 500.f;
+
+	TArray<FOverlapResult> OverlapResults;
+	FVector Origin = GetActorLocation();
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Range), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const FOverlapResult& OverlapResult : OverlapResults)
+		{
+			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+		}
+	}
 }
 
 void AEnemyBoss_Helix::BeginSkill_3()
@@ -220,6 +239,22 @@ void AEnemyBoss_Helix::Skill_3_HitCheck()
 	FVector Origin = GetActorLocation();
 	FVector TargetLoc = Origin + GetActorForwardVector() * 600.f;
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_3Effect, TargetLoc, GetActorRotation());
+
+	FQuat DirectionQuat = FRotationMatrix::MakeFromX(TargetLoc).ToQuat();
+	
+	float Damage = 600.f;
+	float Range = 600.f;
+	FHitResult HitResult;
+	FVector EndHit = TargetLoc + GetActorForwardVector() * Range;
+	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
+	FCollisionQueryParams Params(NAME_None, false, this);
+	
+	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TargetLoc, EndHit, DirectionQuat, ECC_GameTraceChannel1, FCollisionShape::MakeBox(BoxExtent), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		HitResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+	}
 }
 
 void AEnemyBoss_Helix::BeginSkill_4()
@@ -244,8 +279,8 @@ void AEnemyBoss_Helix::Skill_4_HitCheck()
 	FRotator TargetRoc = GetMesh()->GetSocketRotation(TEXT("Muzzle_Front"));
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_4Effect, TargetLoc, TargetRoc);
 
-	const float Damage = 300.f;
-	const float Range = 700.f;
+	float Damage = 300.f;
+	float Range = 700.f;
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
