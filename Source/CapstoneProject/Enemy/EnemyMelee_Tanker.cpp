@@ -56,7 +56,7 @@ void AEnemyMelee_Tanker::DefaultAttackHitCheck()
 	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Range), Params);
 	if (bHit)
 	{
-		for (const auto& OverlapResult : OverlapResults)
+		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{
 			if (IsInDegree(this, OverlapResult.GetActor(), Degree))
 			{

@@ -8,6 +8,10 @@
 
 DECLARE_DELEGATE(FEnemyAttackFinished)
 DECLARE_DELEGATE(FEnemySkill1Finished)
+DECLARE_DELEGATE(FEnemySkill2Finished)
+DECLARE_DELEGATE(FEnemySkill3Finished)
+DECLARE_DELEGATE(FEnemySkill4Finished)
+
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -31,8 +35,14 @@ public:
 
 	virtual void SetEnemyAttackDelegate(const FEnemyAttackFinished& InEnemyAttackFinished) = 0;
 	virtual void SetEnemySkill1Delegate(const FEnemySkill1Finished& InEnemySkill1Finished) = 0;
+	virtual void SetEnemySkill2Delegate(const FEnemySkill1Finished& InEnemySkill2Finished) {};
+	virtual void SetEnemySkill3Delegate(const FEnemySkill1Finished& InEnemySkill3Finished) {};
+	virtual void SetEnemySkill4Delegate(const FEnemySkill1Finished& InEnemySkill4Finished) {};
 	virtual void AttackByAI() = 0;
 	virtual void DefaultAttackHitCheck() = 0;
 
 	virtual void Skill1ByAI() = 0;
+	virtual void Skill2ByAI() {};
+	virtual void Skill3ByAI() {};
+	virtual void Skill4ByAI() {};
 };

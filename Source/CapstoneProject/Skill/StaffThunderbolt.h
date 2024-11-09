@@ -21,11 +21,9 @@ public:
 	void ActiveThunderbolt();
 
 private:
-	bool CheckInArea();
+	bool CheckInArea(TArray<FOverlapResult>& InOverlapResults);
 	void ThunderboltDestory(class UParticleSystemComponent* PSystem);
 
-
-	TArray<FOverlapResult> OverlapResults;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
