@@ -11,6 +11,7 @@
 #include "MotionWarpingComponent.h"
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
 
 AEnemyBoss_Helix::AEnemyBoss_Helix()
 {
@@ -242,6 +243,22 @@ void AEnemyBoss_Helix::Skill_4_HitCheck()
 	FVector TargetLoc = GetMesh()->GetSocketLocation(TEXT("Muzzle_Front"));
 	FRotator TargetRoc = GetMesh()->GetSocketRotation(TEXT("Muzzle_Front"));
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_4Effect, TargetLoc, TargetRoc);
+
+	const float Damage = 300.f;
+	const float Range = 700.f;
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	FColor Color = FColor::Red;
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TargetLoc, TargetLoc + TargetRoc.Vector() * Range, ECC_GameTraceChannel1, Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		HitResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+		Color = FColor::Green;
+	}
+	DrawDebugLine(GetWorld(), TargetLoc, TargetLoc + TargetRoc.Vector() * Range, Color, false, 3.f);
+
 }
 
 AAIControllerHelix* AEnemyBoss_Helix::GetMyController()
