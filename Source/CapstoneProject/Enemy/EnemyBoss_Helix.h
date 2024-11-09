@@ -58,6 +58,7 @@ private:
 	void Skill_1_MotionWarpSet();
 	virtual void Skill_1_HitCheck() override;
 
+	/* 크아앙 스킬 */
 	void BeginSkill_2();
 	void EndSkill_2(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Skill_2_HitCheck() override;
@@ -67,6 +68,7 @@ private:
 	void EndSkill_3(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Skill_3_HitCheck() override;
 
+	/* 레이저 스킬 */
 	void BeginSkill_4();
 	void EndSkill_4(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Skill_4_HitCheck() override;

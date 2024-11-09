@@ -18,4 +18,5 @@ public:
 	UBTService_HelixDetect();
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
 };
