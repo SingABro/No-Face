@@ -44,7 +44,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	bool bOverlap = World->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Radius), Params);
 	if (bOverlap)
 	{
-		for (auto const& OverlapResult : OverlapResults)
+		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{
 			APawn* Target = Cast<APawn>(OverlapResult.GetActor());
 

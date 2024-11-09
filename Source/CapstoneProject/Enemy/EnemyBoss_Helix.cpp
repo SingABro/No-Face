@@ -2,12 +2,15 @@
 
 
 #include "Enemy/EnemyBoss_Helix.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "AI/Controller/AIControllerHelix.h"
 #include "Stat/EnemyStatComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "MotionWarpingComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 AEnemyBoss_Helix::AEnemyBoss_Helix()
 {
@@ -40,7 +43,7 @@ void AEnemyBoss_Helix::AttackByAI()
 {
 	Super::AttackByAI();
 
-
+	BeginDefaultAttack();
 }
 
 void AEnemyBoss_Helix::DefaultAttackHitCheck()
@@ -49,11 +52,54 @@ void AEnemyBoss_Helix::DefaultAttackHitCheck()
 
 }
 
+float AEnemyBoss_Helix::GetAttackInRange()
+{
+	Super::GetAttackInRange();
+
+	return 300.f;
+}
+
 void AEnemyBoss_Helix::Skill1ByAI()
 {
 	Super::Skill1ByAI();
 
-	BeginSkillDash();
+	BeginSkill_1();
+}
+
+void AEnemyBoss_Helix::Skill2ByAI()
+{
+	Super::Skill2ByAI();
+
+	BeginSkill_2();
+}
+
+void AEnemyBoss_Helix::Skill3ByAI()
+{
+	Super::Skill3ByAI();
+
+	BeginSkill_3();
+}
+
+void AEnemyBoss_Helix::Skill4ByAI()
+{
+	Super::Skill4ByAI();
+
+	BeginSkill_4();
+}
+
+void AEnemyBoss_Helix::SetEnemySkill2Delegate(const FEnemySkill1Finished& InEnemySkill2Finished)
+{
+	EnemySkill2Finished = InEnemySkill2Finished;
+}
+
+void AEnemyBoss_Helix::SetEnemySkill3Delegate(const FEnemySkill1Finished& InEnemySkill3Finished)
+{
+	EnemySkill3Finished = InEnemySkill3Finished;
+}
+
+void AEnemyBoss_Helix::SetEnemySkill4Delegate(const FEnemySkill1Finished& InEnemySkill4Finished)
+{
+	EnemySkill4Finished = InEnemySkill4Finished;
 }
 
 float AEnemyBoss_Helix::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -83,31 +129,119 @@ void AEnemyBoss_Helix::SetDead()
 
 }
 
-void AEnemyBoss_Helix::BeginSkillDash()
+void AEnemyBoss_Helix::BeginDefaultAttack()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
-	DashMotionWarpSet();
-	AnimInstance->Montage_Play(DashMontage);
+	Skill_1_MotionWarpSet();
+	AnimInstance->Montage_Play(DefaultAttackMontage);
 
 	FOnMontageEnded MontageEnd;
-	MontageEnd.BindUObject(this, &AEnemyBoss_Helix::EndSkillDash);
-	AnimInstance->Montage_SetEndDelegate(MontageEnd, DashMontage);
+	MontageEnd.BindUObject(this, &AEnemyBoss_Helix::EndDefaultAttack);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, DefaultAttackMontage);
 }
 
-void AEnemyBoss_Helix::EndSkillDash(UAnimMontage* Target, bool IsProperlyEnded)
+void AEnemyBoss_Helix::EndDefaultAttack(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	EnemyAttackFinished.ExecuteIfBound();
+}
+
+void AEnemyBoss_Helix::BeginSkill_1()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	Skill_1_MotionWarpSet();
+	AnimInstance->Montage_Play(Skill_1Montage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyBoss_Helix::EndSkill_1);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, Skill_1Montage);
+}
+
+void AEnemyBoss_Helix::EndSkill_1(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	EnemySkill1Finished.ExecuteIfBound();
 	MotionWarpingComponent->RemoveAllWarpTargets();
 }
 
-void AEnemyBoss_Helix::DashMotionWarpSet()
+void AEnemyBoss_Helix::Skill_1_MotionWarpSet()
 {
 	FVector TargetOrigin = Player->GetActorLocation();
 	FVector Origin = GetActorLocation();
 	FVector TargetDir = (TargetOrigin - Origin);
-	FVector Result = TargetDir.GetSafeNormal() * TargetDir.Size();
-	MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation(TEXT("Dash"), Result);
+	FRotator TargetRot = FRotationMatrix::MakeFromX(TargetDir).Rotator();
+	MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Dash"), TargetOrigin, TargetRot);
+}
+
+void AEnemyBoss_Helix::Skill_1_HitCheck()
+{
+}
+
+void AEnemyBoss_Helix::BeginSkill_2()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	AnimInstance->Montage_Play(Skill_2Montage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyBoss_Helix::EndSkill_2);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, Skill_2Montage);
+}
+
+void AEnemyBoss_Helix::EndSkill_2(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	EnemySkill2Finished.ExecuteIfBound();
+}
+
+void AEnemyBoss_Helix::Skill_2_HitCheck()
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_2Effect, GetActorLocation(), GetActorRotation());
+}
+
+void AEnemyBoss_Helix::BeginSkill_3()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	AnimInstance->Montage_Play(Skill_3Montage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyBoss_Helix::EndSkill_3);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, Skill_3Montage);
+}
+
+void AEnemyBoss_Helix::EndSkill_3(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	EnemySkill3Finished.ExecuteIfBound();
+}
+
+void AEnemyBoss_Helix::Skill_3_HitCheck()
+{
+	FVector Origin = GetActorLocation();
+	FVector TargetLoc = Origin + GetActorForwardVector() * 600.f;
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_3Effect, TargetLoc, GetActorRotation());
+}
+
+void AEnemyBoss_Helix::BeginSkill_4()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	AnimInstance->Montage_Play(Skill_4Montage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyBoss_Helix::EndSkill_4);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, Skill_4Montage);
+}
+
+void AEnemyBoss_Helix::EndSkill_4(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	EnemySkill4Finished.ExecuteIfBound();
+}
+
+void AEnemyBoss_Helix::Skill_4_HitCheck()
+{
+	FVector TargetLoc = GetMesh()->GetSocketLocation(TEXT("Muzzle_Front"));
+	FRotator TargetRoc = GetMesh()->GetSocketRotation(TEXT("Muzzle_Front"));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_4Effect, TargetLoc, TargetRoc);
 }
 
 AAIControllerHelix* AEnemyBoss_Helix::GetMyController()

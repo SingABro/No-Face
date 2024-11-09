@@ -34,11 +34,8 @@ void AStaffArea::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CheckInArea())
-	{
-		PullToCenter(DeltaTime);
-	}
-
+	PullToCenter(DeltaTime);
+	
 	LifeTime -= DeltaTime;
 	if (LifeTime <= 0.f)
 	{
@@ -46,33 +43,39 @@ void AStaffArea::Tick(float DeltaTime)
 	}
 }
 
-bool AStaffArea::CheckInArea()
+bool AStaffArea::CheckInArea(TArray<FOverlapResult>& InOverlapResults)
 {
 	const float Radius = 200.f;
 
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
-	return GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
 }
 
 void AStaffArea::PullToCenter(float DeltaTime)
 {
 	FDamageEvent DamageEvent;
-	for (const auto& OverlapResult : OverlapResults)
-	{
-		FVector Target = GetActorLocation();
-		AActor* Actor = OverlapResult.GetActor();
-		Target.Z = Actor->GetActorLocation().Z;
-		Actor->SetActorLocation(FMath::VInterpTo(Actor->GetActorLocation(), Target, DeltaTime, 1.f));
+	TArray<FOverlapResult> OverlapResults;
 
-		DamageTime += DeltaTime;
-		if (DamageTime >= 1.f)
+	if (CheckInArea(OverlapResults))
+	{
+		for (const auto& OverlapResult : OverlapResults)
 		{
-			Actor->TakeDamage(Damage, DamageEvent, Actor->GetInstigatorController(), GetOwner());
-			DamageTime = 0.f;
+			FVector Target = GetActorLocation();
+			AActor* Actor = OverlapResult.GetActor();
+			Target.Z = Actor->GetActorLocation().Z;
+			Actor->SetActorLocation(FMath::VInterpTo(Actor->GetActorLocation(), Target, DeltaTime, 1.f));
+
+			DamageTime += DeltaTime;
+			if (DamageTime >= 1.f)
+			{
+				Actor->TakeDamage(Damage, DamageEvent, Actor->GetInstigatorController(), GetOwner());
+				DamageTime = 0.f;
+			}
+			DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 32, FColor::Green, false);
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 32, FColor::Green, false);
 	}
+	
 }
 

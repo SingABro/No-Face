@@ -38,6 +38,7 @@ public:
 
 	virtual void Skill1ByAI() override;
 
+
 public:
 	static FOnDead OnDead;
 
