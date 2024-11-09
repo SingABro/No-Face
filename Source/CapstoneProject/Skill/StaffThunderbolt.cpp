@@ -31,7 +31,9 @@ void AStaffThunderbolt::BeginPlay()
 
 void AStaffThunderbolt::ActiveThunderbolt()
 {
-	if (CheckInArea())
+	TArray<FOverlapResult> OverlapResults;
+
+	if (CheckInArea(OverlapResults))
 	{
 		FDamageEvent DamageEvent;
 		for (const auto& OverlapResult : OverlapResults)
@@ -42,14 +44,14 @@ void AStaffThunderbolt::ActiveThunderbolt()
 	}
 }
 
-bool AStaffThunderbolt::CheckInArea()
+bool AStaffThunderbolt::CheckInArea(TArray<FOverlapResult>& InOverlapResults)
 {
 	const float Radius = 350.f;
 
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
-	return GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
 }
 
 void AStaffThunderbolt::ThunderboltDestory(UParticleSystemComponent* PSystem)

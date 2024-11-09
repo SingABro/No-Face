@@ -22,7 +22,7 @@ public:
 
 
 private:
-	bool CheckInArea();
+	bool CheckInArea(TArray<FOverlapResult>& InOverlapResults);
 	void PullToCenter(float DeltaTime);
 
 private:
@@ -31,8 +31,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
-
-	TArray<FOverlapResult> OverlapResults;
 
 	UPROPERTY(EditAnywhere, Category = "LifeTime")
 	float LifeTime;
