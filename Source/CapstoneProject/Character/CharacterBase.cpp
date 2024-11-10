@@ -165,7 +165,6 @@ ACharacterBase::ACharacterBase()
 
 	/* 스킬 UI */
 	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
-
 	if (SkillUIWidgetRef.Class)
 	{
 		SkillUIWidgetClass = SkillUIWidgetRef.Class;
