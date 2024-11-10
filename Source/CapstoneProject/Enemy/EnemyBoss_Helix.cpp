@@ -10,6 +10,7 @@
 #include "Animation/AnimMontage.h"
 #include "MotionWarpingComponent.h"
 #include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
@@ -104,13 +105,17 @@ void AEnemyBoss_Helix::SetEnemySkill4Delegate(const FEnemySkill1Finished& InEnem
 	EnemySkill4Finished = InEnemySkill4Finished;
 }
 
-float AEnemyBoss_Helix::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyBoss_Helix::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	Stat->ApplyDamage(Damage);
+	UE_LOG(LogTemp, Display, TEXT("실행됨?"));
 
-	return Damage;
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
+	ImpactParticleComponent->Activate();
+
+	return 0.0f;
 }
 
 float AEnemyBoss_Helix::TakeExp()

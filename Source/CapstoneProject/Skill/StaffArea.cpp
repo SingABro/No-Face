@@ -70,7 +70,12 @@ void AStaffArea::PullToCenter(float DeltaTime)
 			DamageTime += DeltaTime;
 			if (DamageTime >= 1.f)
 			{
-				Actor->TakeDamage(Damage, DamageEvent, Actor->GetInstigatorController(), GetOwner());
+				AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+				if (Enemy)
+				{
+					if (GetOwner() == nullptr) return;
+					Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+				}
 				DamageTime = 0.f;
 			}
 			DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 32, FColor::Green, false);

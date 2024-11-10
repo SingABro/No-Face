@@ -78,13 +78,16 @@ void AEnemyRanged_Siege::Skill1ByAI()
 	BeginSkill1();
 }
 
-float AEnemyRanged_Siege::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyRanged_Siege::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
+
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
+	ImpactParticleComponent->Activate();
 
 	return Damage;
 }

@@ -11,6 +11,7 @@
 #include "Engine/DamageEvents.h"
 #include "Perception/AISense_Damage.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AEnemyMelee_Assassin::AEnemyMelee_Assassin()
 {
@@ -81,9 +82,9 @@ void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 	}
 }
 
-float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	/* Hit Montage가 먼저 실행 되어야지 Dead 애니메이션이 잘 실행됨 */
 	BeginHitAction();
@@ -99,6 +100,9 @@ float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageE
 		GetActorLocation(),
 		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
 	);
+
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
+	ImpactParticleComponent->Activate();
 
 	return Damage;
 }

@@ -66,7 +66,12 @@ void AArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimi
 	if (OtherActor && OtherActor != this)
 	{
 		FDamageEvent DamageEvent;
-		OtherActor->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
+		if (Enemy)
+		{
+			if (GetOwner() == nullptr) return;
+			Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+		}
 		UE_LOG(LogTemp, Display, TEXT("화살 히트"));
 		Destroy();
 	}

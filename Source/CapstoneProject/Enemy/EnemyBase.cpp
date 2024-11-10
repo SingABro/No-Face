@@ -44,7 +44,41 @@ AEnemyBase::AEnemyBase()
 
 	ImpactParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
 	ImpactParticleComponent->SetupAttachment(GetMesh(), TEXT("Impact"));
+	ImpactParticleComponent->bAutoActivate = false;
 
+	/* Hit Effect */
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> DefaultHitRef(TEXT("Script/Engine.ParticleSystem'/Game/ParagonMinions/FX/Particles/Minions/Minion_melee/FX/Impacts/P_Minion_Impact_Default.P_Minion_Impact_Default'"));
+	if (DefaultHitRef.Object)
+	{
+		HitParticleCollection.Add(TEXT("Default"), DefaultHitRef.Object);
+	}
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Sword_Q_HitRef(TEXT("/Script/Engine.ParticleSystem'/Game/11_10Effects/Sword/Sword_Q_Hit.Sword_Q_Hit'"));
+	if (Sword_Q_HitRef.Object)
+	{
+		HitParticleCollection.Add(TEXT("Sword_Q"), Sword_Q_HitRef.Object);
+	}
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Sword_W_HitRef(TEXT("/Script/Engine.ParticleSystem'/Game/11_10Effects/Sword/Sword_W_Hit.Sword_W_Hit'"));
+	if (Sword_W_HitRef.Object)
+	{
+		HitParticleCollection.Add(TEXT("Sword_W"), Sword_W_HitRef.Object);
+	}
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Bow_Q_HitRef(TEXT("/Script/Engine.ParticleSystem'/Game/11_10Effects/Bow/Bow_Q_Hit.Bow_Q_Hit'"));
+	if (Bow_Q_HitRef.Object)
+	{
+		HitParticleCollection.Add(TEXT("Bow_Q"), Bow_Q_HitRef.Object);
+	}
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Bow_R_HitRef(TEXT("/Script/Engine.ParticleSystem'/Game/11_10Effects/Bow/Bow_R_Hit.Bow_R_Hit'"));
+	if (Bow_R_HitRef.Object)
+	{
+		HitParticleCollection.Add(TEXT("Bow_R"), Bow_R_HitRef.Object);
+	}
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Staff_DefaultAttack_HitRef(TEXT("/Script/Engine.ParticleSystem'/Game/11_10Effects/Staff/Staff_AttackHit.Staff_AttackHit'"));
+	if (Staff_DefaultAttack_HitRef.Object)
+	{
+		HitParticleCollection.Add(TEXT("Staff_Default"), Staff_DefaultAttack_HitRef.Object);
+	}
+
+	
 }
 
 void AEnemyBase::BeginPlay()
@@ -96,7 +130,7 @@ void AEnemyBase::Skill1ByAI()
 {
 }
 
-float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
@@ -118,7 +152,7 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 		}
 	}
 
-	return Damage;
+	return 0.0f;
 }
 
 void AEnemyBase::SetupHpBarWidget(UEnemyHpBarWidget* InHpBarWidget)

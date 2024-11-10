@@ -84,13 +84,16 @@ float AEnemyRanged_Rifle::GetAttackInRange()
 	return 1000.f;
 }
 
-float AEnemyRanged_Rifle::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyRanged_Rifle::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
+
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
+	ImpactParticleComponent->Activate();
 
 	return Damage;
 }
