@@ -179,12 +179,32 @@ void AEnemyBoss_Helix::Skill_1_MotionWarpSet()
 
 void AEnemyBoss_Helix::Skill_1_HitCheck()
 {
+	FVector Origin = GetActorLocation();
+	FVector TargetLoc = Origin + GetActorForwardVector() * 300.f;
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
+
+	float Damage = 500.f;
+	float Range = 200.f;
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, TargetLoc, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Range), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const FOverlapResult& OverlapResult : OverlapResults)
+		{
+			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+		}
+	}
 }
 
 void AEnemyBoss_Helix::BeginSkill_2()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
+	Skill2_Effect();
 	AnimInstance->Montage_Play(Skill_2Montage);
 
 	FOnMontageEnded MontageEnd;
@@ -216,6 +236,13 @@ void AEnemyBoss_Helix::Skill_2_HitCheck()
 			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
 		}
 	}
+}
+
+void AEnemyBoss_Helix::Skill2_Effect()
+{
+	FVector TargetLoc = GetMesh()->GetSocketLocation(TEXT("Chest"));
+	FRotator TargetRoc = GetMesh()->GetSocketRotation(TEXT("Chest"));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_2ChargeEffect, TargetLoc, TargetRoc);
 }
 
 void AEnemyBoss_Helix::BeginSkill_3()
