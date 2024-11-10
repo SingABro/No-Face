@@ -62,6 +62,7 @@ private:
 	void BeginSkill_2();
 	void EndSkill_2(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Skill_2_HitCheck() override;
+	void Skill2_Effect();
 
 	/* 땅 퍽 치는 스킬 */
 	void BeginSkill_3();
@@ -114,6 +115,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystem> Skill_2Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> Skill_2ChargeEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystem> Skill_3Effect;

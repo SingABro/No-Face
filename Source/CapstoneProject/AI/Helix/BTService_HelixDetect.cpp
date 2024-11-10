@@ -64,10 +64,10 @@ void UBTService_HelixDetect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	}
 	
 	/* 각 스킬 확인할 용도 디버그 */
-	bool DebugFlag = false;
+	bool DebugFlag = true;
 	if (DebugFlag)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanSkill4"), true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanSkill2"), true);
 	}
 	else
 	{
