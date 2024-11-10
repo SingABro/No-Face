@@ -157,10 +157,10 @@ ACharacterBase::ACharacterBase()
 
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarp"));
 
-	BowRParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Test Particle"));
-	BowRParticleComponent->SetupAttachment(GetMesh());
-	BowRParticleComponent->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
-	BowRParticleComponent->bAutoActivate = false;
+	SkillParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Skill Particle"));
+	SkillParticleComponent->SetupAttachment(GetMesh());
+	SkillParticleComponent->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+	SkillParticleComponent->bAutoActivate = false;
 
 
 	/* 스킬 UI */

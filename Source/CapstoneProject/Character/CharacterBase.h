@@ -212,7 +212,7 @@ private:
 	TObjectPtr<class UParticleSystemComponent> ShieldParticleComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystemComponent> BowRParticleComponent;
+	TObjectPtr<class UParticleSystemComponent> SkillParticleComponent;
 
 /* UI 섹션 */
 private:

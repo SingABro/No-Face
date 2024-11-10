@@ -90,6 +90,7 @@ float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEve
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
@@ -104,8 +105,6 @@ float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEve
 		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
 	);
 
-	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
-	ImpactParticleComponent->Activate();
 
 	return Damage;
 }
@@ -177,9 +176,16 @@ void AEnemyMelee_Tanker::BeginHitAction()
 		AnimInstance->Montage_Stop(0.1f, HitMontage);
 	}
 
+	/* 파티클도 바로바로 재시작 */
+	if (ImpactParticleComponent->IsActive())
+	{
+		ImpactParticleComponent->Deactivate();
+	}
+
 	/* 피격 몽타주 실행 중 공격 금지 */
 	GetMyController()->StopAI();
 
+	ImpactParticleComponent->Activate();
 	AnimInstance->Montage_Play(HitMontage);
 
 	FOnMontageEnded MontageEnd;

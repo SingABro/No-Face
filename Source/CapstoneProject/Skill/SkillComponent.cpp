@@ -201,6 +201,11 @@ void USkillComponent::Sword_Q_SkillHitCheck()
 {
 	FVector SpawnLocation = Character->GetActorLocation() + Character->GetActorForwardVector() * 100.f;
 	FRotator SpawnRotation = Character->GetActorRotation();
+	
+	/* 왜 잘 소환 안되는지 모르겠네 */
+	FVector EffectLocation = Character->GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
+	FRotator EffectRotation = Character->GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_Q_WeaponEffect, EffectLocation, EffectRotation);
 
 	ASwordAura* SwordAura = GetWorld()->SpawnActor<ASwordAura>(SwordAuraClass, SpawnLocation, SpawnRotation);
 	SwordAura->SetOwner(Character);
@@ -224,6 +229,8 @@ void USkillComponent::BeginSword_W()
 	bCanChangeWeapon = false;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[1], 1.3f);
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_W_BodyEffect, Character->GetActorLocation(), Character->GetActorRotation());
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndSword_W);
@@ -372,6 +379,8 @@ void USkillComponent::BeginSword_R()
 	Sword_R_MotionWarpSet();
 	AnimInstance->Montage_Play(SkillMontageData->SwordMontages[3], 1.0f);
 
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_R_SparkEffect, Character->GetActorLocation(), Character->GetActorRotation());
+
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &USkillComponent::EndSword_R);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->SwordMontages[3]);
@@ -461,7 +470,7 @@ void USkillComponent::Bow_Q_Skill()
 
 	const float Damage = 100.f;
 	const float Range = 500.f;
-	FVector Origin = Character->GetActorLocation();
+	FVector Origin = Character->GetActorLocation() + (Character->GetActorForwardVector() * 100.f);
 	FVector End = Origin + (Character->GetActorForwardVector() * Range);
 
 	FVector ForwardVector = Character->GetActorForwardVector() * Range;
@@ -470,6 +479,10 @@ void USkillComponent::Bow_Q_Skill()
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	float UpgradeDamage = Bow_Q_Upgrade * 50.0f;
+
+	/* 이펙트 */
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Bow_Q_CastingEffect, Origin, RootRot.Rotator());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Bow_Q_Effect, Origin, ForwardVector.Rotation());
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, RootRot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
 	if (bHit)
@@ -490,6 +503,12 @@ void USkillComponent::Bow_Q_Skill()
 
 }
 
+void USkillComponent::Bow_Q_SkillEffect()
+{
+	FVector TargetLoc = Character->GetActorLocation() + (Character->GetActorForwardVector() * 100.f);
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Bow_Q_CastingEffect, TargetLoc, Character->GetActorForwardVector().Rotation());
+}
+
 void USkillComponent::BeginBow_W()
 {
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
@@ -499,11 +518,13 @@ void USkillComponent::BeginBow_W()
 	{
 		StartCooldown(CooldownDuration_Bow_W, CooldownTimerHandle_Bow_W, bCanUseSkill_Bow_W, ESkillType::W, CurrentWeaponType, Bow_W_Timer);
 		CurrentSkillState = ESkillState::Progress;
-
+		Bow_W_SpawnLocation = Cursor.Location;
 		bCasting = false;
-
 		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	
 		AnimInstance->Montage_Play(SkillMontageData->BowMontages[1], 1.0f);
+
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Bow_W_WeaponEffect, Character->GetActorLocation(), FRotator::ZeroRotator);
 
 		FOnMontageEnded MontageEnd;
 		MontageEnd.BindUObject(this, &USkillComponent::EndBow_W);
@@ -513,7 +534,7 @@ void USkillComponent::BeginBow_W()
 	{
 		if (!bCanUseSkill_Bow_W || CurrentSkillState == ESkillState::Progress) return;
 
-		bCasting= true;
+		bCasting = true;
 
 		SkillQueue.Enqueue([this]()
 			{
@@ -524,6 +545,7 @@ void USkillComponent::BeginBow_W()
 
 void USkillComponent::EndBow_W(UAnimMontage* Target, bool IsProperlyEnded)
 {
+	Bow_W_EffectIndex = 0;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	CurrentSkillState = ESkillState::CanSkill;
 	bCanChangeWeapon = true;
@@ -531,10 +553,34 @@ void USkillComponent::EndBow_W(UAnimMontage* Target, bool IsProperlyEnded)
 
 void USkillComponent::Bow_W_Skill()
 {
-	float UpgradeDamage = Bow_W_Upgrade * 50.0f;
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RainArrows, Cursor.Location, FRotator::ZeroRotator);
-	UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f + UpgradeDamage, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
-	
+	if (Bow_W_EffectIndex == 0)
+	{
+		GetParticleComponent(1)->SetTemplate(Bow_W_ShootEffect);
+		GetParticleComponent(1)->SetRelativeRotation(FRotator(50.f, 90.f, 0.f));
+		GetParticleComponent(1)->SetRelativeLocation(FVector(0.f, 200.f, 400.f));
+		GetParticleComponent(1)->Activate();
+		Bow_W_EffectIndex++;
+	}
+	else if (Bow_W_EffectIndex == 1)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Bow_W_BoomEffect, Bow_W_SpawnLocation, FRotator::ZeroRotator);
+		TArray<FOverlapResult> OverlapResults;
+		FCollisionQueryParams Params(NAME_None, false, Character);
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Bow_W_SpawnLocation, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(500.f), Params))
+		{
+			for (const FOverlapResult& OverlapResult : OverlapResults)
+			{
+				AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+				if (Enemy)
+				{
+					FDamageEvent DamageEvent;
+					Enemy->TakeDamage(500.f, DamageEvent, Character->GetController(), Character, TEXT("Default"));
+				}
+			}
+		}
+		
+		Bow_W_EffectIndex = 0;
+	}
 }
 
 void USkillComponent::BeginBow_E()
@@ -692,6 +738,7 @@ void USkillComponent::Staff_Q_Skill()
 		{
 			AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, Cursor.Location + FVector(0.f, 0.f, 800.f), FRotator::ZeroRotator);
 			Meteor->Init(Cursor.Location);
+			Meteor->SetOwner(Character);
 		}, 2.f, false);
 }
 

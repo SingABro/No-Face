@@ -32,8 +32,6 @@ AEnemyMelee_Common::AEnemyMelee_Common()
 
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Common::SetDead);
 
-	ImpactParticleComponent->SetTemplate(ImpactEffect);
-	ImpactParticleComponent->bAutoActivate = false;
 }
 
 void AEnemyMelee_Common::BeginPlay()
@@ -91,6 +89,7 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	/* Hit Montage가 먼저 실행 되어야지 Dead 애니메이션이 잘 실행됨 */
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
@@ -105,8 +104,6 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
 	);
 
-	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
-	ImpactParticleComponent->Activate();
 
 	return Damage;
 }
@@ -206,8 +203,8 @@ void AEnemyMelee_Common::BeginHitAction()
 	/* 피격 몽타주 실행 중 공격 금지 */
 	GetMyController()->StopAI();
 
-	AnimInstance->Montage_Play(HitMontage, 0.5f);
 	ImpactParticleComponent->Activate();
+	AnimInstance->Montage_Play(HitMontage, 0.5f);
 
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndHitAction);
