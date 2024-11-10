@@ -27,9 +27,6 @@ AEnemyRanged_Rifle::AEnemyRanged_Rifle()
 	Stat->OnHpZero.AddUObject(this, &AEnemyRanged_Rifle::SetDead);
 
 	/* 파티클 설정 */
-	ImpactParticleComponent->SetTemplate(ImpactEffect);
-	ImpactParticleComponent->bAutoActivate = false;
-
 	FireEffectComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Fire Effect"));
 	FireEffectComponent->SetupAttachment(GetMesh(), TEXT("Muzzle_02"));
 	FireEffectComponent->bAutoActivate = false;
@@ -88,12 +85,11 @@ float AEnemyRanged_Rifle::TakeDamage(float Damage, FDamageEvent const& DamageEve
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
 
-	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
-	ImpactParticleComponent->Activate();
 
 	return Damage;
 }

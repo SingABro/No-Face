@@ -132,8 +132,6 @@ void AEnemyBase::Skill1ByAI()
 
 float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
 	// 대미지 UI 업데이트
 	FVector2D ScreenPosition;
 	FVector WorldPosition = GetActorLocation() + FVector(30.f, 0.f, 100.f); // 캐릭터 위치에서 약간 위로 띄움

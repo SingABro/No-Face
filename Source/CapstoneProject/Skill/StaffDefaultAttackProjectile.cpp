@@ -26,7 +26,7 @@ AStaffDefaultAttackProjectile::AStaffDefaultAttackProjectile()
 
 	MoveDirection = FVector::ZeroVector;
 	Damage = 200.f;
-	MoveSpeed = 500.f;;
+	MoveSpeed = 1500.f;
 	LifeTime = 5.f;
 }
 
@@ -49,7 +49,6 @@ void AStaffDefaultAttackProjectile::Tick(float DeltaTime)
 		Destroy();
 	}
 
-	DrawDebugSphere(GetWorld(), NewLocation, 50.f, 32, FColor::Red, false);
 }
 
 void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -67,7 +67,7 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);
 
-	const float Radius = 350.f;
+	const float Radius = 500.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FVector Origin = GetActorLocation();

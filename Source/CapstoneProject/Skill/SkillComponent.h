@@ -110,10 +110,11 @@ private:
 	
 
 	//Bow Skill Montage
-	void BeginBow_Q(); //활 Q - 빵빵빵 쏘기
+	void BeginBow_Q(); //활 Q - 빵 쏘기
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
 	virtual void Bow_Q_Skill() override; //활 Q 화살 소환 로직
-	
+	void Bow_Q_SkillEffect();
+
 	void BeginBow_W(); //활 W - 범위에 화살 뿌리기
 	void EndBow_W(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Bow_W_Skill() override; //활 W 애니메이션 중간에 멈추기
@@ -162,7 +163,13 @@ private:
 	TSubclassOf<class ASwordAura> SwordAuraClass;
 
 	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_Q_WeaponEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Sword")
 	TObjectPtr<class UParticleSystem> Sword_W_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_W_BodyEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Sword")
 	TObjectPtr<class UParticleSystem> Sword_E_Defence_Effect;
@@ -173,10 +180,28 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Sword")
 	TObjectPtr<class UParticleSystem> Sword_R_Effect;
 
+	UPROPERTY(EditAnywhere, Category = "Sword")
+	TObjectPtr<class UParticleSystem> Sword_R_SparkEffect;
+
 /* Bow 데이터 */
 private:
 	UPROPERTY(EditAnywhere, Category = "Bow")
 	TObjectPtr<class UParticleSystem> RainArrows;
+
+	UPROPERTY(EditAnywhere, Category = "Bow")
+	TObjectPtr<class UParticleSystem> Bow_Q_CastingEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Bow")
+	TObjectPtr<class UParticleSystem> Bow_Q_Effect;
+
+	UPROPERTY(EditAnywhere, Category = "Bow")
+	TObjectPtr<class UParticleSystem> Bow_W_WeaponEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Bow")
+	TObjectPtr<class UParticleSystem> Bow_W_ShootEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Bow")
+	TObjectPtr<class UParticleSystem> Bow_W_BoomEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Bow")
 	TObjectPtr<class UParticleSystem> Bow_R_Effect;
@@ -184,6 +209,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Bow")
 	TSubclassOf<class AArrow> ArrowClass;
 
+	uint8 Bow_W_EffectIndex = 0;
+	FVector Bow_W_SpawnLocation;
 	FTimerHandle TempTimer;
 
 

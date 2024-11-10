@@ -109,11 +109,11 @@ float AEnemyBoss_Helix::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
-	Stat->ApplyDamage(Damage);
-	UE_LOG(LogTemp, Display, TEXT("실행됨?"));
-
 	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
 	ImpactParticleComponent->Activate();
+
+	Stat->ApplyDamage(Damage);
+	UE_LOG(LogTemp, Display, TEXT("실행됨?"));
 
 	return 0.0f;
 }

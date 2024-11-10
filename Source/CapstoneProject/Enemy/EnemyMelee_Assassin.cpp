@@ -87,6 +87,7 @@ float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageE
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	/* Hit Montage가 먼저 실행 되어야지 Dead 애니메이션이 잘 실행됨 */
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
@@ -101,8 +102,6 @@ float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageE
 		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
 	);
 
-	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
-	ImpactParticleComponent->Activate();
 
 	return Damage;
 }
@@ -187,10 +186,22 @@ void AEnemyMelee_Assassin::BeginHitAction()
 	{
 		return;
 	}
+	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
+	if (AnimInstance->Montage_IsPlaying(HitMontage))
+	{
+		AnimInstance->Montage_Stop(0.1f, HitMontage);
+	}
+
+	/* 파티클도 바로바로 재시작 */
+	if (ImpactParticleComponent->IsActive())
+	{
+		ImpactParticleComponent->Deactivate();
+	}
 
 	/* 피격 몽타주 실행 중 공격 금지 */
 	GetMyController()->StopAI();
 
+	ImpactParticleComponent->Activate();
 	AnimInstance->Montage_Play(HitMontage, 0.5f);
 
 	FOnMontageEnded MontageEnd;

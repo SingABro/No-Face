@@ -321,7 +321,7 @@ void UCharacterDefaultAttackComponent::CheckStaffCombo()
 
 void UCharacterDefaultAttackComponent::StaffDefaultAttack()
 {
-	FVector OriginLoc = Character->GetActorLocation() + Character->GetActorForwardVector() * 100.f;
+	FVector OriginLoc = Character->GetActorLocation() + Character->GetActorForwardVector() * 200.f;
 	FRotator OriginRot = Character->GetActorRotation();
 	StaffAttackPtr = GetWorld()->SpawnActor<AStaffDefaultAttackProjectile>(StaffAttackClass, OriginLoc, OriginRot);
 	StaffAttackPtr->SetOwner(Character);
