@@ -26,7 +26,7 @@ public:
 	virtual void DefaultAttackHitCheck() override;
 
 	/* 오버라이딩 섹션 */
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type) override;
 	virtual float TakeExp() override;
 	virtual void Stun() override;
 	virtual void SetDead() override;

@@ -56,13 +56,13 @@ void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* Overlapp
 {
 	if (OtherActor != GetOwner() && OtherActor)
 	{
-		FDamageEvent DamageEvent;
-		if (GetOwner())
+		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
+		if (Enemy)
 		{
-			OtherActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), GetOwner());
-			Destroy();
+			if (GetOwner() == nullptr) return;
+			FDamageEvent DamageEvent;
+			Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Staff_Default"));
 		}
-		UE_LOG(LogTemp, Display, TEXT("Actor Name : %s"), *OtherActor->GetActorNameOrLabel());
 	}
 }
 

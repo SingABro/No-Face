@@ -38,7 +38,12 @@ void AStaffThunderbolt::ActiveThunderbolt()
 		FDamageEvent DamageEvent;
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, OverlapResult.GetActor()->GetInstigatorController(), GetOwner());
+			AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+			if (Enemy)
+			{
+				if (GetOwner() == nullptr) return;
+				Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+			}
 		}
 		DrawDebugSphere(GetWorld(), GetActorLocation(), 350.f, 32, FColor::Green, false, 3.f);
 	}

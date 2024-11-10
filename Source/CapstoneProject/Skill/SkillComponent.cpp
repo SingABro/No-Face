@@ -256,7 +256,11 @@ void USkillComponent::Sword_W_SkillHitCheck()
 		FDamageEvent DamageEvent;
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			OverlapResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+			AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+			if (Enemy)
+			{
+				Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character, TEXT("Sword_W"));
+			}
 			Color = FColor::Green;
 		}
 	}
@@ -334,7 +338,11 @@ void USkillComponent::Sword_E_SkillHitCheck()
 		FDamageEvent DamageEvent;
 		for (const auto& HitResult : HitResults)
 		{
-			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+			AEnemyBase* Enemy = Cast<AEnemyBase>(HitResult.GetActor());
+			if (Enemy)
+			{
+				Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character, TEXT("Default"));
+			}
 		}
 	}
 
@@ -398,7 +406,11 @@ void USkillComponent::Sword_R_SkillHitCheck()
 		FDamageEvent DamageEvent;
 		for (const auto& HitResult : HitResults)
 		{
-			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+			AEnemyBase* Enemy = Cast<AEnemyBase>(HitResult.GetActor());
+			if (Enemy)
+			{
+				Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character, TEXT("Default"));
+			}
 		}
 	}
 
@@ -465,7 +477,11 @@ void USkillComponent::Bow_Q_Skill()
 		FDamageEvent DamageEvent;
 		for (const auto& HitResult : HitResults)
 		{
-			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+			AEnemyBase* Enemy = Cast<AEnemyBase>(HitResult.GetActor());
+			if (Enemy)
+			{
+				Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character, TEXT("Bow_Q"));
+			}
 		}
 	}
 
@@ -518,6 +534,7 @@ void USkillComponent::Bow_W_Skill()
 	float UpgradeDamage = Bow_W_Upgrade * 50.0f;
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RainArrows, Cursor.Location, FRotator::ZeroRotator);
 	UGameplayStatics::ApplyRadialDamage(GetOwner(), 50.f + UpgradeDamage, Cursor.Location, 200.f, UDamageType::StaticClass(), TArray<AActor*>(), GetOwner());
+	
 }
 
 void USkillComponent::BeginBow_E()
@@ -612,7 +629,11 @@ void USkillComponent::Bow_R_Skill()
 		FDamageEvent DamageEvent;
 		for (const auto& HitResult : HitResults)
 		{
-			HitResult.GetActor()->TakeDamage(Damage + UpgradeDamage, DamageEvent, PlayerController, Character);
+			AEnemyBase* Enemy = Cast<AEnemyBase>(HitResult.GetActor());
+			if (Enemy)
+			{
+				Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character, TEXT("Default"));
+			}
 		}
 	}
 
@@ -760,6 +781,7 @@ void USkillComponent::BeginStaff_R()
 		StartCooldown(CooldownDuration_Staff_R, CooldownTimerHandle_Staff_R, bCanUseSkill_Staff_R, ESkillType::R, CurrentWeaponType, Staff_R_Timer);
 		CurrentSkillState = ESkillState::Progress;
 	}
+
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	bCanChangeWeapon = false;

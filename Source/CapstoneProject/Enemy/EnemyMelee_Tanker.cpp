@@ -10,6 +10,8 @@
 #include "Engine/DamageEvents.h"
 #include "Perception/AISense_Damage.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
 
 AEnemyMelee_Tanker::AEnemyMelee_Tanker()
 {
@@ -84,9 +86,9 @@ void AEnemyMelee_Tanker::Skill1ByAI()
 	BeginSkillDash();
 }
 
-float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	BeginHitAction();
 
@@ -101,6 +103,9 @@ float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEve
 		GetActorLocation(),
 		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
 	);
+
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
+	ImpactParticleComponent->Activate();
 
 	return Damage;
 }

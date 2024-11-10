@@ -11,6 +11,7 @@
 #include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
 #include "Skill/StaffDefaultAttackProjectile.h"
+#include "Enemy/EnemyBase.h"
 
 UCharacterDefaultAttackComponent::UCharacterDefaultAttackComponent()
 {
@@ -161,7 +162,11 @@ void UCharacterDefaultAttackComponent::SwordDefaultAttackHitCheck()
 			//부채꼴의 공격 판정이 만들어짐
 			if (SwordDefaultAttackRadialRange(GetOwner(), OverlapResult.GetActor(), AttackDegree))
 			{
-				OverlapResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character);
+				AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+				if (Enemy)
+				{
+					Enemy->TakeDamage(AttackDamage, DamageEvent, Character->GetController(), Character, TEXT("Default"));
+				}
 				Color = FColor::Green;
 			}
 		}

@@ -7,6 +7,8 @@
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
+#include "Engine/OverlapResult.h"
 
 AStaffMeteor::AStaffMeteor()
 {
@@ -65,7 +67,27 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);
 
-	UGameplayStatics::ApplyRadialDamage(GetWorld(), 500.f, GetActorLocation(), 500.f, UDamageType::StaticClass(), TArray<AActor*>(), this);
+	const float Radius = 350.f;
+
+	TArray<FOverlapResult> OverlapResults;
+	FVector Origin = GetActorLocation();
+	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+			if (Enemy)
+			{
+				if (GetOwner() == nullptr) return;
+				Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+			}
+		}
+		DrawDebugSphere(GetWorld(), GetActorLocation(), 350.f, 32, FColor::Green, false, 3.f);
+	}
 }
 
 void AStaffMeteor::MeteorDestroy(UParticleSystemComponent* PSystem)

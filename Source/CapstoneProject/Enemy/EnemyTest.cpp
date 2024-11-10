@@ -29,15 +29,6 @@ void AEnemyTest::AttackByAI()
 	BeginAttack();
 }
 
-float AEnemyTest::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
-	Stat->ApplyDamage(Damage);
-	BeingHitAction();
-	return Damage;
-}
-
 void AEnemyTest::DefaultAttackHitCheck()
 {
 	float Damage = Stat->GetCurrentDamage();

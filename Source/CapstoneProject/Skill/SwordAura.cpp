@@ -52,7 +52,12 @@ void ASwordAura::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	{
 		FDamageEvent DamageEvent;
 		float UpgradeDamage = 0.0f;
-		OtherActor->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
+		if (Enemy)
+		{
+			if (GetOwner() == nullptr) return;
+			Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Sword_Q"));
+		}
 		Color = FColor::Green;
 	}
 }

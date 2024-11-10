@@ -136,6 +136,7 @@ private:
 
 	void BeginStaff_E(); //스태프 E - 범위 쉴드 시작
 	void EndStaff_E(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 E - 쉴?드 끝
+
 	void BeginStaff_R(); //스태프 R - 주위 번개 공격 시작
 	void EndStaff_R(class UAnimMontage* Target, bool IsProperlyEnded); //스태프 R - 주위 번개 공격 끝
 

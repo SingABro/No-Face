@@ -86,9 +86,9 @@ void AEnemyMelee_Common::DefaultAttackHitCheck()
 	}
 }
 
-float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	/* Hit Montage가 먼저 실행 되어야지 Dead 애니메이션이 잘 실행됨 */
 	BeginHitAction();
@@ -104,6 +104,9 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 		GetActorLocation(),
 		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
 	);
+
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
+	ImpactParticleComponent->Activate();
 
 	return Damage;
 }
