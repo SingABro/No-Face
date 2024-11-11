@@ -221,19 +221,14 @@ void UCharacterDefaultAttackComponent::SwordDefaultAttackHitDebug(const FVector&
 
 void UCharacterDefaultAttackComponent::BeginBowDefaultAttack()
 {
-	if (Bow == nullptr) return;
-	FVector SpawnLocation = Bow->GetMesh()->GetSocketLocation(TEXT("Arrow_Socket"));
-	FRotator SpawnRotation = Bow->GetMesh()->GetSocketRotation(TEXT("Arrow_Socket"));
-
+	if (!bCanBowAttack) return;
+	bCanBowAttack = false;
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	
 	bCanChangeWeapon = false;
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	AnimInstance->Montage_Play(BowDefaultAttackMontage, 2.f);
 	
-	Arrow = GetWorld()->SpawnActor<AArrow>(ArrowClass, SpawnLocation, SpawnRotation);
-	Arrow->AttachToComponent(Bow->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Arrow_Socket"));
-
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &UCharacterDefaultAttackComponent::EndBowDefaultAttack);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, BowDefaultAttackMontage);
@@ -243,6 +238,7 @@ void UCharacterDefaultAttackComponent::EndBowDefaultAttack(UAnimMontage* Target,
 {
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanChangeWeapon = true;
+	bCanBowAttack = true;
 }
 
 void UCharacterDefaultAttackComponent::SetBow(ABow* InBow)
@@ -252,19 +248,22 @@ void UCharacterDefaultAttackComponent::SetBow(ABow* InBow)
 
 void UCharacterDefaultAttackComponent::StartAnimation()
 {
-	Bow->GetMesh()->PlayAnimation(BowPullAnim, true);
+	Bow->GetMesh()->PlayAnimation(BowPullAnim, false);
+
+	if (Bow == nullptr) return;
+	FVector SpawnLocation = Bow->GetMesh()->GetSocketLocation(TEXT("Arrow_Socket"));
+	FRotator SpawnRotation = Bow->GetMesh()->GetSocketRotation(TEXT("Arrow_Socket"));
+
+	Arrow = GetWorld()->SpawnActor<AArrow>(ArrowClass, SpawnLocation, SpawnRotation);
+	Arrow->SetOwner(Character);
+	Arrow->SetActorRotation(Character->GetActorForwardVector().Rotation());
 }
 
 void UCharacterDefaultAttackComponent::EndAnimation()
 {
-	Bow->GetMesh()->PlayAnimation(BowIdleAnim, true);
+	Bow->GetMesh()->PlayAnimation(BowIdleAnim, false);
 
-	if (Bow == nullptr) return;
-	FVector SpawnLocation = Bow->GetMesh()->GetSocketLocation(TEXT("Arrow_Socket")) + FVector(10.f, 0.f, 0.f);
-	FRotator SpawnRotation = Bow->GetMesh()->GetSocketRotation(TEXT("Arrow_Socket"));
-
-	Arrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	Arrow->Init(Character->GetActorForwardVector(), SpawnLocation, SpawnRotation);
+	Arrow->Init(Character->GetActorForwardVector());
 }
 
 void UCharacterDefaultAttackComponent::BeginStaffDefaultAttack()

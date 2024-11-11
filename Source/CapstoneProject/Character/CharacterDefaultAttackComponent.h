@@ -74,10 +74,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UAnimationAsset> BowPullAnim;
 	
-	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UAnimationAsset> BowIdleAnim;
 
+	bool bCanBowAttack = true;
 
 /* Staff 기본 공격 */
 private:
