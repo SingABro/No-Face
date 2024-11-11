@@ -10,26 +10,23 @@ AArrow::AArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = Root;
-
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	Box->SetupAttachment(Root);
+	RootComponent = Box;
 	Box->SetCollisionProfileName(TEXT("Arrow"));
-	Box->OnComponentHit.AddDynamic(this, &AArrow::OnHit);
+	Box->OnComponentBeginOverlap.AddDynamic(this, &AArrow::OnOverlap);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(Root);
+	Mesh->SetupAttachment(Box);
 	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshRef(TEXT("/Script/Engine.StaticMesh'/Game/No-Face/Weapon/Bow/Mesh/SM_Arrow_A.SM_Arrow_A'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshRef(TEXT("/Script/Engine.StaticMesh'/Game/MRPGT/StaticMeshes/Arrow/SM_Arrow_A.SM_Arrow_A'"));
 	if (MeshRef.Object)
 	{
 		Mesh->SetStaticMesh(MeshRef.Object);
 	}
 
 	Direction = FVector::ZeroVector;
-	Damage = Stat->BowDamage;
+	Damage = 500.f;
 	MoveSpeed = Stat->BowSpeed;
 	LifeTime = Stat->BowLifeTime;
 }
@@ -37,7 +34,7 @@ AArrow::AArrow()
 void AArrow::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AArrow::Tick(float DeltaTime)
@@ -54,16 +51,14 @@ void AArrow::Tick(float DeltaTime)
 	}
 }
 
-void AArrow::Init(const FVector& InDirection, const FVector& CurrentLocation, const FRotator& CurrentRotation)
+void AArrow::Init(const FVector& InDirection)
 {
-	SetActorLocation(CurrentLocation);
-	SetActorRotation(CurrentRotation);
 	Direction = InDirection;
 }
 
-void AArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AArrow::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor != this)
+	if (OtherActor && OtherActor != this && !OtherActor->ActorHasTag(TEXT("Player")))
 	{
 		FDamageEvent DamageEvent;
 		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
@@ -76,6 +71,3 @@ void AArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimi
 		Destroy();
 	}
 }
-
-
-
