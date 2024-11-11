@@ -19,9 +19,8 @@ AStaffArea::AStaffArea()
 	ParticleComponent->SetupAttachment(Root);
 	ParticleComponent->SetTemplate(Particle);
 
-	LifeTime = Stat->Staff_W_LifeTime;
+	LifeTime = 3.f;
 	DamageTime = 0.f;
-	Damage = Stat->Staff_W_Damage;
 }
 
 void AStaffArea::BeginPlay()
@@ -45,12 +44,10 @@ void AStaffArea::Tick(float DeltaTime)
 
 bool AStaffArea::CheckInArea(TArray<FOverlapResult>& InOverlapResults)
 {
-	const float Radius = 200.f;
-
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
-	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Stat->Staff_W_Range), Params);
 }
 
 void AStaffArea::PullToCenter(float DeltaTime)
@@ -74,11 +71,11 @@ void AStaffArea::PullToCenter(float DeltaTime)
 				if (Enemy)
 				{
 					if (GetOwner() == nullptr) return;
-					Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+					Enemy->TakeDamage(Stat->Staff_W_Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 				}
 				DamageTime = 0.f;
 			}
-			DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 32, FColor::Green, false);
+			DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_W_Range, 32, FColor::Green, false);
 		}
 	}
 	

@@ -16,14 +16,11 @@ UCharacterStatComponent::UCharacterStatComponent()
 		DataStat = DataStatRef.Object;
 	}
 
-	/* 이렇게 해야 하나의 에셋으로 캐릭터의 스텟을 관리하기 편한거 같음 */
 	MaxHp = DataStat->MaxHp;
-	CurrentHp = DataStat->Hp;
-	CurrentExp = DataStat->Exp;
+	CurrentHp = MaxHp;
 	CurrentLevel = 1;
 	
 	bWantsInitializeComponent = true;
-
 }
 
 

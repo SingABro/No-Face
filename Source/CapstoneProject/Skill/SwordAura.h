@@ -29,12 +29,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TObjectPtr<class UBoxComponent> Box;
 
-
 	FColor Color;
 	FVector MoveDirection;
-
-	UPROPERTY(EditAnywhere, Category = "Var")
-	float Damage;
 
 	UPROPERTY(EditAnywhere, Category = "Var")
 	float MoveSpeed;

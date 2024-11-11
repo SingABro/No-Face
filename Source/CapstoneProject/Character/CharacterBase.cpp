@@ -188,12 +188,6 @@ void ACharacterBase::BeginPlay()
 	//초반에 칼들고 시작
 	EquipSword();
 	CurrentWeaponType = EWeaponType::Sword;
-	StatData->SetSword_R_Damage(150.0f);
-	StatData->SetBowDamage(50.0f);
-	StatData->SetBow_Q_Damage(50.0f);
-	StatData->SetStaff_Q_Damage(100.0f);
-	StatData->SetStaff_W_Damage(100.0f);
-	StatData->SetStaff_R_Damage(100.0f);
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -551,7 +545,6 @@ void ACharacterBase::DisplaySkillUI()
 		}
 	}
 }
-
 
 ACPlayerController* ACharacterBase::GetPlayerController() const
 {

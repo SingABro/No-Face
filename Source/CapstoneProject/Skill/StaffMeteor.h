@@ -46,9 +46,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float MoveSpeed;
 
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	float Damage;
-
 	FVector Destination;
 	bool bStart;
 	

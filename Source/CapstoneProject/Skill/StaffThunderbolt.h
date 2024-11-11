@@ -31,6 +31,4 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
-
-	float Damage;
 };

@@ -112,4 +112,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character")
 	TObjectPtr<class ACharacter> Character;
 
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	TObjectPtr<class UCharacterDataStat> Stat;
+
 };

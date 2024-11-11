@@ -19,8 +19,6 @@ AStaffThunderbolt::AStaffThunderbolt()
 	ParticleComponent->SetupAttachment(Root);
 	ParticleComponent->SetTemplate(Particle);
 	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffThunderbolt::ThunderboltDestory);
-
-	Damage = Stat->Staff_R_Damage;
 }
 
 void AStaffThunderbolt::BeginPlay()
@@ -42,21 +40,19 @@ void AStaffThunderbolt::ActiveThunderbolt()
 			if (Enemy)
 			{
 				if (GetOwner() == nullptr) return;
-				Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+				Enemy->TakeDamage(Stat->Staff_R_Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 			}
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 350.f, 32, FColor::Green, false, 3.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_R_Range, 32, FColor::Green, false, 3.f);
 	}
 }
 
 bool AStaffThunderbolt::CheckInArea(TArray<FOverlapResult>& InOverlapResults)
 {
-	const float Radius = 350.f;
-
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
-	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Stat->Staff_R_Range), Params);
 }
 
 void AStaffThunderbolt::ThunderboltDestory(UParticleSystemComponent* PSystem)

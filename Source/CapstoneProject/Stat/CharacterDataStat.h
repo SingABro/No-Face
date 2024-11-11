@@ -15,10 +15,7 @@ class CAPSTONEPROJECT_API UCharacterDataStat : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-
-	FORCEINLINE void SetSword_R_Damage(float UpgradeDamage) { Sword_R_Damage = UpgradeDamage; }
-	FORCEINLINE void SetBowDamage(float UpgradeDamage) { BowDamage = UpgradeDamage; }
-	FORCEINLINE void SetBow_Q_Damage(float UpgradeDamage) { BowDamage = UpgradeDamage; }
+	FORCEINLINE void SetSword_Q_Damage(float UpgradeDamage) { Sword_Q_Damage = UpgradeDamage; }
 	FORCEINLINE void SetStaff_Q_Damage(float UpgradeDamage) { Staff_Q_Damage = UpgradeDamage; }
 	FORCEINLINE void SetStaff_W_Damage(float UpgradeDamage) { Staff_W_Damage = UpgradeDamage; }
 	FORCEINLINE void SetStaff_R_Damage(float UpgradeDamage) { Staff_R_Damage = UpgradeDamage; }
@@ -27,9 +24,6 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
 	float MaxHp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
-	float Hp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
 	float Exp;
@@ -54,44 +48,42 @@ public:
 	float Sword_Q_Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
-	float Sword_Q_Range;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
 	float Sword_W_Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
 	float Sword_W_Range;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
+	float Sword_E_Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
+	float Sword_E_Range;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
 	float Sword_R_Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
-	float Sword_R_MoveSpeed;
+	float Sword_R_Range;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sword")
-	float Sword_R_LifeTime;
 
 /* 활 스텟 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
-	float BowDamage;
+	float BowDamage;                                                                               
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
 	float BowSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
-	float BowLifeTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
 	float Bow_Q_Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
-	float Bow_Q_Degree;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
-	float Bow_Q_Amount;
+	float Bow_Q_Range;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
 	float Bow_W_Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
+	float Bow_W_Range;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
 	float Bow_E_Distance;
@@ -102,27 +94,33 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
 	float Bow_R_Range;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bow")
-	FVector Bow_R_BoxExtent;
-
 /* 스태프 스텟 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
 	float StaffDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
+	float StaffSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
 	float Staff_Q_Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
+	float Staff_Q_Range;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
 	float Staff_W_Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
-	float Staff_W_LifeTime;
+	float Staff_W_Range;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
-	float Staff_E_Damage;
+	float Staff_E_Threshold;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
 	float Staff_R_Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Staff")
+	float Staff_R_Range;
 
 
 };

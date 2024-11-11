@@ -7,7 +7,7 @@
 
 UCharacterAnimInstance::UCharacterAnimInstance()
 {
-	MovingThreshould = 3.f;
+	MovingThreshold = 3.f;
 	WeaponIndex = 0;
 }
 
@@ -30,7 +30,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		Velocity = Movement->Velocity;
 		GroundSpeed = Velocity.Size();
-		bIsIdle = GroundSpeed < MovingThreshould;
+		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsFalling = Movement->IsFalling();
 	}
 }

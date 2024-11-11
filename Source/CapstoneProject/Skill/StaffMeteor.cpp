@@ -38,7 +38,6 @@ AStaffMeteor::AStaffMeteor()
 	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffMeteor::MeteorDestroy);
 
 	MoveSpeed = 300.f;
-	Damage = Stat->Staff_Q_Damage;
 	Destination = FVector::ZeroVector;
 	bStart = false;
 }
@@ -62,18 +61,14 @@ void AStaffMeteor::Tick(float DeltaTime)
 
 void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Display, TEXT("충돌"));
-
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);
-
-	const float Radius = 500.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
-	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Stat->Staff_Q_Range), Params);
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
@@ -83,10 +78,10 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			if (Enemy)
 			{
 				if (GetOwner() == nullptr) return;
-				Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+				Enemy->TakeDamage(Stat->Staff_Q_Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 			}
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 350.f, 32, FColor::Green, false, 3.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_Q_Range, 32, FColor::Green, false, 3.f);
 	}
 }
 

@@ -49,7 +49,7 @@ public:
 	FORCEINLINE float GetShieldAmount() { return ShieldAmount; }
 	void SetShieldAmount(float InShieldAmount);
 	
-	FORCEINLINE float GetShieldThreshould() { return ShieldThreshould; }
+	FORCEINLINE float GetShieldThreshould() { return ShieldThreshold; }
 
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
@@ -112,15 +112,15 @@ private:
 	//Bow Skill Montage
 	void BeginBow_Q(); //활 Q - 빵 쏘기
 	void EndBow_Q(class UAnimMontage* Target, bool IsProperlyEnded); 
-	virtual void Bow_Q_Skill() override; //활 Q 화살 소환 로직
-	void Bow_Q_SkillEffect();
+	virtual void Bow_Q_Skill() override; 
 
-	void BeginBow_W(); //활 W - 범위에 화살 뿌리기
+	void BeginBow_W(); //활 W - 폭탄 화살
 	void EndBow_W(class UAnimMontage* Target, bool IsProperlyEnded);
-	virtual void Bow_W_Skill() override; //활 W 애니메이션 중간에 멈추기
+	virtual void Bow_W_Skill() override; 
 
 	void BeginBow_E(); //활 E - 백스텝
 	void EndBow_E(class UAnimMontage* Target, bool IsProperlyEnded);
+
 	void BeginBow_R(); //활 R - 날아서 쏘기
 	void EndBow_R(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Bow_R_Skill() override;
@@ -238,8 +238,8 @@ private:
 	TObjectPtr<class UParticleSystem> Staff_E_Effect_Destroy;
 
 	/* 쉴드로 막아줄 대미지 */
-	float ShieldAmount = 0.f;
-	float ShieldThreshould = 500.f;
+	float ShieldAmount;
+	float ShieldThreshold;
 
 /* 공통 스킬 데이터 */
 private:
@@ -297,6 +297,7 @@ private:
 	bool bCanUseSkill_Staff_W = true;
 	bool bCanUseSkill_Staff_E = true;
 	bool bCanUseSkill_Staff_R = true;
+	bool bCanUseDash = true;
 
 	float Sword_Q_Timer = 0.f;
 	float Sword_W_Timer = 0.f;
@@ -346,6 +347,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
 	float CooldownDuration_Staff_R = 3.f;
+
+	UPROPERTY(EditAnywhere, Category = "Cooldown")
+	float CooldownDuration_Dash = 3.f;
 
 /*스킬 레벨 강화*/
 public:

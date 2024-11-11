@@ -16,12 +16,10 @@ ASwordAura::ASwordAura()
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ASwordAura::OnBeginOverlap);
 
 	MoveDirection = FVector::ZeroVector;
-	Damage = Stat->Sword_R_Damage;
-	MoveSpeed = Stat->Sword_R_MoveSpeed;
-	LifeTime = Stat->Sword_R_LifeTime;
+	MoveSpeed = 1000.f;
+	LifeTime = 5.f;
 
 	Color = FColor::Red;
-
 }
 
 void ASwordAura::BeginPlay()
@@ -51,12 +49,11 @@ void ASwordAura::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherActor && OtherActor != this)
 	{
 		FDamageEvent DamageEvent;
-		float UpgradeDamage = 0.0f;
 		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
 		if (Enemy)
 		{
 			if (GetOwner() == nullptr) return;
-			Enemy->TakeDamage(Damage + UpgradeDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Sword_Q"));
+			Enemy->TakeDamage(Stat->Sword_Q_Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Sword_Q"));
 		}
 		Color = FColor::Green;
 	}
