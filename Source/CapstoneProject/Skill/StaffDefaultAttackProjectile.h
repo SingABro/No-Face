@@ -44,11 +44,5 @@ private:
 	FVector MoveDirection;
 
 	UPROPERTY(EditAnywhere, Category = "Var")
-	float Damage;
-
-	UPROPERTY(EditAnywhere, Category = "Var")
-	float MoveSpeed;
-
-	UPROPERTY(EditAnywhere, Category = "Var")
 	float LifeTime;
 };

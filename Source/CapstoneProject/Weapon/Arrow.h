@@ -36,14 +36,6 @@ private:
 
 	FVector Direction;
 
-	UPROPERTY(EditAnywhere, Category = "Speed")
-	float MoveSpeed;
-
 	UPROPERTY(EditAnywhere, Category = "Time")
 	float LifeTime;
-
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	float Damage;
-
-	uint8 Index = 0;
 };

@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Stat/CharacterDataStat.h"
 
 AStaffDefaultAttackProjectile::AStaffDefaultAttackProjectile()
 {
@@ -25,8 +26,7 @@ AStaffDefaultAttackProjectile::AStaffDefaultAttackProjectile()
 	ParticleComponent->bAutoActivate = true;
 
 	MoveDirection = FVector::ZeroVector;
-	Damage = 200.f;
-	MoveSpeed = 1500.f;
+	
 	LifeTime = 5.f;
 }
 
@@ -40,7 +40,7 @@ void AStaffDefaultAttackProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector NewLocation = GetActorLocation() + (MoveDirection * MoveSpeed * DeltaTime);
+	FVector NewLocation = GetActorLocation() + (MoveDirection * Stat->StaffSpeed * DeltaTime);
 	SetActorLocation(NewLocation);
 
 	LifeTime -= DeltaTime;
@@ -60,7 +60,7 @@ void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			if (GetOwner() == nullptr) return;
 			FDamageEvent DamageEvent;
-			Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Staff_Default"));
+			Enemy->TakeDamage(Stat->StaffDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Staff_Default"));
 		}
 	}
 }

@@ -26,9 +26,7 @@ AArrow::AArrow()
 	}
 
 	Direction = FVector::ZeroVector;
-	Damage = 500.f;
-	MoveSpeed = Stat->BowSpeed;
-	LifeTime = Stat->BowLifeTime;
+	LifeTime = 5.f;
 }
 
 void AArrow::BeginPlay()
@@ -41,7 +39,7 @@ void AArrow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector NewLocation = GetActorLocation() + (Direction * MoveSpeed * DeltaTime);
+	FVector NewLocation = GetActorLocation() + (Direction * Stat->BowSpeed * DeltaTime);
 	SetActorLocation(NewLocation);
 
 	LifeTime -= DeltaTime;
@@ -65,9 +63,8 @@ void AArrow::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 		if (Enemy)
 		{
 			if (GetOwner() == nullptr) return;
-			Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+			Enemy->TakeDamage(Stat->BowDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 		}
-		UE_LOG(LogTemp, Display, TEXT("화살 히트"));
 		Destroy();
 	}
 }

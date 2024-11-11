@@ -36,7 +36,7 @@ public:
 	float GroundSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Var")
-	float MovingThreshould;
+	float MovingThreshold;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Var")
 	FVector Velocity;
