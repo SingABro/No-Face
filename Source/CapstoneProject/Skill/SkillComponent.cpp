@@ -35,6 +35,7 @@ USkillComponent::USkillComponent()
 		StatData = StatDataRef.Object;
 	}
 
+
 	ShieldAmount = 0.f;
 	ShieldThreshold = StatData->Staff_E_Threshold;
 }
@@ -46,6 +47,11 @@ void USkillComponent::BeginPlay()
 	Character = CastChecked<ACharacter>(GetOwner());
 	PlayerController = CastChecked<APlayerController>(Character->GetController());
 	StatComponent = Character->GetComponentByClass<UCharacterStatComponent>();
+
+	StatData->SetSword_Q_Level(0);
+	StatData->SetStaff_Q_Level(0);
+	StatData->SetStaff_W_Level(0);
+	StatData->SetStaff_R_Level(0);
 }
 
 void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -938,7 +944,7 @@ void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
 		if (SkillType == 1)
 		{
 			Sword_Q_Upgrade++;
-			StatData->SetSword_Q_Damage(StatData->Sword_Q_Damage + 100.f * Sword_Q_Upgrade);
+			StatData->SetSword_Q_Level(Sword_Q_Upgrade);
 		}
 		else if (SkillType == 2)
 		{
@@ -977,12 +983,12 @@ void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
 		if (SkillType == 1)
 		{
 			Staff_Q_Upgrade++;
-			StatData->SetStaff_Q_Damage(StatData->Staff_Q_Damage + 300.f * Staff_Q_Upgrade);
+			StatData->SetStaff_Q_Level(Staff_Q_Upgrade);
 		}
 		else if (SkillType == 2)
 		{
 			Staff_W_Upgrade++;
-			StatData->SetStaff_W_Damage(StatData->Staff_W_Damage + 50.f * Staff_W_Upgrade);
+			StatData->SetStaff_W_Level(Staff_W_Upgrade);
 		}
 		else if (SkillType == 3)
 		{
@@ -991,7 +997,7 @@ void USkillComponent::UsePlayerSkillPoint(int WeaponType, int SkillType)
 		else if (SkillType == 4)
 		{
 			Staff_R_Upgrade++;
-			StatData->SetStaff_R_Damage(StatData->Staff_Q_Damage + 500.f * Staff_R_Upgrade);
+			StatData->SetStaff_R_Level(Staff_R_Upgrade);
 		}
 	}
 	UE_LOG(LogTemp, Display, TEXT("Skill Point: %d"), SkillPoint);

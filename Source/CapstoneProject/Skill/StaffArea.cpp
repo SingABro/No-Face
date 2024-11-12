@@ -65,7 +65,7 @@ void AStaffArea::PullToCenter(float DeltaTime)
 				if (Enemy)
 				{
 					if (GetOwner() == nullptr) return;
-					Enemy->TakeDamage(Stat->Staff_W_Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+					Enemy->TakeDamage(Stat->Staff_W_Damage + Stat->Staff_W_Level * 50, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 				}
 				DamageTime = 0.f;
 			}

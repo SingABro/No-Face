@@ -15,10 +15,15 @@ class CAPSTONEPROJECT_API UCharacterDataStat : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE void SetSword_Q_Damage(float UpgradeDamage) { Sword_Q_Damage = UpgradeDamage; }
-	FORCEINLINE void SetStaff_Q_Damage(float UpgradeDamage) { Staff_Q_Damage = UpgradeDamage; }
-	FORCEINLINE void SetStaff_W_Damage(float UpgradeDamage) { Staff_W_Damage = UpgradeDamage; }
-	FORCEINLINE void SetStaff_R_Damage(float UpgradeDamage) { Staff_R_Damage = UpgradeDamage; }
+	FORCEINLINE void SetSword_Q_Level(uint8 UpgradeLevel) { Sword_Q_Level = UpgradeLevel; }
+	FORCEINLINE void SetStaff_Q_Level(uint8 UpgradeLevel) { Staff_Q_Level = UpgradeLevel; }
+	FORCEINLINE void SetStaff_W_Level(uint8 UpgradeLevel) { Staff_Q_Level = UpgradeLevel; }
+	FORCEINLINE void SetStaff_R_Level(uint8 UpgradeLevel) { Staff_Q_Level = UpgradeLevel; }
+
+	uint8 Sword_Q_Level = 0;
+	uint8 Staff_Q_Level = 0;
+	uint8 Staff_W_Level = 0;
+	uint8 Staff_R_Level = 0;
 
 /* 일반 스텟 */
 public:
