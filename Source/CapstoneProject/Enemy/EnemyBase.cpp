@@ -193,6 +193,8 @@ void AEnemyBase::Stun()
 
 void AEnemyBase::SetDead()
 {
+	IsDead = true;
+
 	OnDead.ExecuteIfBound(TakeExp());
 }
 

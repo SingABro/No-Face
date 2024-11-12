@@ -81,7 +81,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ImpactParticleComponent;
 
-	
-
+	bool IsDead = false;
 
 };

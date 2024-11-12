@@ -162,6 +162,9 @@ bool AEnemyMelee_Tanker::AttackInRange()
 
 void AEnemyMelee_Tanker::BeginHitAction()
 {
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	/* 스턴 상태라면 그대로 진행 */
@@ -182,9 +185,6 @@ void AEnemyMelee_Tanker::BeginHitAction()
 		ImpactParticleComponent->Deactivate();
 	}
 
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
-
 	ImpactParticleComponent->Activate();
 	AnimInstance->Montage_Play(HitMontage);
 
@@ -195,7 +195,10 @@ void AEnemyMelee_Tanker::BeginHitAction()
 
 void AEnemyMelee_Tanker::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetMyController()->RunAI();
+	if (!IsDead)
+	{
+		GetMyController()->RunAI();
+	}
 }
 
 void AEnemyMelee_Tanker::BeginSkillDash()
@@ -219,7 +222,7 @@ void AEnemyMelee_Tanker::SetDead()
 	Super::SetDead();
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-
+	
 	AnimInstance->StopAllMontages(5.f);
 	AnimInstance->Montage_Play(DeadMontage);
 

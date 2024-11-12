@@ -169,6 +169,9 @@ void AEnemyRanged_Rifle::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
 
 void AEnemyRanged_Rifle::BeginHitAction()
 {
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	/* 스턴 상태라면 그대로 진행 */
@@ -189,9 +192,6 @@ void AEnemyRanged_Rifle::BeginHitAction()
 		ImpactParticleComponent->Deactivate();
 	}
 
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
-
 	AnimInstance->Montage_Play(HitMontage);
 	ImpactParticleComponent->Activate();
 
@@ -202,7 +202,10 @@ void AEnemyRanged_Rifle::BeginHitAction()
 
 void AEnemyRanged_Rifle::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetMyController()->RunAI();
+	if (!IsDead)
+	{
+		GetMyController()->RunAI();
+	}
 }
 
 void AEnemyRanged_Rifle::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
