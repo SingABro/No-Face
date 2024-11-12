@@ -18,8 +18,8 @@ AStaffArea::AStaffArea()
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(Root);
 	ParticleComponent->SetTemplate(Particle);
+	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffArea::AreaDestroy);
 
-	LifeTime = 3.f;
 	DamageTime = 0.f;
 }
 
@@ -34,12 +34,6 @@ void AStaffArea::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	PullToCenter(DeltaTime);
-	
-	LifeTime -= DeltaTime;
-	if (LifeTime <= 0.f)
-	{
-		Destroy();
-	}
 }
 
 bool AStaffArea::CheckInArea(TArray<FOverlapResult>& InOverlapResults)
@@ -79,5 +73,10 @@ void AStaffArea::PullToCenter(float DeltaTime)
 		}
 	}
 	
+}
+
+void AStaffArea::AreaDestroy(UParticleSystemComponent* PSystem)
+{
+	Destroy();
 }
 

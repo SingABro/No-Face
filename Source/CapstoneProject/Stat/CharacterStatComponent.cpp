@@ -4,7 +4,8 @@
 #include "Stat/CharacterStatComponent.h"
 #include "Stat/CharacterDataStat.h"
 #include "Enemy/EnemyBase.h"
-
+#include "Particles/ParticleSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 UCharacterStatComponent::UCharacterStatComponent()
 {
@@ -75,7 +76,6 @@ void UCharacterStatComponent::SetHp(float ChangeHp)
 
 void UCharacterStatComponent::SetExp(float InExp)
 {
-	UE_LOG(LogTemp, Display, TEXT("Get Exp Amount : %f"), InExp);
 	CurrentExp = CurrentExp + InExp;
 	while (CurrentExp >= 100) {
 		CurrentExp -= 100;
@@ -83,6 +83,8 @@ void UCharacterStatComponent::SetExp(float InExp)
 		CurrentSkillPoint++;
 		UE_LOG(LogTemp, Display, TEXT("##### Level Up ##### // Current Level : %d"), CurrentLevel);
 		OnLevelChanged.Broadcast(CurrentLevel);
+
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LevelUpEffect, GetOwner()->GetActorTransform());
 	}
 	UE_LOG(LogTemp, Display, TEXT("Current Exp : %f,  //  Current Level : %d"), CurrentExp, CurrentLevel);
 	OnExpChanged.Broadcast(CurrentExp);

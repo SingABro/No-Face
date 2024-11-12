@@ -47,6 +47,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	TObjectPtr<class UCharacterDataStat> DataStat;
 
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> LevelUpEffect;
+
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	float MaxHp;
 

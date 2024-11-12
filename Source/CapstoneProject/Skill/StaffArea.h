@@ -25,6 +25,9 @@ private:
 	bool CheckInArea(TArray<FOverlapResult>& InOverlapResults);
 	void PullToCenter(float DeltaTime);
 
+	UFUNCTION()
+	void AreaDestroy(class UParticleSystemComponent* PSystem);
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USceneComponent> Root;

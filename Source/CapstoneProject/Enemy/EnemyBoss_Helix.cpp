@@ -135,7 +135,21 @@ void AEnemyBoss_Helix::SetDead()
 {
 	Super::SetDead();
 
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
+	AnimInstance->StopAllMontages(5.f);
+	AnimInstance->Montage_Play(DeadMontage);
+
+	GetMyController()->StopAI();
+
+	SetActorEnableCollision(false);
+
+	FTimerHandle DestroyHandle;
+	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
+		[&]()
+		{
+			Destroy();
+		}, 4.f, false);
 }
 
 void AEnemyBoss_Helix::BeginDefaultAttack()

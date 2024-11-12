@@ -116,12 +116,12 @@ void AEnemyRanged_Siege::SetDead()
 {
 	Super::SetDead();
 
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	AnimInstance->StopAllMontages(5.f);
 	AnimInstance->Montage_Play(DeadMontage);
-
-	GetMyController()->StopAI();
 
 	SetActorEnableCollision(false);
 
@@ -154,6 +154,9 @@ void AEnemyRanged_Siege::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
 
 void AEnemyRanged_Siege::BeginHitAction()
 {
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	/* 스턴 상태라면 그대로 진행 */
@@ -174,9 +177,6 @@ void AEnemyRanged_Siege::BeginHitAction()
 		ImpactParticleComponent->Deactivate();
 	}
 
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
-
 	ImpactParticleComponent->Activate();
 	AnimInstance->Montage_Play(HitMontage);
 
@@ -187,7 +187,10 @@ void AEnemyRanged_Siege::BeginHitAction()
 
 void AEnemyRanged_Siege::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetMyController()->RunAI();
+	if (!IsDead)
+	{
+		GetMyController()->RunAI();
+	}
 }
 
 void AEnemyRanged_Siege::BeginSkill1()

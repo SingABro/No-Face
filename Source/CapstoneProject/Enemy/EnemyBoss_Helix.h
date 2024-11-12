@@ -105,6 +105,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> Skill_4Montage;
 
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<class UAnimMontage> DeadMontage;
+
 /* 파티클 */
 private:
 	UPROPERTY(EditAnywhere, Category = "Effect")

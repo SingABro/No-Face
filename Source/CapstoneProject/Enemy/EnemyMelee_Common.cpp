@@ -132,12 +132,12 @@ void AEnemyMelee_Common::SetDead()
 {
 	Super::SetDead();
 
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	AnimInstance->StopAllMontages(5.f);
 	AnimInstance->Montage_Play(DeadMontage);
-
-	GetMyController()->StopAI();
 
 	SetActorEnableCollision(false);
 
@@ -180,6 +180,9 @@ bool AEnemyMelee_Common::AttackInRange()
 
 void AEnemyMelee_Common::BeginHitAction()
 {
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	/* 스턴 상태라면 그대로 진행 */
@@ -199,9 +202,6 @@ void AEnemyMelee_Common::BeginHitAction()
 	{
 		ImpactParticleComponent->Deactivate();
 	}
-	
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
 
 	ImpactParticleComponent->Activate();
 	AnimInstance->Montage_Play(HitMontage, 0.5f);
@@ -213,7 +213,10 @@ void AEnemyMelee_Common::BeginHitAction()
 
 void AEnemyMelee_Common::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetMyController()->RunAI();
+	if (!IsDead)
+	{
+		GetMyController()->RunAI();
+	}
 }
 
 void AEnemyMelee_Common::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
