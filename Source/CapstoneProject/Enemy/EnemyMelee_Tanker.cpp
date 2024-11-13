@@ -48,7 +48,7 @@ void AEnemyMelee_Tanker::DefaultAttackHitCheck()
 
 	const float Damage = Stat->GetCurrentDamage();
 	const float Range = Stat->GetCurrentRange();
-	const float Degree = 60.f;
+	const float Degree = 90.f;
 
 	FColor Color = FColor::Red;
 	FVector Origin = GetActorLocation();

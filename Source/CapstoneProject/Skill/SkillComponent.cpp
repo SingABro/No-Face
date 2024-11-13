@@ -579,7 +579,8 @@ void USkillComponent::Bow_W_Skill()
 				if (Enemy)
 				{
 					FDamageEvent DamageEvent;
-					Enemy->TakeDamage(Damage, DamageEvent, Character->GetController(), Character, TEXT("Default"));
+					float Distance = FVector::Distance(Enemy->GetActorLocation(), Bow_W_SpawnLocation);
+					Enemy->TakeDamage(Damage - (Distance / 3.f), DamageEvent, Character->GetController(), Character, TEXT("Default"));
 				}
 			}
 		}
@@ -801,6 +802,8 @@ void USkillComponent::BeginStaff_E()
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	
+	ShieldThreshold = StatData->Staff_E_Threshold + Staff_E_Upgrade * 100.f;
 	AnimInstance->Montage_Play(SkillMontageData->StaffMontages[2]);
 
 	GetParticleComponent(0)->SetTemplate(Staff_E_Effect);

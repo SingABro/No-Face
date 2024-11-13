@@ -30,6 +30,7 @@ public:
 	virtual float GetDetectRadius() override;
 	virtual float GetAttackInRange() override;
 	virtual float GetTurnSpeed() override;
+	virtual float GetDetectTime() override;
 
 	virtual void SetEnemyAttackDelegate(const FEnemyAttackFinished& InEnemyAttackFinished) override;
 	virtual void SetEnemySkill1Delegate(const FEnemySkill1Finished& InEnemySkill1Finished) override;

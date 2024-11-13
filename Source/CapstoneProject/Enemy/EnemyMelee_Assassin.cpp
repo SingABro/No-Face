@@ -51,7 +51,7 @@ void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 
 	const float Damage = Stat->GetCurrentDamage();
 	const float Range = Stat->GetCurrentRange();
-	const float Degree = 60.f;
+	const float Degree = 90.f;
 
 	FColor Color = FColor::Red;
 	FVector Origin = GetActorLocation();
@@ -79,6 +79,7 @@ void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 		AnimInstance->Montage_Stop(0.5f, DefaultAttackMontage);
+		EnemyAttackFinished.ExecuteIfBound();
 	}
 }
 
@@ -179,9 +180,6 @@ bool AEnemyMelee_Assassin::AttackInRange()
 
 void AEnemyMelee_Assassin::BeginHitAction()
 {
-	/* 피격 몽타주 실행 중 공격 금지 */
-	GetMyController()->StopAI();
-
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	/* 스턴 상태라면 그대로 진행 */
@@ -189,6 +187,7 @@ void AEnemyMelee_Assassin::BeginHitAction()
 	{
 		return;
 	}
+
 	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
 	if (AnimInstance->Montage_IsPlaying(HitMontage))
 	{
@@ -200,6 +199,9 @@ void AEnemyMelee_Assassin::BeginHitAction()
 	{
 		ImpactParticleComponent->Deactivate();
 	}
+
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
 
 	ImpactParticleComponent->Activate();
 	AnimInstance->Montage_Play(HitMontage, 0.5f);

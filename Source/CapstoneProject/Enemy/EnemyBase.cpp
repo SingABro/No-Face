@@ -107,6 +107,11 @@ float AEnemyBase::GetTurnSpeed()
 	return 10.0f;
 }
 
+float AEnemyBase::GetDetectTime()
+{
+	return 3.0f;
+}
+
 void AEnemyBase::SetEnemyAttackDelegate(const FEnemyAttackFinished& InEnemyAttackFinished)
 {
 	EnemyAttackFinished = InEnemyAttackFinished;
