@@ -32,6 +32,7 @@ public:
 	virtual float GetDetectRadius() = 0;
 	virtual float GetAttackInRange() = 0;
 	virtual float GetTurnSpeed() = 0;
+	virtual float GetDetectTime() = 0;
 
 	virtual void SetEnemyAttackDelegate(const FEnemyAttackFinished& InEnemyAttackFinished) = 0;
 	virtual void SetEnemySkill1Delegate(const FEnemySkill1Finished& InEnemySkill1Finished) = 0;

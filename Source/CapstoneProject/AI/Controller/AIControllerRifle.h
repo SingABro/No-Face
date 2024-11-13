@@ -21,6 +21,9 @@ public:
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
+	bool CanMeleeAttack();
+
+
 /* Perception Sense 섹션 */
 private:
 	FAIStimulus CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense);

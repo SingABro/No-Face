@@ -78,7 +78,8 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			if (Enemy)
 			{
 				if (GetOwner() == nullptr) return;
-				Enemy->TakeDamage(Stat->Staff_Q_Damage + Stat->Staff_Q_Level * 200.f , DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+				float Distance = FVector::Distance(Enemy->GetActorLocation(), GetActorLocation());
+				Enemy->TakeDamage(Stat->Staff_Q_Damage + Stat->Staff_Q_Level * 200.f - (Distance / 3.f), DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 			}
 		}
 		DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_Q_Range, 32, FColor::Green, false, 3.f);

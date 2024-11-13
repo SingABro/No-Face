@@ -22,7 +22,6 @@ public:
 
 public:
 	FORCEINLINE float GetCurrentHp() const { return CurrentHp; }
-	FORCEINLINE float GetCurrentMp() const { return CurrentMp; }
 	FORCEINLINE float GetCurrentDamage() const { return CurrentDamage; }
 	FORCEINLINE float GetCurrentRange() const { return CurrentRange; }
 	FORCEINLINE float GetCurrentMoveSpeed() const { return CurrentMoveSpeed; }
@@ -36,9 +35,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	float CurrentHp;
-
-	UPROPERTY(EditAnywhere, Category = "Stat")
-	float CurrentMp;
 
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	float CurrentDamage;

@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AI/Controller/AIControllerSiege.h"
 #include "Engine/DamageEvents.h"
+#include "Engine/OverlapResult.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -31,7 +32,14 @@ void AEnemyRanged_Siege::AttackByAI()
 {
 	Super::AttackByAI();
 
-	BeginAttack();
+	if (GetMyController()->CanMeleeAttack())
+	{
+		BeginMeleeAttack();
+	}
+	else
+	{
+		BeginAttack();
+	}
 }
 
 void AEnemyRanged_Siege::DefaultAttackHitCheck()
@@ -40,12 +48,53 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 
 	float Damage = 50.f;
 	float Range = 1000.f;
+	float Degree = 90.f;
 
 	FVector Origin = GetActorLocation();
 	FVector End = Origin + GetActorForwardVector() * Range;
 	FCollisionQueryParams Param(NAME_None, false, this);
-	FHitResult HitResult;
 
+	if (GetMyController()->CanMeleeAttack())
+	{
+		TArray<FOverlapResult> OverlapResults;
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(200.f), Param))
+		{
+			for (const FOverlapResult& OverlapResult : OverlapResults)
+			{
+				AActor* Target = OverlapResult.GetActor();
+				FVector PlayerLocation = GetActorLocation();
+				FVector TargetLocation = Target->GetActorLocation();
+				FVector ForwardVector = GetActorForwardVector();
+				FVector DirectionToTarget = (TargetLocation - PlayerLocation).GetSafeNormal();
+
+				float DotProduct = FVector::DotProduct(ForwardVector, DirectionToTarget);
+				float AngleToTarget = FMath::Acos(DotProduct);
+				float AngleToTargetDegrees = FMath::RadiansToDegrees(AngleToTarget);
+
+				FDamageEvent DamageEvent;
+				if (AngleToTargetDegrees <= (Degree / 2.0f))
+				{
+					Target->TakeDamage(Damage, DamageEvent, GetController(), this);
+				}
+			}
+		}
+		else
+		{
+			UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+			Anim->Montage_Stop(1.f, MeleeAttackMontage);
+			float RestTime = MeleeAttackMontage->GetPlayLength() - Anim->Montage_GetPosition(MeleeAttackMontage);
+
+			FTimerHandle MeleeTimer;
+			GetWorld()->GetTimerManager().SetTimer(MeleeTimer, [&]()
+				{
+					EnemyAttackFinished.ExecuteIfBound();
+				}, RestTime, false);
+		}
+
+		return;
+	}
+
+	FHitResult HitResult;
 	FVector ForwardVector = GetActorForwardVector() * Range;
 	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
 	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
@@ -54,7 +103,7 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
-		HitResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+		HitResult.GetActor()->TakeDamage(Damage + 200.f, DamageEvent, GetController(), this);
 	}
 
 	DrawDebugBox(GetWorld(), Origin, BoxExtent, FColor::Green, false, 3.f);
@@ -150,6 +199,24 @@ void AEnemyRanged_Siege::EndAttack(UAnimMontage* Target, bool IsProperlyEnded)
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 
 	EnemyAttackFinished.ExecuteIfBound();
+}
+
+void AEnemyRanged_Siege::BeginMeleeAttack()
+{
+	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	Anim->Montage_Play(MeleeAttackMontage);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyRanged_Siege::EndMeleeAttack);
+	Anim->Montage_SetEndDelegate(MontageEnd, MeleeAttackMontage);
+}
+
+void AEnemyRanged_Siege::EndMeleeAttack(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	EnemyAttackFinished.ExecuteIfBound();
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void AEnemyRanged_Siege::BeginHitAction()

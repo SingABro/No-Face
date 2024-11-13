@@ -36,6 +36,9 @@ private:
 	void BeginAttack();
 	void EndAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 
+	void BeginMeleeAttack();
+	void EndMeleeAttack(class UAnimMontage* Target, bool IsProperlyEnded);
+
 	void BeginHitAction();
 	void EndHitAction(class UAnimMontage* Target, bool IsProperlyEnded);
 
@@ -54,6 +57,9 @@ private:
 private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> DefaultAttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<class UAnimMontage> MeleeAttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> DeadMontage;

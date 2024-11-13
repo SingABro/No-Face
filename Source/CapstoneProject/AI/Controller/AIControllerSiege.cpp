@@ -39,6 +39,11 @@ void AAIControllerSiege::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus
 	}
 }
 
+bool AAIControllerSiege::CanMeleeAttack()
+{
+	return GetBlackboardComponent()->GetValueAsBool(TEXT("MeleeAttack"));
+}
+
 FAIStimulus AAIControllerSiege::CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense)
 {
 	FActorPerceptionBlueprintInfo ActorPerceptionBlueprintInfo;

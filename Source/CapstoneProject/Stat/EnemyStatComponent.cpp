@@ -15,7 +15,6 @@ UEnemyStatComponent::UEnemyStatComponent()
 	}
 	
 	CurrentHp = DataStat->Hp;
-	CurrentMp = DataStat->Mp;
 	CurrentDamage = DataStat->Damage;
 	CurrentRange = DataStat->Range;
 	CurrentMoveSpeed = DataStat->MoveSpeed;
@@ -47,13 +46,12 @@ float UEnemyStatComponent::ApplyDamage(float InDamage)
 		OnHpZero.Broadcast();
 	}
 
-	return 0.0f;
+	return ActualDamage;
 }
 
 void UEnemyStatComponent::SetHp(float ChangeHp)
 {
 	CurrentHp = ChangeHp;
-	UE_LOG(LogTemp, Display, TEXT("Current Hp : %f"), CurrentHp);
 	OnHpChanged.Broadcast(CurrentHp);
 }
 
