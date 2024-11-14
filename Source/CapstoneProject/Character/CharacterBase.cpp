@@ -137,8 +137,7 @@ ACharacterBase::ACharacterBase()
 
 	/* 스텟 */
 	Stat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stat"));
-	StatData = CreateDefaultSubobject<UCharacterDataStat>(TEXT("CharacterDataStat"));
-
+	Stat->OnHpZero.AddUObject(this, &ACharacterBase::SetDead);
 
 	/* 무기 */
 	TakeItemDelegateArray.Add(FTakeItemDelegateWrapper(FTakeItemDelegate::CreateUObject(this, &ACharacterBase::EquipSword)));
@@ -544,6 +543,16 @@ void ACharacterBase::DisplaySkillUI()
 			SkillUIWidget->AddToViewport();
 		}
 	}
+}
+
+void ACharacterBase::SetDead()
+{
+	SetActorEnableCollision(false);
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(DeadMontage);
+
+	GetPlayerController()->GameHasEnded(this, false);
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const

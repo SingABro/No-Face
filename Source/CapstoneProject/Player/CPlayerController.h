@@ -19,6 +19,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	virtual void GameHasEnded(class AActor* EndGameFocus = nullptr, bool bIsWinner = false) override;
 	
 /*HUD ����*/
 protected:
@@ -27,5 +30,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
 	TObjectPtr<class UHUDWidget> HUDWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<class UUserWidget> DeadScreenClass;
 
 };
