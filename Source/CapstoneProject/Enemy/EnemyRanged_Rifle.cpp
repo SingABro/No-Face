@@ -10,6 +10,7 @@
 #include "Engine/OverlapResult.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Weapon/EnemyRangedProjectile.h"
 
 AEnemyRanged_Rifle::AEnemyRanged_Rifle()
 {
@@ -99,7 +100,7 @@ void AEnemyRanged_Rifle::DefaultAttackHitCheck()
 		return;
 	}
 
-	FHitResult HitResult;
+	/*FHitResult HitResult;
 	FVector ForwardVector = GetActorForwardVector() * Range;
 	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
 	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
@@ -112,7 +113,15 @@ void AEnemyRanged_Rifle::DefaultAttackHitCheck()
 	}
 
 	DrawDebugBox(GetWorld(), Origin, BoxExtent, FColor::Green, false, 3.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, FColor::Green, false, 3.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, FColor::Green, false, 3.f);*/
+
+	FVector SpawnLoc = GetMesh()->GetSocketLocation(TEXT("Muzzle_02")) + GetActorForwardVector() * 50.f;
+	FRotator SpawnRot = GetMesh()->GetSocketRotation(TEXT("Muzzle_02"));
+	AEnemyRangedProjectile* Projectile = GetWorld()->SpawnActor<AEnemyRangedProjectile>(ProjectileClass, SpawnLoc, SpawnRot);
+	Projectile->SetOwner(this);
+	Projectile->Init(GetActorForwardVector());
+
+	//TEXT("Muzzle_02")
 }
 
 float AEnemyRanged_Rifle::GetPatrolRadius()

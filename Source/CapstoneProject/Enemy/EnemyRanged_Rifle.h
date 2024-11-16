@@ -47,6 +47,11 @@ private:
 	/* 스턴 애니메이션 끝날 때 실행되는 함수 */
 	void EndStun(class UAnimMontage* Target, bool IsProperlyEnded);
 
+/* 발사체 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<class AEnemyRangedProjectile> ProjectileClass;
+
 /* 유틸리티 섹션 */
 private:
 	class AAIControllerRifle* GetMyController();

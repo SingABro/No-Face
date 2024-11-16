@@ -124,7 +124,7 @@ ACharacterBase::ACharacterBase()
 	}
 
 	/* Mesh */
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/No-Face/Character/Mesh/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ParagonRevenant/Characters/Heroes/Revenant/Meshes/Revenant.Revenant'"));
 	if (MainMeshRef.Object)
 	{
 		GetMesh()->SetSkeletalMesh(MainMeshRef.Object);
@@ -553,6 +553,7 @@ void ACharacterBase::SetDead()
 	AnimInstance->Montage_Play(DeadMontage);
 
 	GetPlayerController()->GameHasEnded(this, false);
+	GetPlayerController()->DisableInput(GetPlayerController());
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const

@@ -53,7 +53,7 @@ void AStaffDefaultAttackProjectile::Tick(float DeltaTime)
 
 void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != this && OtherActor)
+	if (OtherActor != this && OtherActor && !OtherActor->ActorHasTag(TEXT("Player")))
 	{
 		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
 		if (Enemy)
