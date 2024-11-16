@@ -10,6 +10,7 @@
 #include "Engine/OverlapResult.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Weapon/EnemyRangedProjectile.h"
 
 AEnemyRanged_Siege::AEnemyRanged_Siege()
 {
@@ -94,7 +95,7 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 		return;
 	}
 
-	FHitResult HitResult;
+	/*FHitResult HitResult;
 	FVector ForwardVector = GetActorForwardVector() * Range;
 	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
 	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
@@ -107,7 +108,13 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 	}
 
 	DrawDebugBox(GetWorld(), Origin, BoxExtent, FColor::Green, false, 3.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, FColor::Green, false, 3.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, FColor::Green, false, 3.f);*/
+
+	FVector SpawnLoc = GetMesh()->GetSocketLocation(TEXT("Muzzle_02")) + GetActorForwardVector() * 50.f;
+	FRotator SpawnRot = GetMesh()->GetSocketRotation(TEXT("Muzzle_02"));
+	AEnemyRangedProjectile* Projectile = GetWorld()->SpawnActor<AEnemyRangedProjectile>(ProjectileClass, SpawnLoc, SpawnRot);
+	Projectile->SetOwner(this);
+	Projectile->Init(GetActorForwardVector());
 }
 
 float AEnemyRanged_Siege::GetDetectRadius()
