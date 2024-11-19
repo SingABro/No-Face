@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/HighlightInterface.h"
 #include "StoryBook.generated.h"
 
 UCLASS()
-class CAPSTONEPROJECT_API AStoryBook : public AActor
+class CAPSTONEPROJECT_API AStoryBook : public AActor, public IHighlightInterface
 {
 	GENERATED_BODY()
 	
@@ -19,6 +20,9 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void HighlightActor() override;
+	virtual void EndHighlightActor() override;
 
 	UFUNCTION()
 	void OnHighlighting(AActor* TouchedActor);

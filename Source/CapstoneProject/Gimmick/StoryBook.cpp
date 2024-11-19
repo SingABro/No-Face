@@ -33,16 +33,26 @@ void AStoryBook::Tick(float DeltaTime)
 
 }
 
+void AStoryBook::HighlightActor()
+{
+	MeshComp->SetOverlayMaterial(HighlightMaterial);
+}
+
+void AStoryBook::EndHighlightActor()
+{
+	MeshComp->SetOverlayMaterial(nullptr);
+}
+
 void AStoryBook::OnHighlighting(AActor* TouchedActor)
 {
 	UE_LOG(LogTemp, Display, TEXT("Hi"));
 
-	MeshComp->SetOverlayMaterial(HighlightMaterial);
+	HighlightActor();
 }
 
 void AStoryBook::OnEndHighlighting(AActor* TouchedActor)
 {
-	MeshComp->SetOverlayMaterial(nullptr);
+	EndHighlightActor();
 }
 
 void AStoryBook::OnClick(AActor* TouchedActor, FKey ButtonPressed)

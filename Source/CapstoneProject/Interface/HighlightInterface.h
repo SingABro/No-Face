@@ -21,4 +21,6 @@ class CAPSTONEPROJECT_API IHighlightInterface
 	GENERATED_BODY()
 
 public:
+	virtual void HighlightActor() = 0;
+	virtual void EndHighlightActor() = 0;
 };
