@@ -9,8 +9,7 @@
 #include "Character/CharacterBase.h"
 
 AAIControllerHelix::AAIControllerHelix()
-{
-	
+{	
 }
 
 ACharacter* AAIControllerHelix::GetTarget()
@@ -23,4 +22,10 @@ void AAIControllerHelix::BeginPlay()
 	Super::BeginPlay();
 
 	GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));
+}
+
+void AAIControllerHelix::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
 }

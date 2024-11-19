@@ -51,6 +51,7 @@ public:
 private:
 	void BeginDefaultAttack();
 	void EndDefaultAttack(class UAnimMontage* Target, bool IsProperlyEnded);
+	bool IsInDegree(AActor* Actor, AActor* Target, float RadialAngle);
 
 	/* Dash 스킬 */
 	void BeginSkill_1();

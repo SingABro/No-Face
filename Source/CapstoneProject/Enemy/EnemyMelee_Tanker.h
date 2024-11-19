@@ -79,6 +79,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> Skill1Montage;
 
+/* 이펙트 섹션 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> Skill_1Effect;
+
 /* 모션 워핑 */
 private:
 	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
