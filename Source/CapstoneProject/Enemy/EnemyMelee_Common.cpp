@@ -79,7 +79,7 @@ void AEnemyMelee_Common::DefaultAttackHitCheck()
 	if (!AttackInRange())
 	{
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		
+	
 		AnimInstance->Montage_Stop(0.5f, DefaultAttackMontage);
 	}
 }

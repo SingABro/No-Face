@@ -128,7 +128,7 @@ void AEnemyMelee_Tanker::Stun()
 
 	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetMyController()->StopAI();
 	AnimInstance->Montage_Play(StunMontage);
 
 	FOnMontageEnded MontageEnd;
@@ -281,7 +281,7 @@ void AEnemyMelee_Tanker::SetDead()
 
 void AEnemyMelee_Tanker::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetMyController()->RunAI();
 }
 
 bool AEnemyMelee_Tanker::IsInDegree(AActor* Actor, AActor* Target, float RadialAngle)

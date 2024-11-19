@@ -61,6 +61,8 @@ void AStaffMeteor::Tick(float DeltaTime)
 
 void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (bDamageApply == false) return;
+
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);
 
@@ -84,6 +86,8 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		}
 		DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_Q_Range, 32, FColor::Green, false, 3.f);
 	}
+
+	bDamageApply = false;
 }
 
 void AStaffMeteor::MeteorDestroy(UParticleSystemComponent* PSystem)
