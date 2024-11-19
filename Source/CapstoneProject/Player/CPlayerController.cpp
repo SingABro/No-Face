@@ -19,6 +19,11 @@ ACPlayerController::ACPlayerController()
 	{
 		DeadScreenClass = DeadWidgetRef.Class;
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> MapUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_MapUI.WBP_MapUI_C"));
+	if (MapUIWidgetRef.Class)
+	{
+		MapUIClass = MapUIWidgetRef.Class;
+	}
 
 }
 
@@ -28,6 +33,11 @@ void ACPlayerController::BeginPlay()
 	if (HUDWidget)
 	{
 		HUDWidget->AddToViewport();
+	}
+	UUserWidget* MapUIWidget = CreateWidget(this, MapUIClass);
+	if (MapUIWidget)
+	{
+		MapUIWidget->AddToViewport();
 	}
 
 	///* 해당 옵션을 설정해야지 PlayerController에서 인풋시스템을 관리하는듯 하다 -> 아닌가? */

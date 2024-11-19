@@ -76,6 +76,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<class UEnemyDamagedTextWidget> DamagedText;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UEnemyStunTextWidget> StunTextClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TObjectPtr<class UEnemyStunTextWidget> StunText;
+
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TMap<FName, class UParticleSystem*> HitParticleCollection;
 

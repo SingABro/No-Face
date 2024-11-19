@@ -10,6 +10,7 @@
 #include "UI/EnemyHpBarWidget.h"
 #include "UI/EnemyHpBarWidgetComponent.h"
 #include "UI/EnemyDamagedTextWidget.h"
+#include "UI/EnemyStunTextWidget.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
@@ -40,6 +41,11 @@ AEnemyBase::AEnemyBase()
 	if (DamagedTextWidgetRef.Class)
 	{
 		DamagedTextClass = DamagedTextWidgetRef.Class;
+	}
+	static ConstructorHelpers::FClassFinder<UEnemyStunTextWidget> StunTextWidgetRef(TEXT("/Game/No-Face/UI/WBP_EnemyStunTextWidget.WBP_EnemyStunTextWidget_C"));
+	if (StunTextWidgetRef.Class)
+	{
+		StunTextClass = StunTextWidgetRef.Class;
 	}
 
 	ImpactParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
@@ -186,12 +192,13 @@ void AEnemyBase::Stun()
 	if (UGameplayStatics::ProjectWorldToScreen(PlayerController, WorldPosition, ScreenPosition))
 	{
 		// 대미지 UI 위젯 생성
-		DamagedText = CreateWidget<UEnemyDamagedTextWidget>(GetWorld(), DamagedTextClass);
-		if (DamagedText)
+		StunText = CreateWidget<UEnemyStunTextWidget>(GetWorld(), StunTextClass);
+		if (StunText)
 		{
-			DamagedText->AddToViewport();  // 화면에 추가
-			DamagedText->SetDamagedText(TEXT("기절")); 
-			DamagedText->SetPositionInViewport(ScreenPosition); // 스크린 좌표로 위치 설정
+			StunText->AddToViewport();  // 화면에 추가
+			StunText->SetStunText();
+			StunText->SetPositionInViewport(ScreenPosition); // 스크린 좌표로 위치 설정
+
 		}
 	}
 }
