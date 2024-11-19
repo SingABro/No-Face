@@ -228,9 +228,9 @@ void AEnemyBoss_Helix::EndSkill_1(UAnimMontage* Target, bool IsProperlyEnded)
 
 void AEnemyBoss_Helix::Skill_1_MotionWarpSet()
 {
-	FVector TargetOrigin = Player->GetActorLocation();
 	FVector Origin = GetActorLocation();
-	FVector TargetDir = (TargetOrigin - Origin);
+	FVector TargetDir = (Player->GetActorLocation() - Origin);
+	FVector TargetOrigin = Player->GetActorLocation() - (TargetDir.GetSafeNormal() - 100.f);
 	FRotator TargetRot = FRotationMatrix::MakeFromX(TargetDir).Rotator();
 	MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Dash"), TargetOrigin, TargetRot);
 }

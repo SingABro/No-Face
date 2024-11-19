@@ -228,9 +228,9 @@ void AEnemyMelee_Tanker::Skill_MotionWarpSet()
 	ACharacter* Target = GetMyController()->GetTarget();
 	if (Target == nullptr) return;
 
-	FVector TargetOrigin = Target->GetActorLocation();
 	FVector Origin = GetActorLocation();
-	FVector TargetDir = (TargetOrigin - Origin);
+	FVector TargetDir = (Target->GetActorLocation() - Origin);
+	FVector TargetOrigin = Target->GetActorLocation() - (TargetDir.GetSafeNormal() - 100.f);
 	FRotator TargetRot = FRotationMatrix::MakeFromX(TargetDir).Rotator();
 	MotionWarp->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Dash"), TargetOrigin, TargetRot);
 }
