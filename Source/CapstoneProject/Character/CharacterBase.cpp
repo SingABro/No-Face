@@ -368,7 +368,7 @@ void ACharacterBase::ZoomInOut(const FInputActionValue& Value)
 {
 	const float WheelValue = Value.Get<float>() * -50.f;
 
-	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 1200.f);
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 2000.f);
 }
 
 void ACharacterBase::CancelCasting()
