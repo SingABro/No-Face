@@ -26,6 +26,7 @@ public:
 	virtual void DefaultAttackHitCheck() override;
 	virtual float GetAttackInRange() override;
 
+
 	/* 오버라이딩 섹션 */
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type) override;
 	virtual float TakeExp() override;

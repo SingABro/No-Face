@@ -165,7 +165,7 @@ void AEnemyRanged_Rifle::Stun()
 
 	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetMyController()->StopAI();
 	AnimInstance->Montage_Play(StunMontage);
 
 	FOnMontageEnded MontageEnd;
@@ -286,7 +286,7 @@ void AEnemyRanged_Rifle::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded
 
 void AEnemyRanged_Rifle::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMyController()->RunAI();
 }
 
 AAIControllerRifle* AEnemyRanged_Rifle::GetMyController()

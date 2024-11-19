@@ -42,4 +42,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class UMaterialInstance> HighlightMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UUserWidget> DialogUIClass;
+
 };
