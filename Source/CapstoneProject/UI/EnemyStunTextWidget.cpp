@@ -1,24 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/EnemyDamagedTextWidget.h"
+#include "UI/EnemyStunTextWidget.h"
 #include "Components/TextBlock.h"
 #include "Animation/WidgetAnimation.h"
 #include "TimerManager.h"
 
 
-UEnemyDamagedTextWidget::UEnemyDamagedTextWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UEnemyStunTextWidget::UEnemyStunTextWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	DamagedTextEndDelegate.BindDynamic(this, &UEnemyDamagedTextWidget::AnimationFinished);
+	StunTextEndDelegate.BindDynamic(this, &UEnemyStunTextWidget::AnimationFinished);
 
 
 }
 
-void UEnemyDamagedTextWidget::NativeConstruct()
+void UEnemyStunTextWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	TextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("DamagedText")));
+	TextBlock = Cast<UTextBlock>(GetWidgetFromName(TEXT("StunText")));
 	ensure(TextBlock);
 
 	FSlateFontInfo CurrentFont = TextBlock->Font;
@@ -32,23 +32,21 @@ void UEnemyDamagedTextWidget::NativeConstruct()
 	CurrentPosition.Y += dy;
 	SetRenderTranslation(CurrentPosition);
 
-	BindToAnimationFinished(FadeOut, DamagedTextEndDelegate);
+	BindToAnimationFinished(FadeOut, StunTextEndDelegate);
 }
 
-void UEnemyDamagedTextWidget::SetDamagedText(const FString& Text)
+void UEnemyStunTextWidget::SetStunText()
 {
 	if (TextBlock)
 	{
-		TextBlock->SetText(FText::FromString(Text));
-
 		FTimerHandle FontTimer;
 		FTimerHandle DelayTimer;
-		GetWorld()->GetTimerManager().SetTimer(FontTimer, this, &UEnemyDamagedTextWidget::ChangeFontSize, 0.1f, false);
-		GetWorld()->GetTimerManager().SetTimer(DelayTimer, this, &UEnemyDamagedTextWidget::DelayedAction, 0.75f, false);
+		GetWorld()->GetTimerManager().SetTimer(FontTimer, this, &UEnemyStunTextWidget::ChangeFontSize, 0.1f, false);
+		GetWorld()->GetTimerManager().SetTimer(DelayTimer, this, &UEnemyStunTextWidget::DelayedAction, 0.75f, false);
 	}
 }
 
-void UEnemyDamagedTextWidget::ChangeFontSize()
+void UEnemyStunTextWidget::ChangeFontSize()
 {
 	FSlateFontInfo CurrentFont = TextBlock->Font;
 	while (CurrentFont.Size > 30) {
@@ -57,16 +55,16 @@ void UEnemyDamagedTextWidget::ChangeFontSize()
 	}
 }
 
-void UEnemyDamagedTextWidget::DelayedAction()
+void UEnemyStunTextWidget::DelayedAction()
 {
-	// Ïï†ÎãàÎ©îÏù¥ÏÖò Ïã§Ìñâ
+	// æ÷¥œ∏ﬁ¿Ãº« Ω««‡
 	if (FadeOut)
 	{
 		PlayAnimation(FadeOut, 0.0f, 1, EUMGSequencePlayMode::Forward, 15.0f);
 	}
 }
 
-void UEnemyDamagedTextWidget::AnimationFinished()
+void UEnemyStunTextWidget::AnimationFinished()
 {
 	RemoveFromViewport();
 }

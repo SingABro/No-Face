@@ -34,4 +34,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
 	TSubclassOf<class UUserWidget> DeadScreenClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<class UUserWidget> MapUIClass;
+
 };
