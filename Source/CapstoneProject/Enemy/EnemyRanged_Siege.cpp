@@ -95,21 +95,6 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 		return;
 	}
 
-	/*FHitResult HitResult;
-	FVector ForwardVector = GetActorForwardVector() * Range;
-	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
-	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
-
-	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, Origin, End, RootRot, ECC_GameTraceChannel1, FCollisionShape::MakeBox(BoxExtent), Param);
-	if (bHit)
-	{
-		FDamageEvent DamageEvent;
-		HitResult.GetActor()->TakeDamage(Damage + 200.f, DamageEvent, GetController(), this);
-	}
-
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, FColor::Green, false, 3.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, FColor::Green, false, 3.f);*/
-
 	FVector SpawnLoc = GetMesh()->GetSocketLocation(TEXT("Muzzle_02")) + GetActorForwardVector() * 50.f;
 	FRotator SpawnRot = GetMesh()->GetSocketRotation(TEXT("Muzzle_02"));
 	AEnemyRangedProjectile* Projectile = GetWorld()->SpawnActor<AEnemyRangedProjectile>(ProjectileClass, SpawnLoc, SpawnRot);
@@ -160,7 +145,7 @@ void AEnemyRanged_Siege::Stun()
 
 	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetMyController()->StopAI();
 	AnimInstance->Montage_Play(StunMontage);
 
 	FOnMontageEnded MontageEnd;
@@ -286,7 +271,7 @@ void AEnemyRanged_Siege::EndSkill1(UAnimMontage* Target, bool IsProperlyEnded)
 
 void AEnemyRanged_Siege::EndStun(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMyController()->RunAI();
 }
 
 AAIControllerSiege* AEnemyRanged_Siege::GetMyController()

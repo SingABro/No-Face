@@ -48,6 +48,6 @@ private:
 
 	FVector Destination;
 	bool bStart;
-	
+	bool bDamageApply = true;
 
 };

@@ -3,7 +3,7 @@
 
 #include "Gimmick/StoryBook.h"
 #include "Components/BoxComponent.h"
-//#include "Materials/MaterialInterface.h"
+#include "Blueprint/UserWidget.h"
 
 AStoryBook::AStoryBook()
 {
@@ -57,6 +57,7 @@ void AStoryBook::OnEndHighlighting(AActor* TouchedActor)
 
 void AStoryBook::OnClick(AActor* TouchedActor, FKey ButtonPressed)
 {
-	UE_LOG(LogTemp, Display, TEXT("Click"));
+	UUserWidget* DialogUI = CreateWidget<UUserWidget>(GetWorld(), DialogUIClass);
+	DialogUI->AddToViewport();
 }
 
