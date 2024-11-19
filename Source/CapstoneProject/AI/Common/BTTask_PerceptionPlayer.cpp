@@ -29,7 +29,6 @@ EBTNodeResult::Type UBTTask_PerceptionPlayer::ExecuteTask(UBehaviorTreeComponent
 		APawn* Target = Cast<APawn>(UGameplayStatics::GetActorOfClass(Owner->GetWorld(), ACharacterBase::StaticClass()));
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Target);
 		OwnerComp.GetBlackboardComponent()->SetValueAsFloat(TEXT("DetectTime"), 0.f);
-		UE_LOG(LogTemp, Display, TEXT("Detect 성공!"));
 	}
 
 	return EBTNodeResult::Succeeded;

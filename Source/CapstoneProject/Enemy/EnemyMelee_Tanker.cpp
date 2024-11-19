@@ -12,6 +12,8 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
+#include "MotionWarpingComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AEnemyMelee_Tanker::AEnemyMelee_Tanker()
 {
@@ -27,6 +29,9 @@ AEnemyMelee_Tanker::AEnemyMelee_Tanker()
 	GetCharacterMovement()->MaxWalkSpeed = 350.f;
 
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Tanker::SetDead);
+
+	/* 모션 워핑 */
+	MotionWarp = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("Motion Warp"));
 }
 
 void AEnemyMelee_Tanker::BeginPlay()
@@ -205,6 +210,7 @@ void AEnemyMelee_Tanker::BeginSkillDash()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
+	Skill_MotionWarpSet();
 	AnimInstance->Montage_Play(Skill1Montage);
 
 	FOnMontageEnded MontageEnd;
@@ -215,6 +221,41 @@ void AEnemyMelee_Tanker::BeginSkillDash()
 void AEnemyMelee_Tanker::EndSkillDash(UAnimMontage* Target, bool IsProperlyEnded)
 {
 	EnemySkill1Finished.ExecuteIfBound();
+}
+
+void AEnemyMelee_Tanker::Skill_MotionWarpSet()
+{
+	ACharacter* Target = GetMyController()->GetTarget();
+	if (Target == nullptr) return;
+
+	FVector TargetOrigin = Target->GetActorLocation();
+	FVector Origin = GetActorLocation();
+	FVector TargetDir = (TargetOrigin - Origin);
+	FRotator TargetRot = FRotationMatrix::MakeFromX(TargetDir).Rotator();
+	MotionWarp->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Dash"), TargetOrigin, TargetRot);
+}
+
+void AEnemyMelee_Tanker::Skill_1_HitCheck()
+{
+	FVector Origin = GetActorLocation();
+	FVector TargetLoc = Origin + GetActorForwardVector() * 300.f;
+	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
+
+	float Damage = 400.f;
+	float Range = 300.f;
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, TargetLoc, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Range), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const FOverlapResult& OverlapResult : OverlapResults)
+		{
+			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+		}
+	}
 }
 
 void AEnemyMelee_Tanker::SetDead()

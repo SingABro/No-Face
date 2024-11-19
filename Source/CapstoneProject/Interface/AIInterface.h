@@ -41,6 +41,7 @@ public:
 	virtual void SetEnemySkill4Delegate(const FEnemySkill1Finished& InEnemySkill4Finished) {};
 	virtual void AttackByAI() = 0;
 	virtual void DefaultAttackHitCheck() = 0;
+	virtual void Skill_1_HitCheck() {};
 
 	virtual void Skill1ByAI() = 0;
 	virtual void Skill2ByAI() {};

@@ -58,9 +58,8 @@ void AStaffDefaultAttackProjectile::OnBeginOverlap(UPrimitiveComponent* Overlapp
 		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
 		if (Enemy)
 		{
-			if (GetOwner() == nullptr) return;
 			FDamageEvent DamageEvent;
-			Enemy->TakeDamage(Stat->StaffDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Staff_Default"));
+			Enemy->TakeDamage(Stat->StaffDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), this, TEXT("Staff_Default"));
 		}
 	}
 }

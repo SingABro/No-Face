@@ -51,7 +51,7 @@ void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 
 	const float Damage = Stat->GetCurrentDamage();
 	const float Range = Stat->GetCurrentRange();
-	const float Degree = 90.f;
+	const float Degree = 120.f;
 
 	FColor Color = FColor::Red;
 	FVector Origin = GetActorLocation();
@@ -81,6 +81,11 @@ void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 		AnimInstance->Montage_Stop(0.5f, DefaultAttackMontage);
 		EnemyAttackFinished.ExecuteIfBound();
 	}
+}
+
+float AEnemyMelee_Assassin::GetAttackInRange()
+{
+	return 400.f;
 }
 
 float AEnemyMelee_Assassin::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
