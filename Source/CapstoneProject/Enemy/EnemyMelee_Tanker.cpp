@@ -239,7 +239,7 @@ void AEnemyMelee_Tanker::Skill_1_HitCheck()
 {
 	FVector Origin = GetActorLocation();
 	FVector TargetLoc = Origin + GetActorForwardVector() * 300.f;
-	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
 
 	float Damage = 400.f;
 	float Range = 300.f;
