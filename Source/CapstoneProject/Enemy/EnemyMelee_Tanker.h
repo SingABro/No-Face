@@ -45,6 +45,8 @@ private:
 	/* 스킬 함수들 */
 	void BeginSkillDash();
 	void EndSkillDash(class UAnimMontage* Target, bool IsProperlyEnded);
+	void Skill_MotionWarpSet();
+	virtual void Skill_1_HitCheck();
 
 	/* 스턴 애니메이션 끝날 때 실행되는 함수 */
 	void EndStun(class UAnimMontage* Target, bool IsProperlyEnded);
@@ -76,5 +78,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> Skill1Montage;
+
+/* 모션 워핑 */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
+	TObjectPtr<class UMotionWarpingComponent> MotionWarp;
 
 };

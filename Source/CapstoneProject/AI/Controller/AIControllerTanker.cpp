@@ -8,6 +8,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Damage.h"
+#include "GameFramework/Character.h"
 
 AAIControllerTanker::AAIControllerTanker()
 {
@@ -53,6 +54,11 @@ void AAIControllerTanker::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulu
 		Stimulus = CanSenseActor(Actor, EAIPerceptionSense::EPS_Damage);
 		HandleSenseDamage(Actor, Stimulus);
 	}
+}
+
+ACharacter* AAIControllerTanker::GetTarget()
+{
+	return CastChecked<ACharacter>(GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
 }
 
 FAIStimulus AAIControllerTanker::CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense)

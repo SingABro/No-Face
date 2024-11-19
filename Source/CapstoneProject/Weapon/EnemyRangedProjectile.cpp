@@ -11,7 +11,6 @@ AEnemyRangedProjectile::AEnemyRangedProjectile()
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	RootComponent = Box;
-	Box->SetCollisionProfileName(TEXT("Arrow"));
 	Box->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangedProjectile::OnOverlap);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
