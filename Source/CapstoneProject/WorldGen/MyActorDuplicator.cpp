@@ -1,8 +1,7 @@
 #include "MyActorDuplicator.h"
 #include "Engine/World.h"
-#include "Math/UnrealMathUtility.h"  // FMath ����� ���� �ʿ�
-#include "RoomActor.h"  // ARoomActor ����
-
+#include "Math/UnrealMathUtility.h"
+#include "RoomActor.h"  // ARoomActor
 
 AMyActorDuplicator::AMyActorDuplicator()
 {
@@ -13,118 +12,118 @@ void AMyActorDuplicator::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (StaticMeshToDuplicate && RoomActorClass)
+    if (RoomActorClass)
     {
-        // ���� �� ���� (���� �߽�)
+
+        // 시작 방 설정
         FRoom StartRoom;
-        StartRoom.Location = GetActorLocation();
-        Rooms.Add(StartRoom);
+        StartRoom.Location = FVector3d(0, 0, 0);
+        StartRoom.Identity = 0;
+        // 시작 좌표
+        FIntPoint StartCoords = FIntPoint(0, 0);
 
-        // �� ���� ���� (4 ����)
-        CreateRooms(StartRoom, MaxDepth, EDirection::UP);
-        CreateRooms(StartRoom, MaxDepth, EDirection::DOWN);
-        CreateRooms(StartRoom, MaxDepth, EDirection::RIGHT);
-        CreateRooms(StartRoom, MaxDepth, EDirection::LEFT);
+        WorldMap.Add(StartCoords, StartRoom);
 
-        // 기존 방 배열을 복제하여 작은 스케일로 다른 위치에 추가 생성
-        FVector NewOrigin = FVector(10000.f, 10000.f, 8000.f);  // 새로운 기준 좌표 설정
-        float ScaleFactor = 0.2f;  // 스케일 조절 (예: 0.5로 절반 크기로 설정)
-        DuplicateRoomsWithScale(NewOrigin, ScaleFactor);
+        // 트리 형태의 방 생성
+        CreateRooms(StartCoords, MaxDepth, EDirection::UP);
+        CreateRooms(StartCoords, MaxDepth, EDirection::DOWN);
+        CreateRooms(StartCoords, MaxDepth, EDirection::RIGHT);
+        CreateRooms(StartCoords, MaxDepth, EDirection::LEFT);
+
+        BuildActualStage(WorldMap);
     }
 }
 
-void AMyActorDuplicator::DuplicateRoomsWithScale(const FVector& NewOrigin, float ScaleFactor)
+void AMyActorDuplicator::CreateRooms(const FIntPoint& CurrentCoords, int32 Depth, EDirection CurrentDir)
 {
-    for (const FRoom& Room : Rooms)
+    if (Depth == 0)
     {
-        // 기존 위치를 기준으로 새로운 위치를 계산
-        FVector ScaledLocation = (Room.Location - GetActorLocation()) * ScaleFactor + NewOrigin;
+        return;
+    };
 
-        // 새로운 방 생성
-        FActorSpawnParameters SpawnParams;
-        SpawnParams.Owner = this;
-        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    // 새 좌표 계산
+    FIntPoint NewCoords = CurrentCoords;
+    if (CurrentDir == EDirection::UP) NewCoords.Y -= 1;
+    else if (CurrentDir == EDirection::DOWN) NewCoords.Y += 1;
+    else if (CurrentDir == EDirection::RIGHT) NewCoords.X += 1;
+    else if (CurrentDir == EDirection::LEFT) NewCoords.X -= 1;
 
-        ARoomActor* ScaledRoom = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ScaledLocation, FRotator::ZeroRotator, SpawnParams);
-        if (ScaledRoom)
+    // 중복 체크 -> 0,0 체크
+    // if (WorldMap.Contains(NewCoords)) return;
+    if (NewCoords == FIntPoint(0, 0)) return;
+
+    // 랜덤 방향 선택
+    EDirection NewDir = GetRandomDirection(CurrentDir);
+
+    // 새 방 생성 및 우선 저장
+    FRoom NewRoom;
+    NewRoom.Location = GridToWorld(NewCoords);
+    NewRoom.Identity = (static_cast<int32>(CurrentDir) * 4) % 15 + (static_cast<int32>(NewDir));
+    if (WorldMap.Find(NewCoords) != NULL)
+    { // 이미 월드에 존재하면
+        FRoom tmpRoom;
+        WorldMap.FindAndRemoveChecked(NewCoords); // 기존 월드에 같은 좌표의 맵을 불러오고 삭제
+        tmpRoom.Identity |= NewRoom.Identity; // identity 갱신
+        tmpRoom.Location = GridToWorld(NewCoords);
+        WorldMap.Add(NewCoords, tmpRoom); // wolrd에 다시 저장
+    }
+    else
+    {
+        WorldMap.Add(NewCoords, NewRoom);
+    }
+
+    // 재귀 호출
+    CreateRooms(NewCoords, Depth - 1, NewDir);
+}
+
+
+// 방 Actor 생성
+void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
+{
+    for (int i = -7; i < 8; i++)
+    {
+        for (int j = -7; j < 8; j++)
         {
-            // 스케일 적용
-            ScaledRoom->SetActorScale3D(FVector(ScaleFactor));
-            ScaledRoom->MeshComponent->SetStaticMesh(StaticMeshToDuplicate);
+            FIntPoint pointer(i, j);
+            if (WMap.Contains(pointer))
+            {
+                FRoom* tmpRoom = WMap.Find(pointer);
+                ARoomActor* RoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, tmpRoom->Location, FRotator::ZeroRotator);
+                if (RoomActor)
+                {
+                    RoomActor->SetActorScale3D(FVector(1.0f));
+                    RoomActor->SetRoomInfo(tmpRoom->Identity, tmpRoom->Location, tmpRoom->bIsEndRoom);
+                }
+            }
         }
     }
+}
+
+// 실제 좌표 -> 배열 좌표 변환
+FIntPoint AMyActorDuplicator::WorldToGrid(const FVector& WorldLocation)
+{
+    return FIntPoint(FMath::RoundToInt(WorldLocation.X / OffsetDistance.X), FMath::RoundToInt(WorldLocation.Y / OffsetDistance.Y));
+}
+
+// 배열 좌표 -> 실제 좌표 변환
+FVector AMyActorDuplicator::GridToWorld(const FIntPoint& GridCoords)
+{
+    return FVector(GridCoords.X * OffsetDistance.X, GridCoords.Y * OffsetDistance.Y, 0.f);
 }
 
 EDirection AMyActorDuplicator::GetRandomDirection(EDirection CurrentDir)
 {
     float RandValue = FMath::FRand();
-    if (RandValue < 0.5f) 
+    if (RandValue < 0.5f)
     {
         return CurrentDir;
     }
-    else if (RandValue < 0.75f) 
+    else if (RandValue < 0.75f)
     {
         return static_cast<EDirection>((static_cast<uint8>(CurrentDir) * 2) % 15);
     }
-    else 
+    else
     {
         return static_cast<EDirection>((static_cast<uint8>(CurrentDir) * 8) % 15);
     }
-}
-
-void AMyActorDuplicator::CreateRooms(FRoom& CurrentRoom, int32 Depth, EDirection CurrentDir)
-{
-    if (Depth == 0)
-    {
-        CurrentRoom.bIsEndRoom = true;
-        return;
-    }
-
-    // ���ο� ���� ����
-    EDirection NewDir = GetRandomDirection(CurrentDir);
-
-    // ���ο� �� ���� �� ��ġ ���
-    FRoom NextRoom;
-    if (CurrentDir == EDirection::UP)
-    {
-        NextRoom.Location = CurrentRoom.Location + FVector(0.f, -OffsetDistance.Y, 0.f);
-    }
-    else if (CurrentDir == EDirection::DOWN)
-    {
-        NextRoom.Location = CurrentRoom.Location + FVector(0.f, OffsetDistance.Y, 0.f);
-    }
-    else if (CurrentDir == EDirection::RIGHT)
-    {
-        NextRoom.Location = CurrentRoom.Location + FVector(OffsetDistance.X, 0.f, 0.f);
-    }
-    else if (CurrentDir == EDirection::LEFT)
-    {
-        NextRoom.Location = CurrentRoom.Location + FVector(-OffsetDistance.X, 0.f, 0.f);
-    }
-
-    // �ߺ� �� üũ (�̹� ������ ��ġ���� Ȯ��)
-    for (const FRoom& Room : Rooms)
-    {
-        if (Room.Location.Equals(NextRoom.Location))
-        {
-            return;
-        }
-    }
-
-    // ���� �迭�� �߰�
-    Rooms.Add(NextRoom);
-
-    // ���ο� Room ���� ����
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = this;
-    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-    ARoomActor* DuplicatedRoom = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, NextRoom.Location, FRotator::ZeroRotator, SpawnParams);
-    if (DuplicatedRoom)
-    {
-        DuplicatedRoom->MeshComponent->SetStaticMesh(StaticMeshToDuplicate);
-    }
-
-    // ��������� ���� �� ����
-    CreateRooms(NextRoom, Depth - 1, NewDir);
 }
