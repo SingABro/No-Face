@@ -2,7 +2,7 @@
 
 
 #include "UI/HUDWidget.h"
-#include "PlayerHpBarWidget.h"
+//#include "PlayerHpBarWidget.h"
 #include "PlayerExpBarWidget.h"
 #include "UI/SkillCooldownUserWidget.h"
 #include "Character/CharacterBase.h"
@@ -16,11 +16,9 @@ void UHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	HpBar = Cast<UPlayerHpBarWidget>(GetWidgetFromName(TEXT("WidgetHpBar")));
-	ensure(HpBar);
-
 	ExpBar = Cast<UPlayerExpBarWidget>(GetWidgetFromName(TEXT("WidgetExpBar")));
 	ensure(ExpBar);
+	
 
 	Sword_SkillCooldownBar_Q = Cast<USkillCooldownUserWidget>(GetWidgetFromName(TEXT("WidgetCooldownBar_Q")));
 	ensure(Sword_SkillCooldownBar_Q);
@@ -59,12 +57,6 @@ void UHUDWidget::NativeConstruct()
 
 	SetSwordSkillUI();
 }
-
-void UHUDWidget::SetMaxHp(float NewMaxHp)
-{
-	HpBar->SetMaxHp(NewMaxHp);
-}
-
 void UHUDWidget::SetMaxCooldown(float InMaxCooldownTime, int32 WeaponType, ESkillType SkillType)
 {
 	switch (WeaponType)
@@ -497,13 +489,7 @@ void UHUDWidget::SetStaffSkillUI()
 	Staff_SkillCooldownBar_R->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UHUDWidget::UpdateHpBar(float NewCurrentHp)
-{
-	HpBar->UpdateHpBar(NewCurrentHp);
-}
-
 void UHUDWidget::UpdateExpBar(float NewCurrentExp)
 {
 	ExpBar->UpdateExpBar(NewCurrentExp);
 }
-

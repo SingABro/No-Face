@@ -54,6 +54,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
 
+	UFUNCTION(BlueprintCallable, Category = "SkillEffect")
+	float GetShieldDamage();
+	UFUNCTION(BlueprintCallable, Category = "SkillEffect")
+	float GetShield();
+
+
+
 public:
 	virtual void SetupSkillUIWidget(class UHUDWidget* InHUDWidget) override;
 

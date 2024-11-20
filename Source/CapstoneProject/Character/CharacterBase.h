@@ -65,6 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
 
+	UFUNCTION(BlueprintCallable, Category = "WeaponType")
+	int GetPlayerState();
+
 /* 스킬 섹션 */
 protected:
 	void Q_Skill();

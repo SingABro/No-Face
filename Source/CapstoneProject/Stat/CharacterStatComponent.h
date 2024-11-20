@@ -37,6 +37,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stat")
 	int GetPlayerSkillPoint();
 
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	float GetPlayerMaxHp();
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	float GetPlayerCurrentHp();
+
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	float GetPlayerCurrentExp();
+
 	float ApplyDamage(float InDamage);
 	void SetHp(float ChangeHp);
 

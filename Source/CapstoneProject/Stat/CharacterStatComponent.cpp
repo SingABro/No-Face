@@ -53,6 +53,21 @@ int UCharacterStatComponent::GetPlayerSkillPoint()
 	return CurrentSkillPoint;
 }
 
+float UCharacterStatComponent::GetPlayerMaxHp()
+{
+	return MaxHp;
+}
+
+float UCharacterStatComponent::GetPlayerCurrentHp()
+{
+	return CurrentHp;
+}
+
+float UCharacterStatComponent::GetPlayerCurrentExp()
+{
+	return CurrentExp;
+}
+
 float UCharacterStatComponent::ApplyDamage(float InDamage)
 {
 	float ActualDamage = FMath::Clamp(InDamage, 0, InDamage);
