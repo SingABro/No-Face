@@ -218,6 +218,10 @@ float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+	if (CurrentStateType == EPlayerStateType::Common) {
+		Stat->ApplyDamage(Damage);
+		return Damage;
+	}
 	if (CurrentStateType == EPlayerStateType::Shield)
 	{
 		SkillComponent->SetShieldAmount(Damage);
@@ -239,14 +243,23 @@ float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 		return 0.f;
 	}
 
-	Stat->ApplyDamage(Damage);
-
-	return Damage;
+	return 0.f;
 }
 
 int ACharacterBase::GetWeaponType()
 {
 	return WeaponIndex;
+}
+
+int ACharacterBase::GetPlayerState()
+{
+	if (CurrentStateType == EPlayerStateType::Common) {
+		return 0;
+	}
+	if (CurrentStateType == EPlayerStateType::Shield) {
+		return 1;
+	}
+	else return 2;
 }
 
 void ACharacterBase::Q_Skill()
@@ -510,10 +523,7 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 {
 	if (InHUDWidget)
 	{
-		InHUDWidget->SetMaxHp(Stat->GetMaxHp());
-		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
 		InHUDWidget->UpdateExpBar(Stat->GetCurrentExp());
-		Stat->OnHpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateHpBar);
 		Stat->OnExpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateExpBar);
 	}
 

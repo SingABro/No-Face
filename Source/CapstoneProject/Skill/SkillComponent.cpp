@@ -170,6 +170,16 @@ int USkillComponent::GetWeaponType()
 	return CurrentWeaponType;
 }
 
+float USkillComponent::GetShieldDamage()
+{
+	return ShieldAmount;
+}
+
+float USkillComponent::GetShield()
+{
+	return ShieldThreshold;
+}
+
 void USkillComponent::SetupSkillUIWidget(UHUDWidget* InHUDWidget)
 {
 	Widget = InHUDWidget;

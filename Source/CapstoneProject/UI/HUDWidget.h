@@ -22,9 +22,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void UpdateHpBar(float NewCurrentHp);
 	void UpdateExpBar(float NewCurrentExp);
-	void SetMaxHp(float NewMaxHp);
 
 	void SetMaxCooldown(float InMaxCooldownTime, int32 WeaponType, ESkillType SkillType);
 	void StartCooldown(int32 WeaponType, ESkillType SkillType);
@@ -38,8 +36,6 @@ private:
 	void SetStaffSkillUI();
 
 private:
-	UPROPERTY()
-	TObjectPtr<class UPlayerHpBarWidget> HpBar;
 
 	UPROPERTY()
 	TObjectPtr<class UPlayerExpBarWidget> ExpBar;
