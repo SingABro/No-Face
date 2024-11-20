@@ -21,8 +21,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 private:
-
-private:
 	UFUNCTION()
 	void OnStartButtonClicked();
 

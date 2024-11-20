@@ -7,7 +7,7 @@
 
 // ���� ����
 UENUM()
-enum class EDirection : uint8 
+enum class EDirection : uint8
 {
     UP = 1,
     RIGHT = 2,
@@ -17,7 +17,7 @@ enum class EDirection : uint8
 
 // Room ����ü
 USTRUCT()
-struct FRoom 
+struct FRoom
 {
     GENERATED_BODY()
 
@@ -57,7 +57,7 @@ public:
     TSubclassOf<class ARoomActor> RoomActorClass;
 
     UFUNCTION()
-    void DuplicateRoomsWithScale(const FVector& Newcoordinate ,float ScaleFactor);
+    void DuplicateRoomsWithScale(const FVector& Newcoordinate, float ScaleFactor);
 
 private:
     // ���� ������ �迭

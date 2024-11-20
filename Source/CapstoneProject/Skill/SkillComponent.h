@@ -102,6 +102,7 @@ private:
 
 	void BeginSword_E(); //검 E - 패링 시작
 	void EndSword_E(class UAnimMontage* Target, bool IsProperlyEnded); //검 E - 패링 끝
+	void EndParryingAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 	virtual void Sword_E_SkillHitCheck() override;
 
 	void BeginSword_R(); //검 R - 검기 시작

@@ -19,8 +19,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void HighlightActor() override;
 	virtual void EndHighlightActor() override;
 
@@ -33,6 +31,8 @@ public:
 	UFUNCTION()
 	void OnClick(AActor* TouchedActor, FKey ButtonPressed);
 
+	void OnClose();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UBoxComponent> BoxComp;
@@ -44,6 +44,8 @@ private:
 	TObjectPtr<class UMaterialInstance> HighlightMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSubclassOf<class UUserWidget> DialogUIClass;
+	TSubclassOf<class UStoryBookWidget> DialogUIClass;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TObjectPtr<class UStoryBookWidget> DialogUI;
 };

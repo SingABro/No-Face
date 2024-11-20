@@ -84,7 +84,8 @@ AEnemyBase::AEnemyBase()
 		HitParticleCollection.Add(TEXT("Staff_Default"), Staff_DefaultAttack_HitRef.Object);
 	}
 
-	
+	/* 태그 */
+	Tags.Add(TEXT("Enemy"));
 }
 
 void AEnemyBase::BeginPlay()
