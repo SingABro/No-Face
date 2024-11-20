@@ -23,6 +23,7 @@ struct FRoom
     int32 Identity;  // 방의 정체성 (비트 플래그)
     FVector Location;  // 방의 월드 좌표
     bool bIsEndRoom;  // 마지막 방 여부
+    bool bIsBossRoom; // 보스 방 여부
 
     FRoom() : Identity(0), Location(FVector::ZeroVector), bIsEndRoom(false) {}
 };
@@ -47,7 +48,7 @@ private:
 
     // Static Mesh와 방의 거리 오프셋
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication", meta = (AllowPrivateAccess = "true"))
-    FVector OffsetDistance = FVector(200.f, 200.f, 0.f);
+    FVector OffsetDistance = FVector(1850.f, 1850.f, 0.f);
 
     // 생성할 방의 최대 깊이
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Duplication", meta = (AllowPrivateAccess = "true"))
@@ -61,10 +62,13 @@ private:
     EDirection GetRandomDirection(EDirection CurrentDir);
 
     // 방 생성 함수 (재귀 호출)
-    void CreateRooms(const FIntPoint& CurrentCoords, int32 Depth, EDirection CurrentDir);
+    void CreateRooms(const FIntPoint& CurrentCoords, int32 Depth, EDirection CurrentDir, EDirection InitDir, EDirection BossDir);
 
     // 맵 생성 함수
     void BuildActualStage(const TMap<FIntPoint, FRoom> WorldMap);
+
+    // 보스 방 방위 함수
+    EDirection WhereIsBossRoom();
 
     // 월드 좌표에서 FIntPoint 좌표로 변환
     FIntPoint WorldToGrid(const FVector& WorldLocation);

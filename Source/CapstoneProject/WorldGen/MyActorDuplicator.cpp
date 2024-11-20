@@ -14,7 +14,7 @@ void AMyActorDuplicator::BeginPlay()
 
     if (RoomActorClass)
     {
-
+        EDirection BossRoomDirection = WhereIsBossRoom();
         // 시작 방 설정
         FRoom StartRoom;
         StartRoom.Location = FVector3d(0, 0, 0);
@@ -22,19 +22,22 @@ void AMyActorDuplicator::BeginPlay()
         // 시작 좌표
         FIntPoint StartCoords = FIntPoint(0, 0);
 
-        WorldMap.Add(StartCoords, StartRoom);
-
         // 트리 형태의 방 생성
-        CreateRooms(StartCoords, MaxDepth, EDirection::UP);
-        CreateRooms(StartCoords, MaxDepth, EDirection::DOWN);
-        CreateRooms(StartCoords, MaxDepth, EDirection::RIGHT);
-        CreateRooms(StartCoords, MaxDepth, EDirection::LEFT);
+        do
+        {
+            WorldMap.Reset();
+            WorldMap.Add(StartCoords, StartRoom);
+            CreateRooms(StartCoords, MaxDepth, EDirection::UP, EDirection::UP, BossRoomDirection);
+            CreateRooms(StartCoords, MaxDepth, EDirection::DOWN, EDirection::DOWN, BossRoomDirection);
+            CreateRooms(StartCoords, MaxDepth, EDirection::RIGHT, EDirection::RIGHT, BossRoomDirection);
+            CreateRooms(StartCoords, MaxDepth, EDirection::LEFT, EDirection::LEFT, BossRoomDirection);
+        } while (WorldMap.GetAllocatedSize() > 25);
 
         BuildActualStage(WorldMap);
     }
 }
 
-void AMyActorDuplicator::CreateRooms(const FIntPoint& CurrentCoords, int32 Depth, EDirection CurrentDir)
+void AMyActorDuplicator::CreateRooms(const FIntPoint& CurrentCoords, int32 Depth, EDirection CurrentDir, EDirection StartDir, EDirection BossDir)
 {
     if (Depth == 0)
     {
@@ -59,21 +62,35 @@ void AMyActorDuplicator::CreateRooms(const FIntPoint& CurrentCoords, int32 Depth
     FRoom NewRoom;
     NewRoom.Location = GridToWorld(NewCoords);
     NewRoom.Identity = (static_cast<int32>(CurrentDir) * 4) % 15 + (static_cast<int32>(NewDir));
+    NewRoom.bIsEndRoom = false;
+    NewRoom.bIsBossRoom = false;
     if (WorldMap.Find(NewCoords) != NULL)
     { // 이미 월드에 존재하면
         FRoom tmpRoom;
-        WorldMap.FindAndRemoveChecked(NewCoords); // 기존 월드에 같은 좌표의 맵을 불러오고 삭제
+        WorldMap.RemoveAndCopyValue(NewCoords, tmpRoom); // 기존 월드에 같은 좌표의 맵을 불러오고 삭제
         tmpRoom.Identity |= NewRoom.Identity; // identity 갱신
         tmpRoom.Location = GridToWorld(NewCoords);
+        tmpRoom.bIsEndRoom = false;
+        tmpRoom.bIsBossRoom = false;
+        if (Depth == 1)
+        {
+            tmpRoom.bIsEndRoom = true;
+            if (StartDir == BossDir) tmpRoom.bIsBossRoom = true;
+        }
         WorldMap.Add(NewCoords, tmpRoom); // wolrd에 다시 저장
     }
     else
     {
+        if (Depth == 1)
+        {
+            NewRoom.bIsEndRoom = true;
+            if (StartDir == BossDir) NewRoom.bIsBossRoom = true;
+        }
         WorldMap.Add(NewCoords, NewRoom);
     }
 
     // 재귀 호출
-    CreateRooms(NewCoords, Depth - 1, NewDir);
+    CreateRooms(NewCoords, Depth - 1, NewDir, StartDir, BossDir);
 }
 
 
@@ -92,10 +109,31 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
                 if (RoomActor)
                 {
                     RoomActor->SetActorScale3D(FVector(1.0f));
-                    RoomActor->SetRoomInfo(tmpRoom->Identity, tmpRoom->Location, tmpRoom->bIsEndRoom);
+                    RoomActor->SetRoomInfo(tmpRoom->Identity, tmpRoom->Location, tmpRoom->bIsEndRoom, tmpRoom->bIsBossRoom);
                 }
             }
         }
+    }
+}
+
+EDirection AMyActorDuplicator::WhereIsBossRoom()
+{
+    float RandValue = FMath::FRand();
+    if (RandValue < 0.25f)
+    {
+        return EDirection::UP;
+    }
+    else if (RandValue < 0.5f)
+    {
+        return EDirection::DOWN;
+    }
+    else if (RandValue < 0.75f)
+    {
+        return EDirection::RIGHT;
+    }
+    else
+    {
+        return EDirection::LEFT;
     }
 }
 
@@ -111,6 +149,8 @@ FVector AMyActorDuplicator::GridToWorld(const FIntPoint& GridCoords)
     return FVector(GridCoords.X * OffsetDistance.X, GridCoords.Y * OffsetDistance.Y, 0.f);
 }
 
+
+// 랜덤 진행방향
 EDirection AMyActorDuplicator::GetRandomDirection(EDirection CurrentDir)
 {
     float RandValue = FMath::FRand();

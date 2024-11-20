@@ -13,7 +13,7 @@ public:
     ARoomActor();
 
 public:
-    void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom);
+    void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool bIsBossRoom);
 
 private:
     UPROPERTY(EditAnywhere, Category = "Room")
@@ -27,4 +27,7 @@ private:
 
     UPROPERTY(EditAnywhere, Category = "Room")
     bool bIsEndRoom;  // 마지막 방 여부
+
+    UPROPERTY(EditAnywhere, Category = "Room")
+    bool bIsBossRoom;  // 보스 방 여부
 };
