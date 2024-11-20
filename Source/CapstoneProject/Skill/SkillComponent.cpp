@@ -327,47 +327,53 @@ void USkillComponent::ParryingSuccess(AActor* Attacker)
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_E_Defence_Effect, Character->GetActorLocation(), Character->GetActorRotation());
 
 		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();		
+
+		Character->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Dodge"));
 		AnimInstance->Montage_Play(SkillMontageData->SwordMontages[4]);
+
+		FOnMontageEnded MontageEnd;
+		MontageEnd.BindUObject(this, &USkillComponent::EndParryingAttack);
+		AnimInstance->Montage_SetEndDelegate(MontageEnd, SkillMontageData->SwordMontages[4]);
 	}
+}
+
+
+void USkillComponent::EndParryingAttack(UAnimMontage* Target, bool IsProperlyEnded)
+{
+	Character->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 }
 
 void USkillComponent::Sword_E_SkillHitCheck()
 {
 	float Damage = StatData->Sword_E_Damage + Sword_E_Upgrade * 150.0f;
 	float Range = StatData->Sword_E_Range;
-	float RadialAngle = 60.f;
 
-	FVector Origin = Character->GetActorLocation();
-	TArray<FOverlapResult> OverlapResults;
+	FVector Origin = (Character->GetActorLocation() - Character->GetActorForwardVector() * Range);
+	FVector End = Character->GetActorLocation() + Character->GetActorForwardVector() * 250.f;
+
+	TArray<FHitResult> HitResults;
+	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
+	FVector BoxExtent = FVector(50.f, 250.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
-	if (!GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Range), Params))
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
+	if (bHit)
 	{
-		return;
-	}
-
-	FVector ForwardVector = Character->GetActorForwardVector();
-	for (const FOverlapResult& OverlapResult : OverlapResults)
-	{
-		AActor* Target = OverlapResult.GetActor();
-		FVector DirectionToTarget = (Target->GetActorLocation() - Origin).GetSafeNormal();
-
-		float DotProduct = FVector::DotProduct(ForwardVector, DirectionToTarget);
-		float AngleToTarget = FMath::Acos(DotProduct);
-		float AngleToTargetDegree = FMath::RadiansToDegrees(AngleToTarget);
-
-		if (AngleToTargetDegree <= RadialAngle)
+		FDamageEvent DamageEvent;
+		for (const auto& HitResult : HitResults)
 		{
-			AEnemyBase* Enemy = Cast<AEnemyBase>(Target);
+			AEnemyBase* Enemy = Cast<AEnemyBase>(HitResult.GetActor());
 			if (Enemy)
 			{
-				FDamageEvent DamageEvent;
-				Enemy->TakeDamage(Damage, DamageEvent, Character->GetController(), Character, TEXT("Default"));
+				Enemy->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), Character, TEXT("Default"));
 			}
 		}
 	}
 
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_E_Attack_Effect, Origin, ForwardVector.Rotation());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_E_Attack_Effect, Origin, Character->GetActorForwardVector().Rotation());
+
+	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 void USkillComponent::BeginSword_R()
@@ -415,7 +421,7 @@ void USkillComponent::Sword_R_SkillHitCheck()
 	
 	TArray<FHitResult> HitResults;
 	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
-	FVector BoxExtent = FVector(50.f, 200.f, 100.f);
+	FVector BoxExtent = FVector(50.f, 300.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);

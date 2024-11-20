@@ -4,6 +4,7 @@
 #include "Gimmick/StoryBook.h"
 #include "Components/BoxComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/StoryBookWidget.h"
 
 AStoryBook::AStoryBook()
 {
@@ -19,18 +20,17 @@ AStoryBook::AStoryBook()
 	OnBeginCursorOver.AddDynamic(this, &AStoryBook::OnHighlighting);
 	OnEndCursorOver.AddDynamic(this, &AStoryBook::OnEndHighlighting);
 	OnClicked.AddDynamic(this, &AStoryBook::OnClick);
+
 }
 
 void AStoryBook::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
+	DialogUI = CreateWidget<UStoryBookWidget>(GetWorld(), DialogUIClass);
+	ensure(DialogUI);
 
-void AStoryBook::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	DialogUI->OnLastPage.AddUObject(this, &AStoryBook::OnClose);
 }
 
 void AStoryBook::HighlightActor()
@@ -57,7 +57,14 @@ void AStoryBook::OnEndHighlighting(AActor* TouchedActor)
 
 void AStoryBook::OnClick(AActor* TouchedActor, FKey ButtonPressed)
 {
-	UUserWidget* DialogUI = CreateWidget<UUserWidget>(GetWorld(), DialogUIClass);
-	DialogUI->AddToViewport();
+	if (!DialogUI->IsInViewport())
+	{
+		DialogUI->AddToViewport();
+	}
+}
+
+void AStoryBook::OnClose()
+{
+	DialogUI->RemoveFromViewport();
 }
 

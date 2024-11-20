@@ -61,7 +61,7 @@ void AStaffMeteor::Tick(float DeltaTime)
 
 void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bDamageApply == false) return;
+	if (bDamageApply == false || OtherActor->ActorHasTag(TEXT("Enemy"))) return;
 
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);

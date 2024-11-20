@@ -329,6 +329,10 @@ void UCharacterDefaultAttackComponent::StaffDefaultAttack()
 {
 	FVector OriginLoc = Character->GetActorLocation() + Character->GetActorForwardVector() * 200.f;
 	FRotator OriginRot = Character->GetActorRotation();
+	if (CurrentCombo == 2)
+	{
+		OriginLoc * 150.f;
+	}
 	StaffAttackPtr = GetWorld()->SpawnActor<AStaffDefaultAttackProjectile>(StaffAttackClass, OriginLoc, OriginRot);
 	StaffAttackPtr->SetOwner(Character);
 	StaffAttackPtr->Init(Character->GetActorForwardVector());
