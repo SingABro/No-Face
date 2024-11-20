@@ -8,10 +8,11 @@ ARoomActor::ARoomActor()
     RootComponent = MeshComponent;
 }
 
-void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom)
+void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool InbIsBossRoom)
 {
     Identity = InIdentity;
     Location = InLocation;
     bIsEndRoom = InbIsEndRoom;
+    bIsBossRoom = InbIsBossRoom;
 }
 
