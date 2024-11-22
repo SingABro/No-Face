@@ -21,12 +21,14 @@ void ARoomActor::BeginPlay()
 
 }
 
-void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool InbIsBossRoom)
+void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool InbIsBossRoom, bool InbIsStartRoom, int stretch)
 {
     Identity = InIdentity;
     Location = InLocation;
     bIsEndRoom = InbIsEndRoom;
     bIsBossRoom = InbIsBossRoom;
+    bIsStartRoom = InbIsStartRoom;
+    Stretch = stretch;
 
     SpawnEnemy();
 }
