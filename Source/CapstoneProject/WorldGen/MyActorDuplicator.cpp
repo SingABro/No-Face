@@ -133,6 +133,7 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
                 ARoomActor* RoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, tmpRoom->Location, FRotator::ZeroRotator);
                 if (RoomActor)
                 {
+                    /*
                     // 보스 방이거나 시작 방이라면 크기를 키움
                     if (tmpRoom->bIsBossRoom || tmpRoom->bIsStartRoom)
                     {
@@ -142,8 +143,14 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
                     {
                         RoomActor->SetActorScale3D(FVector(1.f));
                     }
+                    */ // 이제 보스방이랑 시작방 되는 거 확인했으니 주석처리
+                    RoomActor->SetActorScale3D(FVector(1.f));
                     RoomActor->SetRoomInfo(tmpRoom->Identity, tmpRoom->Location, tmpRoom->bIsEndRoom, tmpRoom->bIsBossRoom, tmpRoom->bIsStartRoom, tmpRoom->stretch);
                 }
+
+				//RoomActor->SetActorScale3D(FVector(0.8f));
+				ARoomActor* MinimapRoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ((tmpRoom->Location)/3000.f*1850.f)*0.5+MinimapOffset , FRotator::ZeroRotator);
+                MinimapRoomActor->SetActorScale3D(FVector(0.5f));
             }
         }
     }
