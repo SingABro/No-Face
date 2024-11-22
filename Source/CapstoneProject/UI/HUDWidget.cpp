@@ -2,8 +2,6 @@
 
 
 #include "UI/HUDWidget.h"
-//#include "PlayerHpBarWidget.h"
-#include "PlayerExpBarWidget.h"
 #include "UI/SkillCooldownUserWidget.h"
 #include "Character/CharacterBase.h"
 
@@ -15,9 +13,6 @@ UHUDWidget::UHUDWidget(const FObjectInitializer& OnjectInitializer) : Super(Onje
 void UHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	ExpBar = Cast<UPlayerExpBarWidget>(GetWidgetFromName(TEXT("WidgetExpBar")));
-	ensure(ExpBar);
 	
 
 	Sword_SkillCooldownBar_Q = Cast<USkillCooldownUserWidget>(GetWidgetFromName(TEXT("WidgetCooldownBar_Q")));
@@ -487,9 +482,4 @@ void UHUDWidget::SetStaffSkillUI()
 	Staff_SkillCooldownBar_W->SetVisibility(ESlateVisibility::Visible);
 	Staff_SkillCooldownBar_E->SetVisibility(ESlateVisibility::Visible);
 	Staff_SkillCooldownBar_R->SetVisibility(ESlateVisibility::Visible);
-}
-
-void UHUDWidget::UpdateExpBar(float NewCurrentExp)
-{
-	ExpBar->UpdateExpBar(NewCurrentExp);
 }
