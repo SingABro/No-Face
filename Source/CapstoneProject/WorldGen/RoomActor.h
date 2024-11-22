@@ -12,13 +12,25 @@ class CAPSTONEPROJECT_API ARoomActor : public AActor
 public:
     ARoomActor();
 
+protected:
+    virtual void BeginPlay() override;
+
 public:
     void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool bIsBossRoom);
+    void SpawnEnemy();
 
 private:
-    UPROPERTY(EditAnywhere, Category = "Room")
+
+    UPROPERTY(VisibleAnywhere, Category = "Room")
     TObjectPtr<UStaticMeshComponent> MeshComponent;
 
+    UPROPERTY(VisibleAnywhere, Category = "Room")
+    TObjectPtr<USceneComponent> EnemySpawnPointComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "Spawner")
+    TObjectPtr<class UEnemySpawnerComponent> SpawnerComponent;
+
+private:
     UPROPERTY(EditAnywhere, Category = "Room")
     int32 Identity;  // 방의 정체성 (비트 플래그)
 
