@@ -21,12 +21,15 @@
 
 # 임시 ignore
 /Content/MRPGT
+/Content/No-Face/Maps/Test.umap
+
 
 # Any file in /RawContent dir will be managed by git lfs.
 !/RawContent/**/*
 
 # OS/platform generated files.
 
+/Content/No-Face/Maps/Test.umap
 # Windows
 ehthumbs.db
 Thumbs.db

@@ -22,7 +22,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void UpdateExpBar(float NewCurrentExp);
 
 	void SetMaxCooldown(float InMaxCooldownTime, int32 WeaponType, ESkillType SkillType);
 	void StartCooldown(int32 WeaponType, ESkillType SkillType);
@@ -37,8 +36,6 @@ private:
 
 private:
 
-	UPROPERTY()
-	TObjectPtr<class UPlayerExpBarWidget> ExpBar;
 
 	UPROPERTY()
 	TObjectPtr<class USkillCooldownUserWidget> Sword_SkillCooldownBar_Q;

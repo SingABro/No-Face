@@ -521,12 +521,6 @@ void ACharacterBase::ToggleParrying()
 
 void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 {
-	if (InHUDWidget)
-	{
-		InHUDWidget->UpdateExpBar(Stat->GetCurrentExp());
-		Stat->OnExpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateExpBar);
-	}
-
 	IPlayerSkillUIInterface* SkillUIInterface = Cast<IPlayerSkillUIInterface>(SkillComponent);
 	if (SkillUIInterface)
 	{
