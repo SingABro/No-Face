@@ -4,6 +4,25 @@
 #include "GameFramework/Actor.h"
 #include "RoomActor.generated.h"
 
+DECLARE_DELEGATE(FOnStageChangedDelegate);
+USTRUCT(BlueprintType)
+struct FStageChangedDelegateWrapper
+{
+    GENERATED_BODY()
+    FStageChangedDelegateWrapper() {}
+    FStageChangedDelegateWrapper(const FOnStageChangedDelegate& InDelegate) : StageDelegate(InDelegate) {}
+    FOnStageChangedDelegate StageDelegate;
+};
+
+UENUM(BlueprintType)
+enum class EStageState : uint8
+{
+    READY = 0,
+    FIGHT,
+    NEXT
+};
+
+
 UCLASS()
 class CAPSTONEPROJECT_API ARoomActor : public AActor
 {
@@ -12,23 +31,61 @@ class CAPSTONEPROJECT_API ARoomActor : public AActor
 public:
     ARoomActor();
 
-protected:
-    virtual void BeginPlay() override;
-
 public:
-    void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool bIsBossRoom, bool bIsStartRoom, int stretch);
+    void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool bIsBossRoom, bool bIsStartRoom, int InStretch);
     void SpawnEnemy();
 
+/* 스테이지 */
 private:
-    UPROPERTY(EditAnywhere, Category = "Room")
+    UPROPERTY(VisibleAnywhere, Category = "Room")
     TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-    UPROPERTY(VisibleAnywhere, Category = "Room")
+    UPROPERTY(VisibleAnywhere, Category = Stage, Meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<class UBoxComponent> StageTrigger;
+
+    UFUNCTION()
+    void OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+/* 문 */
+private:
+    UPROPERTY(VisibleAnywhere, Category = Gate, Meta = (AllowPrivateAccess = "true"))
+    TMap<FName, TObjectPtr<class UStaticMeshComponent>> Gates;
+
+    UPROPERTY(VisibleAnywhere, Category = Gate, Meta = (AllowPrivateAccess = "true"))
+    TMap<FName, TObjectPtr<class UBoxComponent>> GateTriggers;
+
+    TArray<TObjectPtr<class UBoxComponent>> GetGateOpenDirection();
+
+    UFUNCTION()
+    void OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    void OpenGates();
+    void CloseAllGates();
+
+/* 상태 */
+private:
+    UPROPERTY(EditAnywhere, Category = Stage, Meta = (AllowPrivateAccess = "true"))
+    EStageState CurrentState;
+
+    void SetState(EStageState InNewState);
+
+    UPROPERTY()
+    TMap<EStageState, FStageChangedDelegateWrapper> StateChangeActions;
+
+    void SetReady();
+    void SetFight();
+    void SetChooseNext();
+
+
+/* 몬스터 스폰 */
+private:
+    UPROPERTY(VisibleAnywhere, Category = "Spawner")
     TObjectPtr<USceneComponent> EnemySpawnPointComponent;
 
     UPROPERTY(VisibleAnywhere, Category = "Spawner")
     TObjectPtr<class UEnemySpawnerComponent> SpawnerComponent;
 
+/* 맵 데이터 */
 private:
     UPROPERTY(EditAnywhere, Category = "Room")
     int32 Identity;  // 방의 정체성 (비트 플래그)
