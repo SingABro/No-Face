@@ -31,7 +31,7 @@ void AMyActorDuplicator::BeginPlay()
             CreateRooms(StartCoords, MaxDepth, EDirection::DOWN, EDirection::DOWN, BossRoomDirection);
             CreateRooms(StartCoords, MaxDepth, EDirection::RIGHT, EDirection::RIGHT, BossRoomDirection);
             CreateRooms(StartCoords, MaxDepth, EDirection::LEFT, EDirection::LEFT, BossRoomDirection);
-        } while (WorldMap.GetAllocatedSize() > 25);
+        } while (WorldMap.GetAllocatedSize() < 25);
 
         BuildActualStage(WorldMap);
     }
