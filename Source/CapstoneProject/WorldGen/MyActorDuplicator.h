@@ -21,11 +21,13 @@ struct FRoom
     GENERATED_BODY()
 
     int32 Identity;  // 방의 정체성 (비트 플래그)
+    int stretch; // 몇 번 뻗어나갔는지
     FVector Location;  // 방의 월드 좌표
     bool bIsEndRoom;  // 마지막 방 여부
     bool bIsBossRoom; // 보스 방 여부
+	bool bIsStartRoom; // 시작 방 여부   
 
-    FRoom() : Identity(0), Location(FVector::ZeroVector), bIsEndRoom(false) {}
+    FRoom() : Identity(0), Location(FVector::ZeroVector), bIsEndRoom(false), bIsStartRoom(false), stretch(0) {}
 };
 
 UCLASS()
