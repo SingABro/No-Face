@@ -262,6 +262,11 @@ int ACharacterBase::GetPlayerState()
 	else return 2;
 }
 
+void ACharacterBase::StopMove()
+{
+	GetPlayerController()->StopMovement();
+}
+
 void ACharacterBase::Q_Skill()
 {
 	RotateToTarget();

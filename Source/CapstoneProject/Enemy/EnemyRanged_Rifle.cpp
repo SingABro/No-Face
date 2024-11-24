@@ -100,28 +100,11 @@ void AEnemyRanged_Rifle::DefaultAttackHitCheck()
 		return;
 	}
 
-	/*FHitResult HitResult;
-	FVector ForwardVector = GetActorForwardVector() * Range;
-	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
-	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
-
-	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, Origin, End, RootRot, ECC_GameTraceChannel1, FCollisionShape::MakeBox(BoxExtent), Param);
-	if (bHit)
-	{
-		FDamageEvent DamageEvent;
-		HitResult.GetActor()->TakeDamage(Damage + 200.f, DamageEvent, GetController(), this);
-	}
-
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, FColor::Green, false, 3.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, FColor::Green, false, 3.f);*/
-
 	FVector SpawnLoc = GetMesh()->GetSocketLocation(TEXT("Muzzle_02")) + GetActorForwardVector() * 50.f;
 	FRotator SpawnRot = GetMesh()->GetSocketRotation(TEXT("Muzzle_02"));
 	AEnemyRangedProjectile* Projectile = GetWorld()->SpawnActor<AEnemyRangedProjectile>(ProjectileClass, SpawnLoc, SpawnRot);
 	Projectile->SetOwner(this);
 	Projectile->Init(GetActorForwardVector());
-
-	//TEXT("Muzzle_02")
 }
 
 float AEnemyRanged_Rifle::GetPatrolRadius()
@@ -156,7 +139,7 @@ float AEnemyRanged_Rifle::TakeExp()
 {
 	Super::TakeExp();
 	
-	return 4321.0f;
+	return 20.0f;
 }
 
 void AEnemyRanged_Rifle::Stun()
@@ -185,13 +168,6 @@ void AEnemyRanged_Rifle::SetDead()
 	GetMyController()->StopAI();
 
 	SetActorEnableCollision(false);
-
-	FTimerHandle DestroyHandle;
-	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
-		[&]()
-		{
-			Destroy();
-		}, 4.f, false);
 }
 
 void AEnemyRanged_Rifle::SetWalkSpeed()

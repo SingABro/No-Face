@@ -270,13 +270,6 @@ void AEnemyMelee_Tanker::SetDead()
 	GetMyController()->StopAI();
 
 	SetActorEnableCollision(false);
-
-	FTimerHandle DestroyHandle;
-	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
-		[&]()
-		{
-			Destroy();
-		}, 4.f, false);
 }
 
 void AEnemyMelee_Tanker::EndStun(UAnimMontage* Target, bool IsProperlyEnded)

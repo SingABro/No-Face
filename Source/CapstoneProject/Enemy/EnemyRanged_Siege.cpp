@@ -136,7 +136,7 @@ float AEnemyRanged_Siege::TakeExp()
 {
 	Super::TakeExp();
 
-	return 4321.0f;
+	return 20.0f;
 }
 
 void AEnemyRanged_Siege::Stun()
@@ -165,13 +165,6 @@ void AEnemyRanged_Siege::SetDead()
 	AnimInstance->Montage_Play(DeadMontage);
 
 	SetActorEnableCollision(false);
-
-	FTimerHandle DestroyHandle;
-	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
-		[&]()
-		{
-			Destroy();
-		}, 4.f, false);
 }
 
 void AEnemyRanged_Siege::BeginAttack()

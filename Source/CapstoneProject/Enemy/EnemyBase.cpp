@@ -208,6 +208,14 @@ void AEnemyBase::SetDead()
 {
 	IsDead = true;
 
+	FTimerHandle DestroyHandle;
+	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
+		[&]()
+		{
+			Destroy();
+			OnDeath.ExecuteIfBound();
+		}, 4.f, false);
+
 	OnDead.ExecuteIfBound(TakeExp());
 }
 

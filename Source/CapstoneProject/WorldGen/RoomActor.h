@@ -31,9 +31,8 @@ class CAPSTONEPROJECT_API ARoomActor : public AActor
 public:
     ARoomActor();
 
-public:
+/* 방 생성시 정보 초기화 */
     void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool bIsBossRoom, bool bIsStartRoom, int InStretch);
-    void SpawnEnemy();
 
 /* 스테이지 */
 private:
@@ -61,6 +60,7 @@ private:
 
     void OpenGates();
     void CloseAllGates();
+    void InitGates();
 
 /* 상태 */
 private:
@@ -76,14 +76,12 @@ private:
     void SetFight();
     void SetChooseNext();
 
-
-/* 몬스터 스폰 */
+/* 몬스터 */
 private:
-    UPROPERTY(VisibleAnywhere, Category = "Spawner")
-    TObjectPtr<USceneComponent> EnemySpawnPointComponent;
+    void DeadEnemy();
 
-    UPROPERTY(VisibleAnywhere, Category = "Spawner")
-    TObjectPtr<class UEnemySpawnerComponent> SpawnerComponent;
+    UPROPERTY(EditAnywhere, Category = "Room")
+    int32 CurrentEnemyNum = 0;
 
 /* 맵 데이터 */
 private:
@@ -101,6 +99,9 @@ private:
 
     UPROPERTY(EditAnywhere, Category = "Room")
     bool bIsStartRoom; // 시작 방 여부
+
+    UPROPERTY(EditAnywhere, Category = "Room")
+    bool bIsClearRoom; // 클리어 했나?
 
     UPROPERTY(EditAnywhere, Category = "Room")
     int Stretch; // 몇 번 뻗어나갔는지

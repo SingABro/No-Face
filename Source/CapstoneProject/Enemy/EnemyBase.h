@@ -8,7 +8,8 @@
 #include "Interface/EnemyHpBarWidgetInterface.h"
 #include "EnemyBase.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnDead, float /* TakeExp */);
+DECLARE_DELEGATE_OneParam(FOnDead, float /* TakeExp */)
+DECLARE_DELEGATE(FOnDeath)
 
 UCLASS()
 class CAPSTONEPROJECT_API AEnemyBase : public ACharacter, public IAIInterface, public IEnemyHpBarWidgetInterface
@@ -42,6 +43,7 @@ public:
 
 public:
 	static FOnDead OnDead;
+	FOnDeath OnDeath;
 
 /* 대미지 적용 가상함수 */
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) { return -1; };

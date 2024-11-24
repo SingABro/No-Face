@@ -68,6 +68,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetPlayerState();
 
+	void StopMove();
+
 /* 스킬 섹션 */
 protected:
 	void Q_Skill();

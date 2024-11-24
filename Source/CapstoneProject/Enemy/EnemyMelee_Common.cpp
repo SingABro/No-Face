@@ -145,13 +145,6 @@ void AEnemyMelee_Common::SetDead()
 	AnimInstance->Montage_Play(DeadMontage);
 
 	SetActorEnableCollision(false);
-
-	FTimerHandle DestroyHandle;
-	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
-		[&]()
-		{
-			Destroy();
-		}, 4.f, false);
 }
 
 void AEnemyMelee_Common::BeginAttack()
