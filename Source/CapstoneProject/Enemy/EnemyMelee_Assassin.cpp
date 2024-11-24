@@ -145,13 +145,6 @@ void AEnemyMelee_Assassin::SetDead()
 	GetMyController()->StopAI();
 
 	SetActorEnableCollision(false);
-
-	FTimerHandle DestroyHandle;
-	GetWorld()->GetTimerManager().SetTimer(DestroyHandle,
-		[&]()
-		{
-			Destroy();
-		}, 4.f, false);
 }
 
 void AEnemyMelee_Assassin::BeginAttack()

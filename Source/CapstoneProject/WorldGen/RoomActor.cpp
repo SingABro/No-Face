@@ -1,17 +1,15 @@
 #include "RoomActor.h"
-#include "WorldGen/EnemySpawnerComponent.h"
 #include "NavigationSystem.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Character/CharacterBase.h"
+#include "WorldGen/EnemySpawner.h"
+#include "Enemy/EnemyBase.h"
 
 ARoomActor::ARoomActor()
 {
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
     RootComponent = MeshComponent;
-
-    EnemySpawnPointComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
-    EnemySpawnPointComponent->SetupAttachment(MeshComponent);
-
-    SpawnerComponent = CreateDefaultSubobject<UEnemySpawnerComponent>(TEXT("Spanwer"));
 
     StageTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("StageTrigger"));
     StageTrigger->SetBoxExtent(FVector(775.0, 775.0f, 300.0f));
@@ -50,6 +48,8 @@ ARoomActor::ARoomActor()
     StateChangeActions.Add(EStageState::FIGHT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &ARoomActor::SetFight)));
     StateChangeActions.Add(EStageState::NEXT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &ARoomActor::SetChooseNext)));
 
+    SetState(CurrentState);
+
 }
 
 void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool InbIsBossRoom, bool InbIsStartRoom, int InStretch)
@@ -61,28 +61,29 @@ void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool I
     bIsStartRoom = InbIsStartRoom;
     Stretch = InStretch;
 
-    SpawnEnemy();
-}
-
-void ARoomActor::SpawnEnemy()
-{
-    UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
-    FNavLocation SpawnRandomPos;
-
-    for (int i = 0; i < 3; ++i)
-    {
-        if (NavSystem->GetRandomPointInNavigableRadius(Location + FVector(0.f, 0.f, 100.f), 500, SpawnRandomPos))
-        {
-            SpawnRandomPos.Location.Z = Location.Z + 100.f;
-            SpawnerComponent->GenerateEnemy(bIsBossRoom, 0, SpawnRandomPos);
-        }
-    }
+    InitGates();
 }
 
 void ARoomActor::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    //SpawnEnemy(); 이때 하면 될듯;
-    SetState(EStageState::FIGHT);
+    StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+    GetGameInstance()->GetSubsystem<UEnemySpawner>()->GenerateEnemy(bIsBossRoom, Stretch, Location);
+
+    if (bIsClearRoom == false)
+    {
+        SetState(EStageState::FIGHT);
+    }
+
+    TArray<AActor*> Enemys;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyBase::StaticClass(), Enemys);
+    CurrentEnemyNum = Enemys.Num();
+
+    for (const auto& Enemy : Enemys)
+    {
+        AEnemyBase* EnemyBase = Cast<AEnemyBase>(Enemy);
+        EnemyBase->OnDeath.BindUObject(this, &ARoomActor::DeadEnemy);
+    }
+    UE_LOG(LogTemp, Display, TEXT("생성된 몬스터 수 : %d"), CurrentEnemyNum);
 }
 
 TArray<TObjectPtr<class UBoxComponent>> ARoomActor::GetGateOpenDirection()
@@ -129,7 +130,36 @@ TArray<TObjectPtr<class UBoxComponent>> ARoomActor::GetGateOpenDirection()
     case 9:
         Answer.Add(GateTriggers[TEXT("-XGate")]);
         Answer.Add(GateTriggers[TEXT("-YGate")]);
-
+        break;
+    case 10:
+        Answer.Add(GateTriggers[TEXT("+XGate")]);
+        Answer.Add(GateTriggers[TEXT("-XGate")]);
+        break;
+    case 11:
+        Answer.Add(GateTriggers[TEXT("+XGate")]);
+        Answer.Add(GateTriggers[TEXT("-XGate")]);
+        Answer.Add(GateTriggers[TEXT("+YGate")]);
+        break;
+    case 12:
+        Answer.Add(GateTriggers[TEXT("-XGate")]);
+        Answer.Add(GateTriggers[TEXT("+YGate")]);
+        break;
+    case 13:
+        Answer.Add(GateTriggers[TEXT("-XGate")]);
+        Answer.Add(GateTriggers[TEXT("+YGate")]);
+        Answer.Add(GateTriggers[TEXT("-YGate")]);
+        break;
+    case 14:
+        Answer.Add(GateTriggers[TEXT("+XGate")]);
+        Answer.Add(GateTriggers[TEXT("-XGate")]);
+        Answer.Add(GateTriggers[TEXT("+YGate")]);
+        break;
+    case 15:
+        Answer.Add(GateTriggers[TEXT("+XGate")]);
+        Answer.Add(GateTriggers[TEXT("-XGate")]);
+        Answer.Add(GateTriggers[TEXT("+YGate")]);
+        Answer.Add(GateTriggers[TEXT("-YGate")]);
+        break;
     }
 
     return Answer;
@@ -137,11 +167,38 @@ TArray<TObjectPtr<class UBoxComponent>> ARoomActor::GetGateOpenDirection()
 
 void ARoomActor::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+    check(OverlappedComponent->ComponentTags.Num() == 1);
+    FName ComponentTag = OverlappedComponent->ComponentTags[0];
+    FName SocketName = FName(*ComponentTag.ToString().Left(2));
+
+    bIsClearRoom = true;
+
+    FVector NewLocation = FVector::ZeroVector;
+    if (OverlappedComponent->ComponentHasTag(TEXT("+XGate")))
+    {
+        NewLocation = FVector::ForwardVector;
+    }
+    else if (OverlappedComponent->ComponentHasTag(TEXT("-XGate")))
+    {
+        NewLocation = -FVector::ForwardVector;
+    }
+    else if (OverlappedComponent->ComponentHasTag(TEXT("+YGate")))
+    {
+        NewLocation = FVector::RightVector;
+    }
+    else if (OverlappedComponent->ComponentHasTag(TEXT("-YGate")))
+    {
+        NewLocation = -FVector::RightVector;
+    }
+
+    ACharacterBase* Player = Cast<ACharacterBase>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));  
+    Player->SetActorLocation(GetActorLocation() + NewLocation * 2500.f + FVector(0.f, 0.f, 90.f));
+    Player->StopMove();
 }
 
 void ARoomActor::OpenGates()
 {
-    for (auto Gate : Gates)
+    for (const auto& Gate : Gates)
     {
         (Gate.Value)->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
     }
@@ -149,9 +206,17 @@ void ARoomActor::OpenGates()
 
 void ARoomActor::CloseAllGates()
 {
-    for (auto Gate : Gates)
+    for (const auto& Gate : Gates)
     {
         (Gate.Value)->SetRelativeRotation(FRotator::ZeroRotator);
+    }
+}
+
+void ARoomActor::InitGates()
+{
+    for (const auto& GateTrigger : GetGateOpenDirection())
+    {
+        GateTrigger->SetCollisionProfileName(TEXT("StageTrigger"));
     }
 }
 
@@ -168,9 +233,9 @@ void ARoomActor::SetState(EStageState InNewState)
 void ARoomActor::SetReady()
 {
     StageTrigger->SetCollisionProfileName(TEXT("StageTrigger"));
-    for (auto GateTrigger : GateTriggers)
+    for (const auto& GateTrigger : GetGateOpenDirection())
     {
-        (GateTrigger.Value)->SetCollisionProfileName(TEXT("NoCollision"));
+        GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
     }
 
     OpenGates();
@@ -179,9 +244,9 @@ void ARoomActor::SetReady()
 void ARoomActor::SetFight()
 {
     StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
-    for (auto GateTrigger : GateTriggers)
+    for (const auto& GateTrigger : GetGateOpenDirection())
     {
-        (GateTrigger.Value)->SetCollisionProfileName(TEXT("NoCollision"));
+        GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
     }
 
     CloseAllGates();
@@ -190,12 +255,22 @@ void ARoomActor::SetFight()
 void ARoomActor::SetChooseNext()
 {
     StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
-    for (auto GateTrigger : GateTriggers)
+    for (const auto& GateTrigger : GetGateOpenDirection())
     {
-        (GateTrigger.Value)->SetCollisionProfileName(TEXT("StageTrigger"));
+        GateTrigger->SetCollisionProfileName(TEXT("StageTrigger"));
     }
 
     OpenGates();
+}
+
+void ARoomActor::DeadEnemy()
+{
+    CurrentEnemyNum--;
+    if (CurrentEnemyNum == 0)
+    {
+        SetState(EStageState::NEXT);
+        return;
+    }
 }
 
 
