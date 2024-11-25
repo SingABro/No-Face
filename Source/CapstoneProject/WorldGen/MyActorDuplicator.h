@@ -27,7 +27,7 @@ struct FRoom
     bool bIsBossRoom; // 보스 방 여부
 	bool bIsStartRoom; // 시작 방 여부   
 
-    FRoom() : Identity(0), Location(FVector::ZeroVector), bIsEndRoom(false), bIsStartRoom(false), stretch(0) {}
+    FRoom() : Identity(0), Location(FVector::ZeroVector), bIsEndRoom(false), bIsBossRoom(false), bIsStartRoom(false), stretch(0) {}
 };
 
 UCLASS()
