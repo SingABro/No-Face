@@ -18,7 +18,7 @@ enum class EWeaponType : uint8
 
 DECLARE_DELEGATE(FTakeItemDelegate);
 DECLARE_MULTICAST_DELEGATE_OneParam(FSignedChangeWeapon, int32 /* Current Weapon Type */);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnWarpNextMap, const FVector&, WarpLocation);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnWarpNextMap, const FVector&);
 
 USTRUCT()
 struct FTakeItemDelegateWrapper
@@ -60,17 +60,7 @@ public:
 
 /* 델리게이트 */
 	FSignedChangeWeapon SignedChangeWeapon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FOnWarpNextMap OnWarpNextMap;
-
-	UFUNCTION(BlueprintCallable)
-	const FVector& GetWarpDirection();
-
-	void WarpEvent(const FVector& InWarpLocation);
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FVector WarpDirection;
 
 /* UFUNCTION 섹션 */
 public:
