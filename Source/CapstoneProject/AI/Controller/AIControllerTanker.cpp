@@ -24,9 +24,9 @@ AAIControllerTanker::AAIControllerTanker()
 	}
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 800.f;
-	SightConfig->LoseSightRadius = 1200.f;
-	SightConfig->PeripheralVisionAngleDegrees = 120.f;
+	SightConfig->SightRadius = 1500.f;
+	SightConfig->LoseSightRadius = 2000.f;
+	SightConfig->PeripheralVisionAngleDegrees = 270.f;
 	SightConfig->SetMaxAge(5.f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = -1.f;
 

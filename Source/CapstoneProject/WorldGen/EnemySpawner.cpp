@@ -56,7 +56,7 @@ void UEnemySpawner::GenerateEnemy(bool bIsBoss, int32 Depth, const FVector& Spaw
 		{
 			if (NavSystem->GetRandomPointInNavigableRadius(SpawnLocation, 2500, SpawnRandomPos))
 			{
-				SpawnRandomPos.Location.Z = 90.f;
+				SpawnRandomPos.Location.Z = 150.f;
 				RandomPos.Add(SpawnRandomPos);
 			}
 		}

@@ -27,6 +27,8 @@ AEnemyRanged_Siege::AEnemyRanged_Siege()
 
 	/* 죽을 때 */
 	Stat->OnHpZero.AddUObject(this, &AEnemyRanged_Siege::SetDead);
+
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 }
 
 void AEnemyRanged_Siege::AttackByAI()
@@ -47,18 +49,16 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 {
 	Super::DefaultAttackHitCheck();
 
-	float Damage = 50.f;
-	float Range = 1000.f;
+	float Damage = 200.f;
 	float Degree = 90.f;
 
 	FVector Origin = GetActorLocation();
-	FVector End = Origin + GetActorForwardVector() * Range;
 	FCollisionQueryParams Param(NAME_None, false, this);
 
 	if (GetMyController()->CanMeleeAttack())
 	{
 		TArray<FOverlapResult> OverlapResults;
-		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(200.f), Param))
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(300.f), Param))
 		{
 			for (const FOverlapResult& OverlapResult : OverlapResults)
 			{
@@ -104,12 +104,12 @@ void AEnemyRanged_Siege::DefaultAttackHitCheck()
 
 float AEnemyRanged_Siege::GetDetectRadius()
 {
-	return 2000.f;
+	return 2500.f;
 }
 
 float AEnemyRanged_Siege::GetAttackInRange()
 {
-	return 1500.f;
+	return 2500.f;
 }
 
 void AEnemyRanged_Siege::Skill1ByAI()

@@ -28,9 +28,10 @@ AEnemyMelee_Common::AEnemyMelee_Common()
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
-	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Common::SetDead);
+
 
 }
 
