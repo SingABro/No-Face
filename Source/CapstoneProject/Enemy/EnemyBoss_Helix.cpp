@@ -39,7 +39,11 @@ void AEnemyBoss_Helix::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = GetMyController()->GetTarget();
+	FTimerHandle StartDelay;
+	GetWorld()->GetTimerManager().SetTimer(StartDelay, [&]()
+		{
+			Player = GetMyController()->GetTarget();
+		}, 1.f, false);
 }
 
 void AEnemyBoss_Helix::AttackByAI()

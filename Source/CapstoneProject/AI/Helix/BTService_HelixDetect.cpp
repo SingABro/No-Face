@@ -5,11 +5,12 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Interface/AIInterface.h"
+#include "Engine/OverlapResult.h"
 
 UBTService_HelixDetect::UBTService_HelixDetect()
 {
 	NodeName = TEXT("HelixDetect");
-	Interval = 1.f;
+	Interval = 0.5f;
 }
 
 void UBTService_HelixDetect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
