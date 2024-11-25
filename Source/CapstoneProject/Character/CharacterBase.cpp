@@ -218,6 +218,12 @@ float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+	if (bIsParrying)
+	{
+		SkillComponent->ParryingSuccess(DamageCauser);
+		return 0.f;
+	}
+
 	if (CurrentStateType == EPlayerStateType::Common) {
 		Stat->ApplyDamage(Damage);
 		return Damage;
@@ -235,12 +241,6 @@ float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 			SkillComponent->SetShieldAmount(-SkillComponent->GetShieldAmount());
 			CurrentStateType = EPlayerStateType::Common;
 		}
-	}
-
-	if (bIsParrying)
-	{
-		SkillComponent->ParryingSuccess(DamageCauser);
-		return 0.f;
 	}
 
 	return 0.f;
