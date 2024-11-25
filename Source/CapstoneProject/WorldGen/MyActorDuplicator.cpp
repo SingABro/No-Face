@@ -26,7 +26,7 @@ void AMyActorDuplicator::BeginPlay()
         // 트리 형태의 방 생성
         do
         {
-            WorldMap.Reset();
+            WorldMap.Empty();
             WorldMap.Add(StartCoords, StartRoom);
             CreateRooms(StartCoords, MaxDepth, EDirection::UP, EDirection::UP, BossRoomDirection);
             CreateRooms(StartCoords, MaxDepth, EDirection::DOWN, EDirection::DOWN, BossRoomDirection);
@@ -114,10 +114,13 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
     {
         for (auto& Elem : WMap) // WMap의 모든 요소에 대해 반복
         {
-            FRoom* tmpRoom = &Elem.Value; // Elem의 Value를 tmpRoom에 저장
-            if (tmpRoom->bIsEndRoom) // 마지막 방이라면
+            FRoom tmpRoom = Elem.Value; // Elem의 Value를 tmpRoom에 저장
+            if (tmpRoom.bIsEndRoom) // 마지막 방이라면
             {
-                tmpRoom->bIsBossRoom = true; // 보스 방으로 설정
+                FIntPoint BossRoomCoords = WorldToGrid(tmpRoom.Location); // 보스 방의 좌표를 저장
+				tmpRoom.bIsBossRoom = true; // 보스 방으로 설정
+				WMap.FindAndRemoveChecked(BossRoomCoords); // 기존의 보스 방을 삭제
+				WMap.Add(BossRoomCoords, tmpRoom);// 새로운 보스 방을 추가
                 break; // 반복문 종료
             }
         }
