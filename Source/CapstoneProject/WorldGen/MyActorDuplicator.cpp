@@ -72,8 +72,6 @@ void AMyActorDuplicator::CreateRooms(const FIntPoint& CurrentCoords, int32 Depth
         WorldMap.RemoveAndCopyValue(NewCoords, tmpRoom); // 기존 월드에 같은 좌표의 맵을 불러오고 삭제
         tmpRoom.Identity = tmpRoom.Identity | NewRoom.Identity; // 두 Identity를 합침
         tmpRoom.Location = GridToWorld(NewCoords);
-        tmpRoom.bIsEndRoom = false;
-        tmpRoom.bIsBossRoom = false;
         if (Depth == 1)
         {
             tmpRoom.bIsEndRoom = true;
@@ -110,7 +108,10 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
             break; // 반복문 종료
         }
     }
-    if (!BossRoomExist) // 보스 방이 없다면
+    if (BossRoomExist) // 보스 방이 있다면
+    {
+	}
+	else // 보스 방이 없다면
     {
         for (auto& Elem : WMap) // WMap의 모든 요소에 대해 반복
         {
@@ -136,22 +137,10 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
                 ARoomActor* RoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, tmpRoom->Location, FRotator::ZeroRotator);
                 if (RoomActor)
                 {
-                    /*
-                    // 보스 방이거나 시작 방이라면 크기를 키움
-                    if (tmpRoom->bIsBossRoom || tmpRoom->bIsStartRoom)
-                    {
-                        RoomActor->SetActorScale3D(FVector(1.3f));
-                    }
-                    else
-                    {
-                        RoomActor->SetActorScale3D(FVector(1.f));
-                    }
-                    */ // 이제 보스방이랑 시작방 되는 거 확인했으니 주석처리
                     RoomActor->SetActorScale3D(FVector(3.f, 3.f, 7.f));
                     RoomActor->SetRoomInfo(tmpRoom->Identity, tmpRoom->Location, tmpRoom->bIsEndRoom, tmpRoom->bIsBossRoom, tmpRoom->bIsStartRoom, tmpRoom->stretch);
                 }
 
-				//RoomActor->SetActorScale3D(FVector(0.8f));
 				ARoomActor* MinimapRoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ((tmpRoom->Location)/10000.f*1850.f)*0.5+MinimapOffset , FRotator::ZeroRotator);
                 MinimapRoomActor->SetActorScale3D(FVector(0.5f));
             }
