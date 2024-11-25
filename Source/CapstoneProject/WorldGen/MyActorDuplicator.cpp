@@ -149,7 +149,7 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
                 }
 
 				//RoomActor->SetActorScale3D(FVector(0.8f));
-				ARoomActor* MinimapRoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ((tmpRoom->Location)/3000.f*1850.f)*0.5+MinimapOffset , FRotator::ZeroRotator);
+				ARoomActor* MinimapRoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ((tmpRoom->Location)/10000.f*1850.f)*0.5+MinimapOffset , FRotator::ZeroRotator);
                 MinimapRoomActor->SetActorScale3D(FVector(0.5f));
             }
         }
