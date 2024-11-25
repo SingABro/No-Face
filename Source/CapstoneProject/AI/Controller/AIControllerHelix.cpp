@@ -14,14 +14,18 @@ AAIControllerHelix::AAIControllerHelix()
 
 ACharacter* AAIControllerHelix::GetTarget()
 {
-	return CastChecked<ACharacter>(GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
+	return Cast<ACharacter>(GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
 }
 
 void AAIControllerHelix::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));
+	FTimerHandle StartDelay;
+	GetWorld()->GetTimerManager().SetTimer(StartDelay, [&]()
+		{
+			GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Cast<APawn>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass())));
+		}, 1.f, false);
 }
 
 void AAIControllerHelix::PostInitializeComponents()

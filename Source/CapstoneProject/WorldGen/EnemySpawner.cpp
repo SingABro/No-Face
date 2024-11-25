@@ -9,7 +9,6 @@
 #include "Enemy/EnemyRanged_Siege.h"
 #include "Enemy/EnemyBoss_Helix.h"
 #include "NavigationSystem.h"
-#include "NavMesh/NavMeshBoundsVolume.h"
 
 UEnemySpawner::UEnemySpawner()
 {
@@ -47,8 +46,6 @@ UEnemySpawner::UEnemySpawner()
 
 void UEnemySpawner::GenerateEnemy(bool bIsBoss, int32 Depth, const FVector& SpawnLocation)
 {
-	UE_LOG(LogTemp, Display, TEXT("몇번불림?"));
-
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 	FNavLocation SpawnRandomPos;
 
@@ -57,9 +54,9 @@ void UEnemySpawner::GenerateEnemy(bool bIsBoss, int32 Depth, const FVector& Spaw
 		TSet<FVector> RandomPos;
 		for (int i = 0; i < Depth + 1; ++i)
 		{
-			if (NavSystem->GetRandomPointInNavigableRadius(SpawnLocation, 500, SpawnRandomPos))
+			if (NavSystem->GetRandomPointInNavigableRadius(SpawnLocation, 1000, SpawnRandomPos))
 			{
-				SpawnRandomPos.Location.Z = 200.f;
+				SpawnRandomPos.Location.Z = 90.f;
 				RandomPos.Add(SpawnRandomPos);
 			}
 		}
@@ -72,7 +69,7 @@ void UEnemySpawner::GenerateEnemy(bool bIsBoss, int32 Depth, const FVector& Spaw
 	}
 	else
 	{
-		GetWorld()->SpawnActor<AEnemyBase>(Enemys[5], SpawnLocation + FVector(0.f, 0.f, 500.f), FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AEnemyBase>(Enemys[5], SpawnLocation + FVector(0.f, 0.f, 100.f), FRotator::ZeroRotator);
 	}
 	
 }
