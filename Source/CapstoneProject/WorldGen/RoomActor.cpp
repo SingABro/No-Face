@@ -192,7 +192,7 @@ void ARoomActor::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedCompon
     }
 
     ACharacterBase* Player = Cast<ACharacterBase>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));  
-    Player->SetActorLocation(GetActorLocation() + NewLocation * 2500.f + FVector(0.f, 0.f, 90.f));
+    Player->SetActorLocation(GetActorLocation() + NewLocation * 8000.f + FVector(0.f, 0.f, 90.f));
     Player->StopMove();
 }
 

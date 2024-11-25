@@ -54,7 +54,7 @@ void UEnemySpawner::GenerateEnemy(bool bIsBoss, int32 Depth, const FVector& Spaw
 		TSet<FVector> RandomPos;
 		for (int i = 0; i < Depth + 1; ++i)
 		{
-			if (NavSystem->GetRandomPointInNavigableRadius(SpawnLocation, 1000, SpawnRandomPos))
+			if (NavSystem->GetRandomPointInNavigableRadius(SpawnLocation, 2500, SpawnRandomPos))
 			{
 				SpawnRandomPos.Location.Z = 90.f;
 				RandomPos.Add(SpawnRandomPos);
@@ -69,7 +69,7 @@ void UEnemySpawner::GenerateEnemy(bool bIsBoss, int32 Depth, const FVector& Spaw
 	}
 	else
 	{
-		GetWorld()->SpawnActor<AEnemyBase>(Enemys[5], SpawnLocation + FVector(0.f, 0.f, 100.f), FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AEnemyBase>(Enemys[5], SpawnLocation + FVector(0.f, 0.f, 600.f), FRotator::ZeroRotator);
 	}
 	
 }
