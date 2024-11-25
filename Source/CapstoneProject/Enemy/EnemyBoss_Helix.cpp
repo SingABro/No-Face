@@ -43,7 +43,7 @@ void AEnemyBoss_Helix::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(StartDelay, [&]()
 		{
 			Player = GetMyController()->GetTarget();
-		}, 1.f, false);
+		}, 1.5f, false);
 }
 
 void AEnemyBoss_Helix::AttackByAI()
@@ -246,7 +246,7 @@ void AEnemyBoss_Helix::Skill_1_HitCheck()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
 
 	float Damage = 800.f;
-	float Range = 300.f;
+	float Range = 600.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams Params(NAME_None, false, this);

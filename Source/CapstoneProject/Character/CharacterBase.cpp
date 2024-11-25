@@ -46,7 +46,7 @@ ACharacterBase::ACharacterBase()
 	SpringArm->SetUsingAbsoluteRotation(true);
 	SpringArm->bUsePawnControlRotation = false;
 	SpringArm->bDoCollisionTest = false;
-	SpringArm->TargetArmLength = 1000.f;
+	SpringArm->TargetArmLength = 2000.f;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
@@ -386,7 +386,7 @@ void ACharacterBase::ZoomInOut(const FInputActionValue& Value)
 {
 	const float WheelValue = Value.Get<float>() * -50.f;
 
-	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 2000.f);
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 3000.f);
 }
 
 void ACharacterBase::CancelCasting()
