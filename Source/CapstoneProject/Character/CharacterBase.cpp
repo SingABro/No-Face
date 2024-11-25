@@ -466,7 +466,7 @@ void ACharacterBase::EquipSword()
 
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
-	GetCharacterMovement()->MaxWalkSpeed = 550.f;
+	GetCharacterMovement()->MaxWalkSpeed = 650.f;
 
 	WeaponBase = GetWorld()->SpawnActor<ASword>(SwordClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_rSocket"));
@@ -481,7 +481,7 @@ void ACharacterBase::EquipBow()
 
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_lSocket_Bow"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_lSocket_Bow"));
-	GetCharacterMovement()->MaxWalkSpeed = 650.f;
+	GetCharacterMovement()->MaxWalkSpeed = 750.f;
 
 	WeaponBase = GetWorld()->SpawnActor<ABow>(BowClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_lSocket_Bow"));
@@ -501,7 +501,7 @@ void ACharacterBase::EquipStaff()
 
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
-	GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	GetCharacterMovement()->MaxWalkSpeed = 550.f;
 
 	WeaponBase = GetWorld()->SpawnActor<AStaff>(StaffClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_rSocket"));
@@ -531,6 +531,16 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 	{
 		SkillUIInterface->SetupSkillUIWidget(InHUDWidget);
 	}
+}
+
+const FVector& ACharacterBase::GetWarpDirection()
+{
+	return WarpDirection;
+}
+
+void ACharacterBase::WarpEvent(const FVector& InWarpLocation)
+{
+	WarpDirection = InWarpLocation;
 }
 
 void ACharacterBase::StaffCreateShield()

@@ -5,6 +5,7 @@
 #include "RoomActor.generated.h"
 
 DECLARE_DELEGATE(FOnStageChangedDelegate);
+
 USTRUCT(BlueprintType)
 struct FStageChangedDelegateWrapper
 {
@@ -21,7 +22,6 @@ enum class EStageState : uint8
     FIGHT,
     NEXT
 };
-
 
 UCLASS()
 class CAPSTONEPROJECT_API ARoomActor : public AActor

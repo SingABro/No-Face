@@ -29,7 +29,7 @@ AEnemyMelee_Assassin::AEnemyMelee_Assassin()
 	/* 죽을 때 */
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Assassin::SetDead);
 
-	GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 }
 
 void AEnemyMelee_Assassin::BeginPlay()

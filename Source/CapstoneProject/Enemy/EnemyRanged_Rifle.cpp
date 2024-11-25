@@ -32,6 +32,8 @@ AEnemyRanged_Rifle::AEnemyRanged_Rifle()
 	FireEffectComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Fire Effect"));
 	FireEffectComponent->SetupAttachment(GetMesh(), TEXT("Muzzle_02"));
 	FireEffectComponent->bAutoActivate = false;
+
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 }
 
 void AEnemyRanged_Rifle::AttackByAI()
@@ -52,18 +54,16 @@ void AEnemyRanged_Rifle::DefaultAttackHitCheck()
 {
 	Super::DefaultAttackHitCheck();
 
-	float Damage = 50.f;
-	float Range = 1000.f;
+	float Damage = 150.f;
 	float Degree = 60.f;
 
 	FVector Origin = GetActorLocation();
-	FVector End = Origin + GetActorForwardVector() * Range;
 	FCollisionQueryParams Param(NAME_None, false, this);
 
 	if (GetMyController()->CanMeleeAttack())
 	{
 		TArray<FOverlapResult> OverlapResults;
-		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(200.f), Param))
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(300.f), Param))
 		{
 			for (const FOverlapResult& OverlapResult : OverlapResults)
 			{
@@ -114,12 +114,12 @@ float AEnemyRanged_Rifle::GetPatrolRadius()
 
 float AEnemyRanged_Rifle::GetDetectRadius()
 {
-	return 1500.f;
+	return 2000.f;
 }
 
 float AEnemyRanged_Rifle::GetAttackInRange()
 {
-	return 1000.f;
+	return 2000.f;
 }
 
 float AEnemyRanged_Rifle::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
@@ -172,12 +172,12 @@ void AEnemyRanged_Rifle::SetDead()
 
 void AEnemyRanged_Rifle::SetWalkSpeed()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 210.f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 }
 
 void AEnemyRanged_Rifle::SetRunSpeed()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 420.f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 }
 
 void AEnemyRanged_Rifle::BeginAttack()
