@@ -18,8 +18,8 @@ void AMinimapCursor::Tick(float DeltaSeconds)
 	{
 		NewLocation = UKismetMathLibrary::TransformLocation(UKismetMathLibrary::MakeTransform(FVector(10000.f, 10000.f, 8010.f),
 			FRotator::ZeroRotator, FVector(0.2f, 0.2f, 0.2f)), 
-			Player->GetActorLocation() - (FVector::RightVector * PlusYWarpIndex * 5000.f) - (-FVector::RightVector * MinusYWarpIndex * 5000.f)
-			- (FVector::ForwardVector * PlusXWarpIndex * 5000.f) - (-FVector::ForwardVector * MinusXWarpIndex * 5000.f));
+			Player->GetActorLocation() - (FVector::RightVector * PlusYWarpIndex * 5500.f) - (-FVector::RightVector * MinusYWarpIndex * 5500.f)
+			- (FVector::ForwardVector * PlusXWarpIndex * 5500.f) - (-FVector::ForwardVector * MinusXWarpIndex * 5500.f));
 		float RollRot;
 		float PitchRot;
 		float YawRot;

@@ -83,6 +83,8 @@ private:
     UPROPERTY(EditAnywhere, Category = "Room")
     int32 CurrentEnemyNum = 0;
 
+    void BossClear();
+
 /* 맵 데이터 */
 private:
     UPROPERTY(EditAnywhere, Category = "Room")

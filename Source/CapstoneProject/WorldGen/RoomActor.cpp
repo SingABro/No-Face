@@ -5,6 +5,8 @@
 #include "Character/CharacterBase.h"
 #include "WorldGen/EnemySpawner.h"
 #include "Enemy/EnemyBase.h"
+#include "Enemy/EnemyBoss_Helix.h"
+#include "Game/CGameModeBase.h"
 
 ARoomActor::ARoomActor()
 {
@@ -66,6 +68,8 @@ void ARoomActor::SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool I
 
 void ARoomActor::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+    if (bIsStartRoom == true) return;
+
     StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
     GetGameInstance()->GetSubsystem<UEnemySpawner>()->GenerateEnemy(bIsBossRoom, Stretch, Location);
 
@@ -82,6 +86,10 @@ void ARoomActor::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedCompo
     {
         AEnemyBase* EnemyBase = Cast<AEnemyBase>(Enemy);
         EnemyBase->OnDeath.BindUObject(this, &ARoomActor::DeadEnemy);
+        if (AEnemyBoss_Helix* Helix = Cast<AEnemyBoss_Helix>(Enemy))
+        {
+            Helix->OnEndGame.AddUObject(this, &ARoomActor::BossClear);
+        }
     }
     UE_LOG(LogTemp, Display, TEXT("생성된 몬스터 수 : %d"), CurrentEnemyNum);
 }
@@ -271,6 +279,17 @@ void ARoomActor::DeadEnemy()
     {
         SetState(EStageState::NEXT);
         return;
+    }
+}
+
+void ARoomActor::BossClear()
+{
+    SetState(EStageState::FIGHT);
+
+    ACGameModeBase* GameMode = Cast<ACGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+    if (GameMode)
+    {
+        GameMode->GameEnd();
     }
 }
 
