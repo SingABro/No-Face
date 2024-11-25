@@ -533,16 +533,6 @@ void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 	}
 }
 
-const FVector& ACharacterBase::GetWarpDirection()
-{
-	return WarpDirection;
-}
-
-void ACharacterBase::WarpEvent(const FVector& InWarpLocation)
-{
-	WarpDirection = InWarpLocation;
-}
-
 void ACharacterBase::StaffCreateShield()
 {
 	CurrentStateType = EPlayerStateType::Shield;
