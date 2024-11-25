@@ -17,4 +17,10 @@ class CAPSTONEPROJECT_API ACGameModeBase : public AGameModeBase
 public:
 	ACGameModeBase();
 	
+	void GameEnd();
+
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "HUD")
+	TSubclassOf<class UUserWidget> WinScreenClass;
 };

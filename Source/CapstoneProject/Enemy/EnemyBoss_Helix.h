@@ -7,6 +7,7 @@
 #include "Interface/HelixSkillInterface.h"
 #include "EnemyBoss_Helix.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnEndGame)
 /**
  * 
  */
@@ -17,6 +18,8 @@ class CAPSTONEPROJECT_API AEnemyBoss_Helix : public AEnemyBase, public IHelixSki
 	
 public:
 	AEnemyBoss_Helix();
+
+	FOnEndGame OnEndGame;
 
 protected:
 	virtual void BeginPlay() override;

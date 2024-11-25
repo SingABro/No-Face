@@ -21,15 +21,11 @@ void AAIControllerHelix::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FTimerHandle StartDelay;
-	GetWorld()->GetTimerManager().SetTimer(StartDelay, [&]()
-		{
-			GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Cast<APawn>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass())));
-		}, 1.f, false);
 }
 
-void AAIControllerHelix::PostInitializeComponents()
+void AAIControllerHelix::OnPossess(APawn* InPawn)
 {
-	Super::PostInitializeComponents();
+	Super::OnPossess(InPawn);
 
+	GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Cast<APawn>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass())));
 }

@@ -2,6 +2,7 @@
 
 
 #include "Game/CGameModeBase.h"
+#include "Blueprint/UserWidget.h"
 
 ACGameModeBase::ACGameModeBase()
 {
@@ -15,4 +16,24 @@ ACGameModeBase::ACGameModeBase()
 	{
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> WinScreenClassRef(TEXT("/Game/No-Face/UI/WBP_Ending.WBP_Ending_C"));
+	if (WinScreenClassRef.Class)
+	{
+		WinScreenClass = WinScreenClassRef.Class;
+	}
+}
+
+void ACGameModeBase::GameEnd()
+{
+	UUserWidget* WinScreen = CreateWidget(GetWorld(), WinScreenClass);
+	if (WinScreen)
+	{
+		WinScreen->AddToViewport();
+	}
+
+	/*FTimerHandle UITimer;
+	GetWorld()->GetTimerManager().SetTimer(UITimer, [&]()
+		{
+			WinScreen->RemoveFromViewport();
+		}, 7.f, false);*/
 }

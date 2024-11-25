@@ -39,11 +39,12 @@ void AEnemyBoss_Helix::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FTimerHandle StartDelay;
+	/*FTimerHandle StartDelay;
 	GetWorld()->GetTimerManager().SetTimer(StartDelay, [&]()
 		{
 			Player = GetMyController()->GetTarget();
-		}, 1.5f, false);
+		}, 1.1f, false);*/
+	Player = GetMyController()->GetTarget();
 }
 
 void AEnemyBoss_Helix::AttackByAI()
@@ -58,7 +59,7 @@ void AEnemyBoss_Helix::DefaultAttackHitCheck()
 	Super::DefaultAttackHitCheck();
 
 	const float Damage = Stat->GetCurrentDamage();
-	const float Range = Stat->GetCurrentRange();
+	const float Range = 1000.f;
 	const float Degree = 150.f;
 
 	FVector Origin = GetActorLocation();
@@ -160,6 +161,7 @@ void AEnemyBoss_Helix::SetDead()
 {
 	Super::SetDead();
 
+	OnEndGame.Broadcast();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	AnimInstance->StopAllMontages(5.f);
@@ -246,7 +248,7 @@ void AEnemyBoss_Helix::Skill_1_HitCheck()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
 
 	float Damage = 800.f;
-	float Range = 600.f;
+	float Range = 1200.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -284,7 +286,7 @@ void AEnemyBoss_Helix::Skill_2_HitCheck()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_2Effect, GetActorLocation(), GetActorRotation());
 
 	const float Damage = 1200.f;
-	const float Range = 700.f;
+	const float Range = 2000.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FVector Origin = GetActorLocation();
@@ -336,7 +338,7 @@ void AEnemyBoss_Helix::Skill_3_HitCheck()
 	float Range = 600.f;
 	FHitResult HitResult;
 	FVector EndHit = TargetLoc + GetActorForwardVector() * Range;
-	FVector BoxExtent = FVector(1.f, 200.f, 100.f);
+	FVector BoxExtent = FVector(1.f, 500.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, false, this);
 	
 	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TargetLoc, EndHit, DirectionQuat, ECC_GameTraceChannel1, FCollisionShape::MakeBox(BoxExtent), Params);
@@ -370,12 +372,12 @@ void AEnemyBoss_Helix::Skill_4_HitCheck()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_4Effect, TargetLoc, TargetRoc);
 
 	float Damage = 2000.f;
-	float Range = 700.f;
+	float Range = 1200.f;
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	FColor Color = FColor::Red;
-	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TargetLoc, TargetLoc + TargetRoc.Vector() * Range, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeBox(FVector(1.f, 50.f, 50.f)), Params);
+	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TargetLoc, TargetLoc + TargetRoc.Vector() * Range, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeBox(FVector(1.f, 300.f, 300.f)), Params);
 	if (bHit)
 	{
 		FDamageEvent DamageEvent;
@@ -384,7 +386,7 @@ void AEnemyBoss_Helix::Skill_4_HitCheck()
 	}
 	
 	FVector BoxCenter = (TargetLoc + (TargetLoc + TargetRoc.Vector() * Range)) * 0.5f;
-	FVector BoxExtent(1.f, 50.f, 50.f);
+	FVector BoxExtent(1.f, 300.f, 300.f);
 	DrawDebugBox(GetWorld(), BoxCenter, BoxExtent, FQuat(TargetRoc), Color, false, 2.f);
 	DrawDebugLine(GetWorld(), TargetLoc, TargetLoc + TargetRoc.Vector() * Range, Color, false, 2.f, 0, 2.f);
 
