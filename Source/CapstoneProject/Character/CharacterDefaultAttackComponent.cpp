@@ -261,6 +261,7 @@ void UCharacterDefaultAttackComponent::StartAnimation()
 	FVector SpawnLocation = Bow->GetMesh()->GetSocketLocation(TEXT("Arrow_Socket"));
 	FRotator SpawnRotation = Bow->GetMesh()->GetSocketRotation(TEXT("Arrow_Socket"));
 
+	UE_LOG(LogTemp, Display, TEXT("화살소환"));
 	Arrow = GetWorld()->SpawnActor<AArrow>(ArrowClass, SpawnLocation, SpawnRotation);
 	Arrow->SetOwner(Character);
 	Arrow->SetActorRotation(Character->GetActorForwardVector().Rotation());

@@ -63,7 +63,7 @@ void AEnemyRanged_Rifle::DefaultAttackHitCheck()
 	if (GetMyController()->CanMeleeAttack())
 	{
 		TArray<FOverlapResult> OverlapResults;
-		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(300.f), Param))
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(400.f), Param))
 		{
 			for (const FOverlapResult& OverlapResult : OverlapResults)
 			{

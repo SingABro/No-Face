@@ -24,7 +24,7 @@ ACGameModeBase::ACGameModeBase()
 		WinScreenClass = WinScreenClassRef.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/BGM/action-187118.action-187118'"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/BGM/0-top-battle-game-bgm-264625.0-top-battle-game-bgm-264625'"));
 	if (SoundRef.Object)
 	{
 		BGM = SoundRef.Object;
@@ -52,7 +52,7 @@ void ACGameModeBase::GameEnd()
 void ACGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+		
 	AudioComponent->SetSound(BGM);
 	AudioComponent->Play();
 }

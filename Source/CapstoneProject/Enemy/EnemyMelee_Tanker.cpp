@@ -241,8 +241,8 @@ void AEnemyMelee_Tanker::Skill_1_HitCheck()
 	FVector TargetLoc = Origin + GetActorForwardVector() * 300.f;
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Skill_1Effect, TargetLoc, GetActorRotation());
 
-	float Damage = 400.f;
-	float Range = 300.f;
+	float Damage = 500.f;
+	float Range = 700.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -253,7 +253,8 @@ void AEnemyMelee_Tanker::Skill_1_HitCheck()
 		FDamageEvent DamageEvent;
 		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{
-			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, GetController(), this);
+			float Distance = FVector::Distance(OverlapResult.GetActor()->GetActorLocation(), GetActorLocation());
+			OverlapResult.GetActor()->TakeDamage(Damage - (Distance * 0.3f), DamageEvent, GetController(), this);
 		}
 	}
 }

@@ -20,7 +20,6 @@ AStaffThunderbolt::AStaffThunderbolt()
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(Root);
 	ParticleComponent->SetTemplate(Particle);
-	//ParticleComponent->SetRelativeScale3D(FVector(5.f));
 	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffThunderbolt::ThunderboltDestory);
 
 	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/Staff/Staff_R/Staff_R3.Staff_R3'"));
