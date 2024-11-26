@@ -3,6 +3,8 @@
 
 #include "Game/CGameModeBase.h"
 #include "Blueprint/UserWidget.h"
+#include "Sound/SoundWave.h"
+#include "Components/AudioComponent.h"
 
 ACGameModeBase::ACGameModeBase()
 {
@@ -21,6 +23,15 @@ ACGameModeBase::ACGameModeBase()
 	{
 		WinScreenClass = WinScreenClassRef.Class;
 	}
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/BGM/action-187118.action-187118'"));
+	if (SoundRef.Object)
+	{
+		BGM = SoundRef.Object;
+	}
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->bAutoActivate = false;
 }
 
 void ACGameModeBase::GameEnd()
@@ -36,4 +47,12 @@ void ACGameModeBase::GameEnd()
 		{
 			WinScreen->RemoveFromViewport();
 		}, 7.f, false);*/
+}
+
+void ACGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AudioComponent->SetSound(BGM);
+	AudioComponent->Play();
 }

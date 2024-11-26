@@ -137,7 +137,7 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
                 ARoomActor* RoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, tmpRoom->Location, FRotator::ZeroRotator);
                 if (RoomActor)
                 {
-                    RoomActor->SetActorScale3D(FVector(3.f, 3.f, 7.f));
+                    RoomActor->SetActorScale3D(FVector(3.f, 3.f, 9.f));
                     RoomActor->SetRoomInfo(tmpRoom->Identity, tmpRoom->Location, tmpRoom->bIsEndRoom, tmpRoom->bIsBossRoom, tmpRoom->bIsStartRoom, tmpRoom->stretch);
                 }
 

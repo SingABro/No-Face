@@ -28,6 +28,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
 #include "MotionWarpingComponent.h"
+#include "Sound/SoundWave.h"
+#include "Kismet/GameplayStatics.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -384,9 +386,9 @@ void ACharacterBase::UpdateRotate()
 
 void ACharacterBase::ZoomInOut(const FInputActionValue& Value)
 {
-	const float WheelValue = Value.Get<float>() * -50.f;
+	const float WheelValue = Value.Get<float>() * -100.f;
 
-	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 3000.f);
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 2500.f);
 }
 
 void ACharacterBase::CancelCasting()
@@ -464,6 +466,7 @@ void ACharacterBase::EquipSword()
 		WeaponBase->Destroy();
 	}
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ToSwordChangeSound, GetActorLocation());
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
 	GetCharacterMovement()->MaxWalkSpeed = 650.f;
@@ -479,6 +482,7 @@ void ACharacterBase::EquipBow()
 		WeaponBase->Destroy();
 	}
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ToBowChangeSound, GetActorLocation());
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_lSocket_Bow"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_lSocket_Bow"));
 	GetCharacterMovement()->MaxWalkSpeed = 750.f;
@@ -499,6 +503,7 @@ void ACharacterBase::EquipStaff()
 		WeaponBase->Destroy();
 	}
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ToStaffChangeSound, GetActorLocation());
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
 	GetCharacterMovement()->MaxWalkSpeed = 550.f;

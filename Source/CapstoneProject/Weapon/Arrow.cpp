@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AArrow::AArrow()
 {
@@ -18,6 +20,12 @@ AArrow::AArrow()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(Box);
 	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
+
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
+	ParticleComponent->SetupAttachment(Mesh);
+	ParticleComponent->SetTemplate(Particle);
+	ParticleComponent->bAutoActivate = true;
+
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshRef(TEXT("/Script/Engine.StaticMesh'/Game/MRPGT/StaticMeshes/Arrow/SM_Arrow_A.SM_Arrow_A'"));
 	if (MeshRef.Object)

@@ -34,6 +34,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent> Mesh;
 
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
+
 	FVector Direction;
 
 	UPROPERTY(EditAnywhere, Category = "Time")
