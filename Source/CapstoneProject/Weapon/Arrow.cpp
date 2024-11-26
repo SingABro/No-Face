@@ -17,21 +17,15 @@ AArrow::AArrow()
 	Box->SetCollisionProfileName(TEXT("Arrow"));
 	Box->OnComponentBeginOverlap.AddDynamic(this, &AArrow::OnOverlap);
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(Box);
-	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
-
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
-	ParticleComponent->SetupAttachment(Mesh);
-	ParticleComponent->SetTemplate(Particle);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleRef(TEXT("/Script/Engine.ParticleSystem'/Game/ParagonGideon/FX/Particles/Gideon/Abilities/Burden/FX/P_Gideon_Burden_Projectile.P_Gideon_Burden_Projectile'"));
+	if (ParticleRef.Object)
+	{
+		ParticleComponent->SetTemplate(ParticleRef.Object);
+	}
+	ParticleComponent->SetupAttachment(Box);
 	ParticleComponent->bAutoActivate = true;
 
-
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshRef(TEXT("/Script/Engine.StaticMesh'/Game/MRPGT/StaticMeshes/Arrow/SM_Arrow_A.SM_Arrow_A'"));
-	if (MeshRef.Object)
-	{
-		Mesh->SetStaticMesh(MeshRef.Object);
-	}
 
 	Direction = FVector::ZeroVector;
 	LifeTime = 5.f;

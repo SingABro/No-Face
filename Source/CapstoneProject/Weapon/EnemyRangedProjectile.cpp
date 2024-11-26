@@ -54,5 +54,6 @@ void AEnemyRangedProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 		FDamageEvent DamageEvent;
 		if (!GetOwner()) return;
 		OtherActor->TakeDamage(200.f, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner());
+		Destroy();
 	}
 }
