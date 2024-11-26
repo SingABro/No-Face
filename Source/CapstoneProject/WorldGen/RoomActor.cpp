@@ -173,12 +173,88 @@ TArray<TObjectPtr<class UBoxComponent>> ARoomActor::GetGateOpenDirection()
     return Answer;
 }
 
+TArray<TObjectPtr<class UStaticMeshComponent>> ARoomActor::GetGateOpen()
+{
+    TArray<TObjectPtr<UStaticMeshComponent>> Answer;
+
+    switch (Identity)
+    {
+    case 0:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 1:
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 2:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        break;
+    case 3:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 4:
+        Answer.Add(Gates[TEXT("+YGate")]);
+        break;
+    case 5:
+        Answer.Add(Gates[TEXT("+YGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 6:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        break;
+    case 7:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 8:
+        Answer.Add(Gates[TEXT("-XGate")]);
+        break;
+    case 9:
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 10:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("-XGate")]);
+        break;
+    case 11:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        break;
+    case 12:
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        break;
+    case 13:
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    case 14:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        break;
+    case 15:
+        Answer.Add(Gates[TEXT("+XGate")]);
+        Answer.Add(Gates[TEXT("-XGate")]);
+        Answer.Add(Gates[TEXT("+YGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
+        break;
+    }
+
+    return Answer;
+}
+
+
 void ARoomActor::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    check(OverlappedComponent->ComponentTags.Num() == 1);
-    FName ComponentTag = OverlappedComponent->ComponentTags[0];
-    FName SocketName = FName(*ComponentTag.ToString().Left(2));
-
     bIsClearRoom = true;
 
     FVector NewLocation = FVector::ZeroVector;
@@ -200,16 +276,16 @@ void ARoomActor::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedCompon
     }
 
     ACharacterBase* Player = Cast<ACharacterBase>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));  
-    Player->SetActorLocation(GetActorLocation() + NewLocation * 8000.f + FVector(0.f, 0.f, 150.f));
+    Player->SetActorLocation(GetActorLocation() + NewLocation * 8000.f + FVector(0.f, 0.f, 130.f));
     Player->StopMove();
     Player->OnWarpNextMap.Broadcast(NewLocation);
 }
 
 void ARoomActor::OpenGates()
 {
-    for (const auto& Gate : Gates)
+    for (const auto& Gate : GetGateOpen())
     {
-        (Gate.Value)->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+        Gate->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
     }
 }
 

@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Sound/SoundWave.h"
 #include "Components/AudioComponent.h"
+#include "Player/CPlayerController.h"
 
 ACGameModeBase::ACGameModeBase()
 {
@@ -41,12 +42,6 @@ void ACGameModeBase::GameEnd()
 	{
 		WinScreen->AddToViewport();
 	}
-
-	/*FTimerHandle UITimer;
-	GetWorld()->GetTimerManager().SetTimer(UITimer, [&]()
-		{
-			WinScreen->RemoveFromViewport();
-		}, 7.f, false);*/
 }
 
 void ACGameModeBase::BeginPlay()
