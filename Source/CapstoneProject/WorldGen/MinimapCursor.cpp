@@ -57,7 +57,22 @@ void AMinimapCursor::WarpEvent(const FVector& InWarpLocation)
 void AMinimapCursor::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (Player)
+	{
+		Player->OnWarpNextMap.AddUObject(this, &AMinimapCursor::WarpEvent);
+	}
+	else
+	{
+		FTimerHandle Temp;
+		GetWorld()->GetTimerManager().SetTimer(Temp, [&]()
+			{
+				Init();
+			}, 0.5f, true);
+	}
+}
 
+void AMinimapCursor::Init()
+{
 	Player = Cast<ACharacterBase>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));
-	Player->OnWarpNextMap.AddUObject(this, &AMinimapCursor::WarpEvent);
 }

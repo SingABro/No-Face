@@ -52,6 +52,21 @@ void AMinimapFollow::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (Player)
+	{
+		Player->OnWarpNextMap.AddUObject(this, &AMinimapFollow::WarpEvent);
+	}
+	else
+	{
+		FTimerHandle Temp;
+		GetWorld()->GetTimerManager().SetTimer(Temp, [&]()
+			{
+				Init();
+			}, 0.5f, true);
+	}
+}
+
+void AMinimapFollow::Init()
+{
 	Player = Cast<ACharacterBase>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));
-	Player->OnWarpNextMap.AddUObject(this, &AMinimapFollow::WarpEvent);
 }

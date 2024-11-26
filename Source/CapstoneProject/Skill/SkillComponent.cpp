@@ -431,7 +431,7 @@ void USkillComponent::Sword_R_SkillHitCheck()
 	
 	TArray<FHitResult> HitResults;
 	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
-	FVector BoxExtent = FVector(100.f, 300.f, 100.f);
+	FVector BoxExtent = FVector(250.f, 300.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
@@ -500,7 +500,7 @@ void USkillComponent::Bow_Q_Skill()
 	TArray<FHitResult> HitResults;
 	FVector ForwardVector = Character->GetActorForwardVector() * Range;
 	FQuat RootRot = FRotationMatrix::MakeFromZ(ForwardVector).ToQuat();
-	FVector BoxExtent = FVector(100.f, 100.f, 100.f);
+	FVector BoxExtent = FVector(200.f, 100.f, 100.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	/* 이펙트 */
