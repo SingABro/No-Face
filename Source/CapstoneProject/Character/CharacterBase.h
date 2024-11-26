@@ -242,6 +242,17 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> DeadMontage;
 
+/* 사운드 섹션 */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> ToSwordChangeSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> ToBowChangeSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> ToStaffChangeSound;
+
+
 /* 유틸리티 섹션 */
 private:
 	class ACPlayerController* GetPlayerController() const;

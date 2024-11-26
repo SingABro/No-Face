@@ -653,9 +653,9 @@ void USkillComponent::BeginBow_R()
 	bCanChangeWeapon = false;
 
 	GetParticleComponent(1)->SetTemplate(Bow_R_Effect);
-	GetParticleComponent(1)->SetRelativeRotation(FRotator(-20.f, 90.f, 0.f));
+	GetParticleComponent(1)->SetRelativeRotation(FRotator(-5.f, 90.f, 0.f));
 	GetParticleComponent(1)->SetRelativeLocation(FVector(0.f, 50.f, 100.f));
-	GetParticleComponent(1)->SetWorldScale3D(FVector(3.f, 3.f, 3.f));
+	GetParticleComponent(1)->SetWorldScale3D(FVector(4.f, 4.f, 4.f));
 	GetParticleComponent(1)->Activate();
 
 	Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
@@ -685,7 +685,7 @@ void USkillComponent::Bow_R_Skill()
 	FVector Origin = Character->GetActorLocation() + Character->GetActorForwardVector() * 200.f;
 	FVector End = Origin + Character->GetActorForwardVector() * Range;
 	FQuat Rot = FRotationMatrix::MakeFromZ(Character->GetActorForwardVector()).ToQuat();
-	FVector BoxExtent = FVector(100.f, 200.f, 300.f);
+	FVector BoxExtent = FVector(200.f, 300.f, 300.f);
 	FCollisionQueryParams Params(NAME_None, true, Character);
 
 	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Origin, End, Rot, ECC_GameTraceChannel2, FCollisionShape::MakeBox(BoxExtent), Params);
@@ -755,7 +755,7 @@ void USkillComponent::Staff_Q_Skill()
 	GetWorld()->GetTimerManager().SetTimer(StaffQHandle,
 		[&]()
 		{
-			AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, Cursor.Location + FVector(0.f, 0.f, 800.f), FRotator::ZeroRotator);
+			AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, Cursor.Location + FVector(0.f, 0.f, 3000.f), FRotator::ZeroRotator);
 			Meteor->Init(Cursor.Location);
 			Meteor->SetOwner(Character);
 		}, 2.f, false);

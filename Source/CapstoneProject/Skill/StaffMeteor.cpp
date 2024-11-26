@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
+#include "Sound/SoundWave.h"
 
 AStaffMeteor::AStaffMeteor()
 {
@@ -37,7 +38,13 @@ AStaffMeteor::AStaffMeteor()
 	ParticleComponent->bAutoActivate = false;
 	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffMeteor::MeteorDestroy);
 
-	MoveSpeed = 300.f;
+	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/Staff/Staff_Q/Staff_Q_02.Staff_Q_02'"));
+	if (SoundRef.Object)
+	{
+		Sound = SoundRef.Object;
+	}
+
+	MoveSpeed = 2000.f;
 	Destination = FVector::ZeroVector;
 	bStart = false;
 }
@@ -63,6 +70,7 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	if (bDamageApply == false || OtherActor->ActorHasTag(TEXT("Enemy"))) return;
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
 	ParticleComponent->Activate();
 	MeshComponent->SetHiddenInGame(true);
 

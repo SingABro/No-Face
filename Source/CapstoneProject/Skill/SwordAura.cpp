@@ -16,7 +16,7 @@ ASwordAura::ASwordAura()
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ASwordAura::OnBeginOverlap);
 
 	MoveDirection = FVector::ZeroVector;
-	MoveSpeed = 1000.f;
+	MoveSpeed = 2000.f;
 	LifeTime = 5.f;
 
 	Color = FColor::Red;

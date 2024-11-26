@@ -42,6 +42,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystem> CrashEffect;
 
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> Sound;
+
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float MoveSpeed;

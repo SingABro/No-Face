@@ -327,7 +327,7 @@ void UCharacterDefaultAttackComponent::CheckStaffCombo()
 
 void UCharacterDefaultAttackComponent::StaffDefaultAttack()
 {
-	FVector OriginLoc = Character->GetActorLocation() + Character->GetActorForwardVector() * 200.f;
+	FVector OriginLoc = Character->GetActorLocation() + Character->GetActorForwardVector() * 400.f;
 	FRotator OriginRot = Character->GetActorRotation();
 	if (CurrentCombo == 2)
 	{

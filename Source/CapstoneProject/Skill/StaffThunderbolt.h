@@ -31,4 +31,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> Sound;
 };

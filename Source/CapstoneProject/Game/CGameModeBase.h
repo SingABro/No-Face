@@ -19,8 +19,16 @@ public:
 	
 	void GameEnd();
 
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "HUD")
 	TSubclassOf<class UUserWidget> WinScreenClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	TObjectPtr<class UAudioComponent> AudioComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> BGM;
 };
