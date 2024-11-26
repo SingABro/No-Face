@@ -27,6 +27,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	void Init();
 
 private:
 	UPROPERTY()
