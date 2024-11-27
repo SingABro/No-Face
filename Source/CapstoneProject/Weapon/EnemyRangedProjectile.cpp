@@ -18,7 +18,7 @@ AEnemyRangedProjectile::AEnemyRangedProjectile()
 	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	Direction = FVector::ZeroVector;
-	LifeTime = 5.f;
+	LifeTime = 2.5f;
 }
 
 void AEnemyRangedProjectile::BeginPlay()

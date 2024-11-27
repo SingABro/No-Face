@@ -387,8 +387,8 @@ void AEnemyBoss_Helix::Skill_4_HitCheck()
 	
 	FVector BoxCenter = (TargetLoc + (TargetLoc + TargetRoc.Vector() * Range)) * 0.5f;
 	FVector BoxExtent(1.f, 300.f, 300.f);
-	DrawDebugBox(GetWorld(), BoxCenter, BoxExtent, FQuat(TargetRoc), Color, false, 2.f);
-	DrawDebugLine(GetWorld(), TargetLoc, TargetLoc + TargetRoc.Vector() * Range, Color, false, 2.f, 0, 2.f);
+	//DrawDebugBox(GetWorld(), BoxCenter, BoxExtent, FQuat(TargetRoc), Color, false, 2.f);
+	//DrawDebugLine(GetWorld(), TargetLoc, TargetLoc + TargetRoc.Vector() * Range, Color, false, 2.f, 0, 2.f);
 
 }
 

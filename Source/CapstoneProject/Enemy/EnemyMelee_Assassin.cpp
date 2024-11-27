@@ -72,7 +72,7 @@ void AEnemyMelee_Assassin::DefaultAttackHitCheck()
 		}
 	}
 
-	DefaultAttackHitDebug(Origin, GetActorForwardVector(), Range, Degree, Color);
+	//DefaultAttackHitDebug(Origin, GetActorForwardVector(), Range, Degree, Color);
 
 	if (!AttackInRange())
 	{
@@ -116,7 +116,7 @@ float AEnemyMelee_Assassin::TakeExp()
 {
 	Super::TakeExp();
 
-	return 50.0f;
+	return 70.0f;
 }
 
 void AEnemyMelee_Assassin::Stun()

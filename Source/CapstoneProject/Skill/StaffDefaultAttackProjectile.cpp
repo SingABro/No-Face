@@ -27,7 +27,7 @@ AStaffDefaultAttackProjectile::AStaffDefaultAttackProjectile()
 
 	MoveDirection = FVector::ZeroVector;
 	
-	LifeTime = 5.f;
+	LifeTime = 2.5f;
 }
 
 void AStaffDefaultAttackProjectile::BeginPlay()

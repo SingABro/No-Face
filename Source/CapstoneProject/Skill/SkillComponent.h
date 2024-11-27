@@ -157,6 +157,7 @@ private:
 	/* 스킬 시전할 곳 표시 하기 위한 데이터 */
 	FHitResult Cursor;
 	bool bCasting = false;
+	FVector CursorLocation = FVector::ZeroVector;
 
 	/* 점프 스킬 모션 워핑 */
 	void Sword_R_MotionWarpSet();

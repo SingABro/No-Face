@@ -28,7 +28,7 @@ AArrow::AArrow()
 
 
 	Direction = FVector::ZeroVector;
-	LifeTime = 5.f;
+	LifeTime = 2.5f;
 }
 
 void AArrow::BeginPlay()

@@ -30,6 +30,7 @@
 #include "MotionWarpingComponent.h"
 #include "Sound/SoundWave.h"
 #include "Kismet/GameplayStatics.h"
+#include "Gimmick/StoryBook.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -329,6 +330,8 @@ void ACharacterBase::OnRelease()
 
 void ACharacterBase::OnAttackStart()
 {
+	if (Cast<AStoryBook>(UGameplayStatics::GetActorOfClass(GetWorld(), AStoryBook::StaticClass()))->CanReadBook()) return;
+
 	if (TraceAttack() == false || SkillComponent->GetSkillState() == ESkillState::Progress)
 	{
 		return;
@@ -469,7 +472,7 @@ void ACharacterBase::EquipSword()
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ToSwordChangeSound, GetActorLocation());
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
-	GetCharacterMovement()->MaxWalkSpeed = 650.f;
+	GetCharacterMovement()->MaxWalkSpeed = 785.f;
 
 	WeaponBase = GetWorld()->SpawnActor<ASword>(SwordClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_rSocket"));
@@ -485,7 +488,7 @@ void ACharacterBase::EquipBow()
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ToBowChangeSound, GetActorLocation());
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_lSocket_Bow"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_lSocket_Bow"));
-	GetCharacterMovement()->MaxWalkSpeed = 750.f;
+	GetCharacterMovement()->MaxWalkSpeed = 850.f;
 
 	WeaponBase = GetWorld()->SpawnActor<ABow>(BowClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_lSocket_Bow"));
@@ -506,7 +509,7 @@ void ACharacterBase::EquipStaff()
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ToStaffChangeSound, GetActorLocation());
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
-	GetCharacterMovement()->MaxWalkSpeed = 550.f;
+	GetCharacterMovement()->MaxWalkSpeed = 700.f;
 
 	WeaponBase = GetWorld()->SpawnActor<AStaff>(StaffClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_rSocket"));

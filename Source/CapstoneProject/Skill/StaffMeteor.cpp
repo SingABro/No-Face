@@ -92,7 +92,7 @@ void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				Enemy->TakeDamage(Stat->Staff_Q_Damage + Stat->Staff_Q_Level * 200.f - (Distance / 3.f), DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 			}
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_Q_Range, 32, FColor::Green, false, 3.f);
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_Q_Range, 32, FColor::Green, false, 3.f);
 	}
 
 	bDamageApply = false;

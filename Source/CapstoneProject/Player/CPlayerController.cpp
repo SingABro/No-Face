@@ -8,6 +8,8 @@ ACPlayerController::ACPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
+	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
 
 	static ConstructorHelpers::FClassFinder<UHUDWidget> HUDWidgetRef(TEXT("/Game/No-Face/UI/WBP_HUD.WBP_HUD_C"));
 	if (HUDWidgetRef.Class)
