@@ -18,6 +18,7 @@ AStaffArea::AStaffArea()
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	ParticleComponent->SetupAttachment(Root);
 	ParticleComponent->SetTemplate(Particle);
+	ParticleComponent->SetRelativeScale3D(FVector(2.5f));
 	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffArea::AreaDestroy);
 
 	DamageTime = 0.f;
@@ -69,7 +70,7 @@ void AStaffArea::PullToCenter(float DeltaTime)
 				}
 				DamageTime = 0.f;
 			}
-			DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_W_Range, 32, FColor::Green, false);
+			//DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_W_Range, 32, FColor::Green, false);
 		}
 	}
 	

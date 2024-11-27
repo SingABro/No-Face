@@ -27,6 +27,7 @@ private:
 	UFUNCTION()
 	void OnExitButtonClicked();
 
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UButton> StartButton;
 

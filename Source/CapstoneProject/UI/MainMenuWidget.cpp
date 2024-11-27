@@ -13,21 +13,23 @@ void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("GameStartButton")));
+	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("Start")));
 	ensure(StartButton);
-	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("QuitButton")));
+	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("Quit")));
 	ensure(ExitButton);
 
 	StartButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnStartButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnExitButtonClicked);
+
 }
 
 void UMainMenuWidget::OnStartButtonClicked()
 {
-	UGameplayStatics::OpenLevel(this, FName("Start"));
+	UGameplayStatics::OpenLevel(this, FName("Test"));
 }
 
 void UMainMenuWidget::OnExitButtonClicked()
 {
 	UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
 }
+

@@ -52,7 +52,7 @@ void AStaffThunderbolt::ActiveThunderbolt()
 				Enemy->TakeDamage(Stat->Staff_R_Damage + Stat->Staff_R_Level * 300.f, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
 			}
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_R_Range, 32, FColor::Green, false, 3.f);
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_R_Range, 32, FColor::Green, false, 3.f);
 	}
 }
 

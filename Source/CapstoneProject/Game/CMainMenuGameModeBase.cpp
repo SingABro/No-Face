@@ -12,6 +12,11 @@ ACMainMenuGameModeBase::ACMainMenuGameModeBase()
 	{
 		MainMenuWidgetClass = MainMenuWidgetClassRef.Class;
 	}
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(TEXT("/Game/No-Face/Blueprints/Controller/BP_MainMenuController.BP_MainMenuController_C"));
+	if (PlayerControllerClassRef.Class)
+	{
+		PlayerControllerClass = PlayerControllerClassRef.Class;
+	}
 }
 
 void ACMainMenuGameModeBase::BeginPlay()

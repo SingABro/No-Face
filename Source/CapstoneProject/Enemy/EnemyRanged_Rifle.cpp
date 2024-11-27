@@ -139,7 +139,7 @@ float AEnemyRanged_Rifle::TakeExp()
 {
 	Super::TakeExp();
 	
-	return 20.0f;
+	return 50.0f;
 }
 
 void AEnemyRanged_Rifle::Stun()

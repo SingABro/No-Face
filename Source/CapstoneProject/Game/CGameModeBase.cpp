@@ -6,6 +6,7 @@
 #include "Sound/SoundWave.h"
 #include "Components/AudioComponent.h"
 #include "Player/CPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 ACGameModeBase::ACGameModeBase()
 {
@@ -42,6 +43,12 @@ void ACGameModeBase::GameEnd()
 	{
 		WinScreen->AddToViewport();
 	}
+
+	FTimerHandle NextLevelTimer;
+	GetWorld()->GetTimerManager().SetTimer(NextLevelTimer, [&]()
+		{
+			UGameplayStatics::OpenLevel(this, FName("MainMenu"));
+		}, 5.f, false);
 }
 
 void ACGameModeBase::BeginPlay()
@@ -49,5 +56,6 @@ void ACGameModeBase::BeginPlay()
 	Super::BeginPlay();
 		
 	AudioComponent->SetSound(BGM);
+	AudioComponent->VolumeMultiplier = 0.5f;
 	AudioComponent->Play();
 }

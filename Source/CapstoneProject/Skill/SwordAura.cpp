@@ -17,7 +17,7 @@ ASwordAura::ASwordAura()
 
 	MoveDirection = FVector::ZeroVector;
 	MoveSpeed = 2000.f;
-	LifeTime = 5.f;
+	LifeTime = 2.5f;
 
 	Color = FColor::Red;
 }

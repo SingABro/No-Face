@@ -22,6 +22,8 @@ public:
 	virtual void HighlightActor() override;
 	virtual void EndHighlightActor() override;
 
+	FORCEINLINE bool CanReadBook() { return bStoryBook; }
+
 	UFUNCTION()
 	void OnHighlighting(AActor* TouchedActor);
 
@@ -48,4 +50,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UStoryBookWidget> DialogUI;
+
+	bool bStoryBook = false;
 };

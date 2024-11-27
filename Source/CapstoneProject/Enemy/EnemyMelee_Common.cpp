@@ -75,7 +75,7 @@ void AEnemyMelee_Common::DefaultAttackHitCheck()
 		}
 	}
 	
-	DefaultAttackHitDebug(Origin, GetActorForwardVector(), Range, Degree, Color);
+	//DefaultAttackHitDebug(Origin, GetActorForwardVector(), Range, Degree, Color);
 
 	if (!AttackInRange())
 	{
@@ -116,8 +116,9 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 
 float AEnemyMelee_Common::TakeExp()
 {
-	//일반 몬스터 30 경험치
-	return 30.0f;
+	Super::TakeExp();
+
+	return 50.0f;
 }
 
 void AEnemyMelee_Common::Stun()

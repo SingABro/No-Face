@@ -292,7 +292,7 @@ void USkillComponent::Sword_W_SkillHitCheck()
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_W_Effect, Origin);
 
-	DrawDebugSphere(GetWorld(), Origin, Radius, 32, Color, false, 3.f);
+	//DrawDebugSphere(GetWorld(), Origin, Radius, 32, Color, false, 3.f);
 }
 
 void USkillComponent::BeginSword_E()
@@ -382,8 +382,8 @@ void USkillComponent::Sword_E_SkillHitCheck()
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_E_Attack_Effect, Origin, Character->GetActorForwardVector().Rotation());
 
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 void USkillComponent::BeginSword_R()
@@ -450,8 +450,8 @@ void USkillComponent::Sword_R_SkillHitCheck()
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Sword_R_Effect, Origin, (End-Origin).Rotation());
 
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 
@@ -522,8 +522,8 @@ void USkillComponent::Bow_Q_Skill()
 		}
 	}
 	
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, RootRot, FColor::Green, false, 5.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, RootRot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), Origin, BoxExtent, RootRot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), End, BoxExtent, RootRot, FColor::Green, false, 5.f);
 }
 
 void USkillComponent::BeginBow_W()
@@ -702,8 +702,8 @@ void USkillComponent::Bow_R_Skill()
 		}
 	}
 
-	DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
-	DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), Origin, BoxExtent, Rot, FColor::Green, false, 5.f);
+	//DrawDebugBox(GetWorld(), End, BoxExtent, Rot, FColor::Green, false, 5.f);
 }
 
 /************* 지팡이 스킬 라인 *************/
@@ -717,6 +717,7 @@ void USkillComponent::BeginStaff_Q()
 		StartCooldown(CooldownDuration_Staff_Q, CooldownTimerHandle_Staff_Q, bCanUseSkill_Staff_Q, ESkillType::Q, CurrentWeaponType, Staff_Q_Timer);
 		CurrentSkillState = ESkillState::Progress;
 
+		CursorLocation = Cursor.Location;
 		bCasting = false;
 
 		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
@@ -749,16 +750,16 @@ void USkillComponent::EndStaff_Q(UAnimMontage* Target, bool IsProperlyEnded)
 
 void USkillComponent::Staff_Q_Skill()
 {
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorCastingEffect, Cursor.Location, FRotator::ZeroRotator);
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorCastingEffect, CursorLocation, FRotator::ZeroRotator);
 
 	FTimerHandle StaffQHandle;
 	GetWorld()->GetTimerManager().SetTimer(StaffQHandle,
 		[&]()
 		{
-			AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, Cursor.Location + FVector(0.f, 0.f, 3000.f), FRotator::ZeroRotator);
-			Meteor->Init(Cursor.Location);
+			AStaffMeteor* Meteor = GetWorld()->SpawnActor<AStaffMeteor>(MeteorClass, CursorLocation + FVector(0.f, 0.f, 3000.f), FRotator::ZeroRotator);
+			Meteor->Init(CursorLocation);
 			Meteor->SetOwner(Character);
-		}, 2.f, false);
+		}, 1.f, false);
 }
 
 void USkillComponent::BeginStaff_W()

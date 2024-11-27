@@ -35,11 +35,13 @@ void AStoryBook::BeginPlay()
 
 void AStoryBook::HighlightActor()
 {
+	bStoryBook = true;
 	MeshComp->SetOverlayMaterial(HighlightMaterial);
 }
 
 void AStoryBook::EndHighlightActor()
 {
+	bStoryBook = false;
 	MeshComp->SetOverlayMaterial(nullptr);
 }
 

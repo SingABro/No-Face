@@ -136,7 +136,7 @@ float AEnemyRanged_Siege::TakeExp()
 {
 	Super::TakeExp();
 
-	return 20.0f;
+	return 60.0f;
 }
 
 void AEnemyRanged_Siege::Stun()
