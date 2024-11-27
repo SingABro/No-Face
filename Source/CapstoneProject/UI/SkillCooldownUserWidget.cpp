@@ -19,6 +19,12 @@ void USkillCooldownUserWidget::NativeConstruct()
 
 	//처음 UI 생성시 쿨타임바 초기화
 	CooldownBar->SetPercent(0.f);
+
+	FLinearColor TransparentWhite(1.0f, 1.0f, 1.0f, 0.0f);
+
+	FProgressBarStyle& ProgressBarStyle = CooldownBar->WidgetStyle;
+	ProgressBarStyle.BackgroundImage.TintColor = FSlateColor(TransparentWhite);
+	CooldownBar->WidgetStyle = ProgressBarStyle;
 }
 
 void USkillCooldownUserWidget::UpdateCooldownBar(float CurrentTime)
@@ -27,7 +33,7 @@ void USkillCooldownUserWidget::UpdateCooldownBar(float CurrentTime)
 	if (bIsCooldownActive)
 	{
 		//외부에서 들어오는 시간을 그대로 적용한다.
-		CooldownBar->SetPercent(CurrentTime / MaxCooldownTime);
+		CooldownBar->SetPercent(1 - CurrentTime / MaxCooldownTime);
 
 		//최대 쿨타임보다 커지면 더 이상 업데이트를 진행하지 않으며 쿨타임바를 초기화한다.
 		if (CurrentTime >= MaxCooldownTime - KINDA_SMALL_NUMBER)
