@@ -12,10 +12,10 @@ UMainMenuWidget::UMainMenuWidget(const FObjectInitializer& ObjectInitializer) : 
 void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("StartButton")));
+	
+	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("GameStartButton")));
 	ensure(StartButton);
-	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("ExitButton")));
+	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("QuitButton")));
 	ensure(ExitButton);
 
 	StartButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnStartButtonClicked);
@@ -24,7 +24,7 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::OnStartButtonClicked()
 {
-	UGameplayStatics::OpenLevel(this, FName("Test"));
+	UGameplayStatics::OpenLevel(this, FName("Start"));
 }
 
 void UMainMenuWidget::OnExitButtonClicked()
