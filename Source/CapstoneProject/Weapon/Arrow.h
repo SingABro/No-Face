@@ -21,30 +21,21 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	void Init(const FVector& InDirection, const FVector& CurrentLocation, const FRotator& CurrentRotation);
+	void Init(const FVector& InDirection);
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Root")
-	TObjectPtr<class USceneComponent> Root;
-
 	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TObjectPtr<class UBoxComponent> Box;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> Mesh;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
 
 	FVector Direction;
 
-	UPROPERTY(EditAnywhere, Category = "Speed")
-	float MoveSpeed;
-
 	UPROPERTY(EditAnywhere, Category = "Time")
 	float LifeTime;
-
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	float Damage;
 };

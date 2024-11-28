@@ -4,38 +4,47 @@
 #include "Skill/StaffMeteor.h"
 #include "Components/BoxComponent.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
+#include "Engine/OverlapResult.h"
+#include "Sound/SoundWave.h"
 
 AStaffMeteor::AStaffMeteor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = Root;
-
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	Box->SetupAttachment(Root);
-	Box->OnComponentHit.AddDynamic(this, &AStaffMeteor::OnHit);
+	RootComponent = Box;
+	Box->OnComponentBeginOverlap.AddDynamic(this, &AStaffMeteor::OnBeginOverlap);
 
-	Meteor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Meteor"));
-	Meteor->SetupAttachment(Root);
-	Meteor->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeteorRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Meteor.SM_Meteor'"));
-	if (MeteorRef.Object)
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetupAttachment(Box);
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/Abilities/SM_Meteor_Rot.SM_Meteor_Rot'"));
+	if (MeshRef.Object)
 	{
-		Meteor->SetStaticMesh(MeteorRef.Object);
+		MeshComponent->SetStaticMesh(MeshRef.Object);
 	}
 
-	MeteorSpline = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeteorSpline"));
-	MeteorSpline->SetupAttachment(Meteor);
-	MeteorSpline->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeteorSplineRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Meteor_Spline.SM_Meteor_Spline'"));
-	if (MeteorSplineRef.Object)
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Paticle"));
+	ParticleComponent->SetupAttachment(Box);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> CrashEffectRef(TEXT("/Script/Engine.ParticleSystem'/Game/No-Face/Effect/Staff/Staff_Q/Staff_Q_MeteorCrash.Staff_Q_MeteorCrash'"));
+	if (CrashEffectRef.Object)
 	{
-		MeteorSpline->SetStaticMesh(MeteorSplineRef.Object);
+		CrashEffect = CrashEffectRef.Object;
+		ParticleComponent->SetTemplate(CrashEffect);
+	}
+	ParticleComponent->bAutoActivate = false;
+	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffMeteor::MeteorDestroy);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/Staff/Staff_Q/Staff_Q_02.Staff_Q_02'"));
+	if (SoundRef.Object)
+	{
+		Sound = SoundRef.Object;
 	}
 
-	MoveSpeed = 1500.f;
-	Damage = Stat->Staff_Q_Damage;
+	MoveSpeed = 2000.f;
 	Destination = FVector::ZeroVector;
 	bStart = false;
 }
@@ -57,11 +66,41 @@ void AStaffMeteor::Tick(float DeltaTime)
 	}
 }
 
-void AStaffMeteor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AStaffMeteor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Display, TEXT("충돌"));
-	Destroy();
+	if (bDamageApply == false || OtherActor->ActorHasTag(TEXT("Enemy"))) return;
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
+	ParticleComponent->Activate();
+	MeshComponent->SetHiddenInGame(true);
+
+	TArray<FOverlapResult> OverlapResults;
+	FVector Origin = GetActorLocation();
+	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Stat->Staff_Q_Range), Params);
+	if (bHit)
+	{
+		FDamageEvent DamageEvent;
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+			if (Enemy)
+			{
+				if (GetOwner() == nullptr) return;
+				float Distance = FVector::Distance(Enemy->GetActorLocation(), GetActorLocation());
+				Enemy->TakeDamage(Stat->Staff_Q_Damage + Stat->Staff_Q_Level * 200.f - (Distance / 3.f), DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+			}
+		}
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_Q_Range, 32, FColor::Green, false, 3.f);
+	}
+
+	bDamageApply = false;
+}
+
+void AStaffMeteor::MeteorDestroy(UParticleSystemComponent* PSystem)
+{
+	Destroy();
 }
 
 void AStaffMeteor::Init(const FVector& InDestination)

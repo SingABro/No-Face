@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "Interface/PlayerHUDInterface.h"
 #include "CharacterBase.generated.h"
 
 //Animation Blueprint 에서 무기 애니메이션 값을 바꿀 때 쓰는 ENUM 값
@@ -17,7 +16,9 @@ enum class EWeaponType : uint8
 	Staff UMETA(DisplayName = "Staff")
 };
 
-DECLARE_DELEGATE(FTakeItemDelegate)
+DECLARE_DELEGATE(FTakeItemDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FSignedChangeWeapon, int32 /* Current Weapon Type */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnWarpNextMap, const FVector&);
 
 USTRUCT()
 struct FTakeItemDelegateWrapper
@@ -30,8 +31,17 @@ struct FTakeItemDelegateWrapper
 	FTakeItemDelegate TakeItemDelegate;
 };
 
+UENUM(BlueprintType)
+enum class EPlayerStateType : uint8
+{
+	Common = 0,
+	Shield,
+	Stun,
+	Dead
+};
+
 UCLASS()
-class CAPSTONEPROJECT_API ACharacterBase : public ACharacter, public IPlayerHUDInterface
+class CAPSTONEPROJECT_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -46,14 +56,21 @@ public:
 
 /* 오버라이딩 섹션 */
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void SetupHUDWidget(class UHUDWidget* InHUDWidget) override;
+	/*virtual */void SetupHUDWidget(class UHUDWidget* InHUDWidget);
 
-/* Getter */
+/* 델리게이트 */
+	FSignedChangeWeapon SignedChangeWeapon;
+	FOnWarpNextMap OnWarpNextMap;
 
+/* UFUNCTION 섹션 */
 public:
-
 	UFUNCTION(BlueprintCallable, Category = "WeaponType")
 	int GetWeaponType();
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponType")
+	int GetPlayerState();
+
+	void StopMove();
 
 /* 스킬 섹션 */
 protected:
@@ -106,6 +123,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> ZoomInOutAction;
+
+	UPROPERTY(VisibleAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> DisplaySkillUIAction;
+
+	UPROPERTY(VisibleAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> DashAction;
 
 /* 마우스 우클릭을 통해 캐릭터 이동 기능을 실현하는 함수와 변수 */
 	void OnClickStart();	//Mouse Right Click Started
@@ -172,8 +195,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<class USkillComponent> SkillComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Component")
-	TObjectPtr<class UCharacterHitCheckComponent> HitCheckComponent;
+	//대쉬
+	void Dash();
+
 
 	//패링을 위한 함수와 변수
 	void ToggleParrying();
@@ -183,6 +207,51 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	TObjectPtr<class UCharacterStatComponent> Stat;
+
+/* 이펙트 섹션 */
+private:
+	void StaffCreateShield();
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ShieldParticleComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> SkillParticleComponent;
+
+/* UI 섹션 */
+private:
+	void DisplaySkillUI();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class USkillUIWidget> SkillUIWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USkillUIWidget> SkillUIWidget;
+
+/* 모션 워핑 섹션 */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
+	TObjectPtr<class UMotionWarpingComponent> MotionWarpComponent;
+
+/* 상태 섹션 */
+private:
+	EPlayerStateType CurrentStateType = EPlayerStateType::Common;
+
+	void SetDead();
+
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<class UAnimMontage> DeadMontage;
+
+/* 사운드 섹션 */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> ToSwordChangeSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> ToBowChangeSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<class USoundWave> ToStaffChangeSound;
+
 
 /* 유틸리티 섹션 */
 private:

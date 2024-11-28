@@ -17,4 +17,6 @@ class CAPSTONEPROJECT_API AStaff : public AWeaponBase
 public:
 	AStaff();
 
+	UPROPERTY(EditAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMeshComponent> StaffMesh;
 };

@@ -4,7 +4,8 @@
 #include "Stat/CharacterStatComponent.h"
 #include "Stat/CharacterDataStat.h"
 #include "Enemy/EnemyBase.h"
-
+#include "Particles/ParticleSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 UCharacterStatComponent::UCharacterStatComponent()
 {
@@ -16,14 +17,11 @@ UCharacterStatComponent::UCharacterStatComponent()
 		DataStat = DataStatRef.Object;
 	}
 
-	/* 이렇게 해야 하나의 에셋으로 캐릭터의 스텟을 관리하기 편한거 같음 */
 	MaxHp = DataStat->MaxHp;
-	CurrentHp = DataStat->Hp;
-	CurrentExp = DataStat->Exp;
+	CurrentHp = MaxHp;
 	CurrentLevel = 1;
 	
 	bWantsInitializeComponent = true;
-
 }
 
 
@@ -43,6 +41,31 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+}
+
+int UCharacterStatComponent::GetPlayerLevel()
+{
+	return CurrentLevel;
+}
+
+int UCharacterStatComponent::GetPlayerSkillPoint()
+{
+	return CurrentSkillPoint;
+}
+
+float UCharacterStatComponent::GetPlayerMaxHp()
+{
+	return MaxHp;
+}
+
+float UCharacterStatComponent::GetPlayerCurrentHp()
+{
+	return CurrentHp;
+}
+
+float UCharacterStatComponent::GetPlayerCurrentExp()
+{
+	return CurrentExp;
 }
 
 float UCharacterStatComponent::ApplyDamage(float InDamage)
@@ -68,9 +91,20 @@ void UCharacterStatComponent::SetHp(float ChangeHp)
 
 void UCharacterStatComponent::SetExp(float InExp)
 {
-	UE_LOG(LogTemp, Display, TEXT("Get Exp Amount : %f"), InExp);
 	CurrentExp = CurrentExp + InExp;
+	while (CurrentExp >= 100) {
+		CurrentExp -= 100;
+		CurrentLevel++;
+		CurrentSkillPoint++;
+		UE_LOG(LogTemp, Display, TEXT("##### Level Up ##### // Current Level : %d"), CurrentLevel);
+		OnLevelChanged.Broadcast(CurrentLevel);
+
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LevelUpEffect, GetOwner()->GetActorTransform());
+	}
 	UE_LOG(LogTemp, Display, TEXT("Current Exp : %f,  //  Current Level : %d"), CurrentExp, CurrentLevel);
 	OnExpChanged.Broadcast(CurrentExp);
 }
+
+
+
 

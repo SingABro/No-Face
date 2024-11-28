@@ -2,6 +2,7 @@
 
 
 #include "Skill/SwordAura.h"
+#include "Skill/SkillComponent.h"
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
@@ -15,9 +16,8 @@ ASwordAura::ASwordAura()
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ASwordAura::OnBeginOverlap);
 
 	MoveDirection = FVector::ZeroVector;
-	Damage = Stat->Sword_R_Damage;
-	MoveSpeed = Stat->Sword_R_MoveSpeed;
-	LifeTime = Stat->Sword_R_LifeTime;
+	MoveSpeed = 2000.f;
+	LifeTime = 2.5f;
 
 	Color = FColor::Red;
 }
@@ -49,7 +49,11 @@ void ASwordAura::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherActor && OtherActor != this)
 	{
 		FDamageEvent DamageEvent;
-		OtherActor->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
+		if (Enemy)
+		{
+			Enemy->TakeDamage(Stat->Sword_Q_Damage + Stat->Sword_Q_Level * 120, DamageEvent, GetWorld()->GetFirstPlayerController(), this, TEXT("Sword_Q"));
+		}
 		Color = FColor::Green;
 	}
 }

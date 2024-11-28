@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interface/SwordInterface.h"
 #include "Interface/BowInterface.h"
+#include "Interface/StaffInterface.h"
 #include "CharacterDefaultAttackComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAPSTONEPROJECT_API UCharacterDefaultAttackComponent : public UActorComponent, public IBowInterface
+class CAPSTONEPROJECT_API UCharacterDefaultAttackComponent : public UActorComponent, public ISwordInterface, public IBowInterface, public IStaffInterface
 {
 	GENERATED_BODY()
 
@@ -34,9 +36,14 @@ private:
 	void EndSwordDefaultAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 	void SetSwordComboTimer();
 	void CheckSwordCombo();
+	virtual void SwordDefaultAttackHitCheck() override;
 	virtual void SwordDefaultAttackEnd() override;
 
+	bool SwordDefaultAttackRadialRange(AActor* Player, AActor* Target, float RadialAngle);
+	void SwordDefaultAttackHitDebug(const FVector& Start, const FVector& ForwardVector, float AttackRange, const FColor& Color, float Degree);
+
 	FTimerHandle SwordComboTimer;
+	bool SwordHasNextComboCommand = false;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UCharacterComboAttackData> SwordComboData;
@@ -67,10 +74,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UAnimationAsset> BowPullAnim;
 	
-	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UAnimationAsset> BowIdleAnim;
 
+	bool bCanBowAttack = true;
 
 /* Staff 기본 공격 */
 private:
@@ -78,8 +85,10 @@ private:
 	void EndStaffDefaultAttack(class UAnimMontage* Target, bool IsProperlyEnded);
 	void SetStaffComboTimer();
 	void CheckStaffCombo();
+	virtual void StaffDefaultAttack() override;
 
 	FTimerHandle StaffComboTimer;
+	bool StaffHasNextComboCommand = false;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<class UCharacterComboAttackData> StaffComboData;
@@ -87,15 +96,23 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> StaffDefaultAttackMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<class AStaffDefaultAttackProjectile> StaffAttackClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Projectile")
+	TObjectPtr<class AStaffDefaultAttackProjectile> StaffAttackPtr;
+
 /* 유틸리티 */
 private:
-	int32 CurrentCombo = 0;
 	int32 CurrentWeaponType;
-	bool HasNextComboCommand = false;
+	int32 CurrentCombo = 0;
 
 	bool bCanChangeWeapon = true;
 
 	UPROPERTY(VisibleAnywhere, Category = "Character")
 	TObjectPtr<class ACharacter> Character;
+
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	TObjectPtr<class UCharacterDataStat> Stat;
 
 };

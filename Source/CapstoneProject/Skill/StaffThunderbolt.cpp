@@ -5,6 +5,10 @@
 #include "Engine/OverlapResult.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundWave.h"
 
 AStaffThunderbolt::AStaffThunderbolt()
 {
@@ -13,26 +17,16 @@ AStaffThunderbolt::AStaffThunderbolt()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
-	UpPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UpPlane"));
-	UpPlane->SetupAttachment(Root);
-	UpPlane->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> UpPlaneRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Ult_Runes_Inner.SM_Ult_Runes_Inner'"));
-	if (UpPlaneRef.Object)
-	{
-		UpPlane->SetStaticMesh(UpPlaneRef.Object);
-	}
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ParticleComponent->SetupAttachment(Root);
+	ParticleComponent->SetTemplate(Particle);
+	ParticleComponent->OnSystemFinished.AddDynamic(this, &AStaffThunderbolt::ThunderboltDestory);
 
-	DownPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DownPlane"));
-	DownPlane->SetupAttachment(Root);
-	DownPlane->SetCollisionProfileName(TEXT("NoCollision"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> DownPlaneRef(TEXT("/Script/Engine.StaticMesh'/Game/ParagonGideon/FX/Meshes/Heroes/Gideon/SM_Ult_Runes_Outer.SM_Ult_Runes_Outer'"));
-	if (DownPlaneRef.Object)
+	static ConstructorHelpers::FObjectFinder<USoundWave> SoundRef(TEXT("/Script/Engine.SoundWave'/Game/No-Face/SkillSound/Staff/Staff_R/Staff_R3.Staff_R3'"));
+	if (SoundRef.Object)
 	{
-		DownPlane->SetStaticMesh(DownPlaneRef.Object);
+		Sound = SoundRef.Object;
 	}
-
-	LifeTime = 5.f;
-	Damage = Stat->Staff_R_Damage;
 }
 
 void AStaffThunderbolt::BeginPlay()
@@ -41,38 +35,37 @@ void AStaffThunderbolt::BeginPlay()
 	
 }
 
-void AStaffThunderbolt::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	LifeTime -= DeltaTime;
-	if (LifeTime <= 0.f)
-	{
-		Destroy();
-	}
-
-}
-
 void AStaffThunderbolt::ActiveThunderbolt()
 {
-	if (CheckInArea())
+	TArray<FOverlapResult> OverlapResults;
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
+
+	if (CheckInArea(OverlapResults))
 	{
 		FDamageEvent DamageEvent;
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			OverlapResult.GetActor()->TakeDamage(Damage, DamageEvent, OverlapResult.GetActor()->GetInstigatorController(), GetOwner());
+			AEnemyBase* Enemy = Cast<AEnemyBase>(OverlapResult.GetActor());
+			if (Enemy)
+			{
+				if (GetOwner() == nullptr) return;
+				Enemy->TakeDamage(Stat->Staff_R_Damage + Stat->Staff_R_Level * 300.f, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+			}
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 350.f, 32, FColor::Green, false, 3.f);
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), Stat->Staff_R_Range, 32, FColor::Green, false, 3.f);
 	}
 }
 
-bool AStaffThunderbolt::CheckInArea()
+bool AStaffThunderbolt::CheckInArea(TArray<FOverlapResult>& InOverlapResults)
 {
-	const float Radius = 350.f;
-
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, true, GetOwner()); //GetOwner 꼭 설정해주기
 
-	return GetWorld()->OverlapMultiByChannel(OverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius), Params);
+	return GetWorld()->OverlapMultiByChannel(InOverlapResults, Origin, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Stat->Staff_R_Range), Params);
+}
+
+void AStaffThunderbolt::ThunderboltDestory(UParticleSystemComponent* PSystem)
+{
+	Destroy();
 }
 

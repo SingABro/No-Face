@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Var")
 	uint8 bIsIdle : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Var")
+	uint8 bIsFalling : 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Var")
 	int32 WeaponIndex;
 
@@ -36,7 +39,7 @@ public:
 	float GroundSpeed; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Var")
-	float MovingThreshould;
+	float MovingThreshold;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Var")
 	FVector Velocity;

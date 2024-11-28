@@ -5,46 +5,43 @@
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AArrow::AArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = Root;
-
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	Box->SetupAttachment(Root);
+	RootComponent = Box;
 	Box->SetCollisionProfileName(TEXT("Arrow"));
-	Box->OnComponentHit.AddDynamic(this, &AArrow::OnHit);
+	Box->OnComponentBeginOverlap.AddDynamic(this, &AArrow::OnOverlap);
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(Root);
-	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
-
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshRef(TEXT("/Script/Engine.StaticMesh'/Game/No-Face/Weapon/Bow/Mesh/SM_Arrow_A.SM_Arrow_A'"));
-	if (MeshRef.Object)
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleRef(TEXT("/Script/Engine.ParticleSystem'/Game/ParagonGideon/FX/Particles/Gideon/Abilities/Burden/FX/P_Gideon_Burden_Projectile.P_Gideon_Burden_Projectile'"));
+	if (ParticleRef.Object)
 	{
-		Mesh->SetStaticMesh(MeshRef.Object);
+		ParticleComponent->SetTemplate(ParticleRef.Object);
 	}
+	ParticleComponent->SetupAttachment(Box);
+	ParticleComponent->bAutoActivate = true;
+
 
 	Direction = FVector::ZeroVector;
-	Damage = Stat->BowDamage;
-	MoveSpeed = Stat->BowSpeed;
-	LifeTime = Stat->BowLifeTime;
+	LifeTime = 2.5f;
 }
 
 void AArrow::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AArrow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector NewLocation = GetActorLocation() + (Direction * MoveSpeed * DeltaTime);
+	FVector NewLocation = GetActorLocation() + (Direction * Stat->BowSpeed * DeltaTime);
 	SetActorLocation(NewLocation);
 
 	LifeTime -= DeltaTime;
@@ -54,23 +51,22 @@ void AArrow::Tick(float DeltaTime)
 	}
 }
 
-void AArrow::Init(const FVector& InDirection, const FVector& CurrentLocation, const FRotator& CurrentRotation)
+void AArrow::Init(const FVector& InDirection)
 {
-	SetActorLocation(CurrentLocation);
-	SetActorRotation(CurrentRotation);
 	Direction = InDirection;
 }
 
-void AArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AArrow::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor != this)
+	if (OtherActor && OtherActor != this && !OtherActor->ActorHasTag(TEXT("Player")))
 	{
 		FDamageEvent DamageEvent;
-		OtherActor->TakeDamage(Damage, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
-		UE_LOG(LogTemp, Display, TEXT("화살 히트"));
+		AEnemyBase* Enemy = Cast<AEnemyBase>(OtherActor);
+		if (Enemy)
+		{
+			if (GetOwner() == nullptr) return;
+			Enemy->TakeDamage(Stat->BowDamage, DamageEvent, GetWorld()->GetFirstPlayerController(), GetOwner(), TEXT("Default"));
+		}
 		Destroy();
 	}
 }
-
-
-

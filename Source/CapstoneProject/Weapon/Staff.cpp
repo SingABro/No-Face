@@ -5,5 +5,6 @@
 
 AStaff::AStaff()
 {
-
+	StaffMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaffMesh"));
+	StaffMesh->SetupAttachment(RootComponent);
 }

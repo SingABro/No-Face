@@ -8,12 +8,25 @@ ACPlayerController::ACPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
+	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
 
 	static ConstructorHelpers::FClassFinder<UHUDWidget> HUDWidgetRef(TEXT("/Game/No-Face/UI/WBP_HUD.WBP_HUD_C"));
 	if (HUDWidgetRef.Class)
 	{
 		HUDWidgetClass = HUDWidgetRef.Class;
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> DeadWidgetRef(TEXT("/Game/No-Face/UI/WBP_DeadUI.WBP_DeadUI_C"));
+	if (DeadWidgetRef.Class)
+	{
+		DeadScreenClass = DeadWidgetRef.Class;
+	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> MapUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_MapUI.WBP_MapUI_C"));
+	if (MapUIWidgetRef.Class)
+	{
+		MapUIClass = MapUIWidgetRef.Class;
+	}
+
 }
 
 void ACPlayerController::BeginPlay()
@@ -23,4 +36,28 @@ void ACPlayerController::BeginPlay()
 	{
 		HUDWidget->AddToViewport();
 	}
+	UUserWidget* MapUIWidget = CreateWidget(this, MapUIClass);
+	if (MapUIWidget)
+	{
+		MapUIWidget->AddToViewport();
+	}
+
+	///* 해당 옵션을 설정해야지 PlayerController에서 인풋시스템을 관리하는듯 하다 -> 아닌가? */
+	//FInputModeGameOnly GameOnlyInputMode;
+	//SetInputMode(GameOnlyInputMode);
 }
+
+void ACPlayerController::GameHasEnded(AActor* EndGameFocus, bool bIsWinner)
+{
+	Super::GameHasEnded(EndGameFocus, bIsWinner);
+
+	UUserWidget* DeadScreen = CreateWidget(this, DeadScreenClass);
+	if (DeadScreen)
+	{
+		DeadScreen->AddToViewport();
+	}
+
+	FTimerHandle ResponeTimer;
+	GetWorldTimerManager().SetTimer(ResponeTimer, this, &ACPlayerController::RestartLevel, 5.0f);
+}
+

@@ -8,7 +8,7 @@
 
 UEnemyAnimInstance::UEnemyAnimInstance()
 {
-	MovingThreshould = 3.f;
+	MovingThreshold = 3.f;
 }
 
 void UEnemyAnimInstance::NativeInitializeAnimation()
@@ -30,7 +30,7 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		Velocity = Movement->Velocity;
 		GroundSpeed = Velocity.Size();
-		bIsIdle = GroundSpeed < MovingThreshould;
+		bIsIdle = GroundSpeed < MovingThreshold;
 		Angle = UKismetMathLibrary::InverseTransformDirection(Character->GetActorTransform(), Velocity);
 	}
 }

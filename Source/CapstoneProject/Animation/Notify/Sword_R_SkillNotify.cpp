@@ -2,8 +2,8 @@
 
 
 #include "Animation/Notify/Sword_R_SkillNotify.h"
-#include "Interface/SwordInterface.h"
-#include "Character/CharacterHitCheckComponent.h"
+#include "Interface/SwordSkillInterface.h"
+#include "Skill/SkillComponent.h"
 
 USword_R_SkillNotify::USword_R_SkillNotify()
 {
@@ -13,7 +13,7 @@ void USword_R_SkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	ISwordInterface* Interface = Cast<ISwordInterface>(MeshComp->GetOwner()->GetComponentByClass<UCharacterHitCheckComponent>());
+	ISwordSkillInterface* Interface = Cast<ISwordSkillInterface>(MeshComp->GetOwner()->GetComponentByClass<USkillComponent>());
 	if (Interface)
 	{
 		Interface->Sword_R_SkillHitCheck();

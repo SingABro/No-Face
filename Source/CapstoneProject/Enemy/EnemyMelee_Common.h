@@ -24,9 +24,11 @@ public:
 	/* AI 인터페이스 구현 섹션 */
 	virtual void AttackByAI() override;
 	virtual void DefaultAttackHitCheck() override;
+	virtual float GetAttackInRange() override;
+
 
 	/* 오버라이딩 섹션 */
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type) override;
 	virtual float TakeExp() override;
 	virtual void Stun() override;
 	virtual void SetDead() override;
@@ -37,7 +39,7 @@ private:
 	bool AttackInRange();
 
 	void BeginHitAction();
-
+	void EndHitAction(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 스턴 애니메이션 끝날 때 실행되는 함수 */
 	void EndStun(class UAnimMontage* Target, bool IsProperlyEnded);
@@ -50,7 +52,8 @@ private:
 /* 유틸리티 섹션 */
 private:
 	class AAIControllerCommon* GetMyController();
-
+	
+/* 몽타주 섹션 */
 private:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> DefaultAttackMontage;
