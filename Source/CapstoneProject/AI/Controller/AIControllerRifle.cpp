@@ -15,9 +15,9 @@
 AAIControllerRifle::AAIControllerRifle()
 {
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 1500.f;
-	SightConfig->LoseSightRadius = 2000.f;
-	SightConfig->PeripheralVisionAngleDegrees = 90.f;
+	SightConfig->SightRadius = 2000.f;
+	SightConfig->LoseSightRadius = 2500.f;
+	SightConfig->PeripheralVisionAngleDegrees = 180.f;
 	SightConfig->SetMaxAge(10.f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = -1.f;
 
@@ -37,6 +37,11 @@ void AAIControllerRifle::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus
 		Stimulus = CanSenseActor(Actor, EAIPerceptionSense::EPS_Sight);
 		HandleSenseSight(Actor, Stimulus);
 	}
+}
+
+bool AAIControllerRifle::CanMeleeAttack()
+{
+	return GetBlackboardComponent()->GetValueAsBool(TEXT("MeleeAttack"));
 }
 
 FAIStimulus AAIControllerRifle::CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense)

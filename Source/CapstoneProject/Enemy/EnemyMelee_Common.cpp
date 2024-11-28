@@ -11,6 +11,9 @@
 #include "Engine/DamageEvents.h"
 #include "AI/Controller/AIControllerCommon.h"
 #include "UI/EnemyHpBarWidget.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Perception/AISense_Damage.h"
 
 AEnemyMelee_Common::AEnemyMelee_Common()
 {
@@ -25,7 +28,11 @@ AEnemyMelee_Common::AEnemyMelee_Common()
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+
 	Stat->OnHpZero.AddUObject(this, &AEnemyMelee_Common::SetDead);
+
+
 }
 
 void AEnemyMelee_Common::BeginPlay()
@@ -47,7 +54,7 @@ void AEnemyMelee_Common::DefaultAttackHitCheck()
 
 	const float Damage = Stat->GetCurrentDamage();
 	const float Range = Stat->GetCurrentRange();
-	const float Degree = 60.f;
+	const float Degree = 90.f;
 
 	FColor Color = FColor::Red;
 	FVector Origin = GetActorLocation();
@@ -73,19 +80,36 @@ void AEnemyMelee_Common::DefaultAttackHitCheck()
 	if (!AttackInRange())
 	{
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		
+	
 		AnimInstance->Montage_Stop(0.5f, DefaultAttackMontage);
 	}
 }
 
-float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AEnemyMelee_Common::GetAttackInRange()
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	return 300.f;
+}
+
+float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	/* Hit Montage가 먼저 실행 되어야지 Dead 애니메이션이 잘 실행됨 */
+	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
 	BeginHitAction();
 
 	Stat->ApplyDamage(Damage);
+
+	/* 대미지 입으면 감각 활성화 */
+	UAISense_Damage::ReportDamageEvent(
+		GetWorld(),
+		this,
+		DamageCauser,
+		Damage,
+		GetActorLocation(),
+		(GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal()
+	);
+
 
 	return Damage;
 }
@@ -108,6 +132,20 @@ void AEnemyMelee_Common::Stun()
 	FOnMontageEnded MontageEnd;
 	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndStun);
 	AnimInstance->Montage_SetEndDelegate(MontageEnd, StunMontage);
+}
+
+void AEnemyMelee_Common::SetDead()
+{
+	Super::SetDead();
+
+	GetMyController()->StopAI();
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	AnimInstance->StopAllMontages(5.f);
+	AnimInstance->Montage_Play(DeadMontage);
+
+	SetActorEnableCollision(false);
 }
 
 void AEnemyMelee_Common::BeginAttack()
@@ -141,6 +179,9 @@ bool AEnemyMelee_Common::AttackInRange()
 
 void AEnemyMelee_Common::BeginHitAction()
 {
+	/* 피격 몽타주 실행 중 공격 금지 */
+	GetMyController()->StopAI();
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	/* 스턴 상태라면 그대로 진행 */
@@ -149,27 +190,32 @@ void AEnemyMelee_Common::BeginHitAction()
 		return;
 	}
 
-	AnimInstance->Montage_Play(HitMontage, 0.1f);
+	/* 만약 몽타주 실행 중 한번 더 맞는다면 멈추고 빠른 재시작 */
+	if (AnimInstance->Montage_IsPlaying(HitMontage))
+	{
+		AnimInstance->Montage_Stop(0.1f, HitMontage);
+	}
+
+	/* 파티클도 바로바로 재시작 */
+	if (ImpactParticleComponent->IsActive())
+	{
+		ImpactParticleComponent->Deactivate();
+	}
+
+	ImpactParticleComponent->Activate();
+	AnimInstance->Montage_Play(HitMontage, 0.5f);
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindUObject(this, &AEnemyMelee_Common::EndHitAction);
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, HitMontage);
 }
 
-void AEnemyMelee_Common::SetDead()
+void AEnemyMelee_Common::EndHitAction(UAnimMontage* Target, bool IsProperlyEnded)
 {
-	Super::SetDead();
-
-	GetMyController()->StopAI();
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-
-	AnimInstance->StopAllMontages(5.f);
-	AnimInstance->Montage_Play(DeadMontage);
-	SetActorEnableCollision(false);
-	
-	FTimerHandle DestroyHandle;
-	GetWorld()->GetTimerManager().SetTimer(DestroyHandle, 
-		[&]()
-		{
-			Destroy();
-		}, 4.f, false);
+	if (!IsDead)
+	{
+		GetMyController()->RunAI();
+	}
 }
 
 void AEnemyMelee_Common::EndStun(UAnimMontage* Target, bool IsProperlyEnded)

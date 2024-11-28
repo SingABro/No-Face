@@ -11,6 +11,7 @@
 #include "Player/CPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Stat/CharacterStatComponent.h"
+#include "Stat/CharacterDataStat.h"
 #include "Animation/CharacterAnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Character/CharacterComboAttackData.h"
@@ -18,12 +19,15 @@
 #include "Weapon/Bow.h"
 #include "Weapon/Staff.h"
 #include "Skill/SkillComponent.h"
-#include "Character/CharacterHitCheckComponent.h"
 #include "Character/CharacterDefaultAttackComponent.h"
 #include "Interface/BowInterface.h"
 #include "Components/CapsuleComponent.h"
-#include "Interface/PlayerHUDInterface.h"
 #include "UI/HUDWidget.h"
+#include "UI/SkillUIWidget.h"
+#include "Interface/PlayerSkillUIInterface.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "MotionWarpingComponent.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -42,7 +46,7 @@ ACharacterBase::ACharacterBase()
 	SpringArm->SetUsingAbsoluteRotation(true);
 	SpringArm->bUsePawnControlRotation = false;
 	SpringArm->bDoCollisionTest = false;
-	SpringArm->TargetArmLength = 1000.f;
+	SpringArm->TargetArmLength = 2000.f;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
@@ -108,9 +112,19 @@ ACharacterBase::ACharacterBase()
 	{
 		ZoomInOutAction = ZoomInOutActionRef.Object;
 	}
-	
+	static ConstructorHelpers::FObjectFinder<UInputAction> DisplaySkillUIActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_DisplaySkillUI.IA_DisplaySkillUI'"));
+	if (DisplaySkillUIActionRef.Object)
+	{
+		DisplaySkillUIAction = DisplaySkillUIActionRef.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<UInputAction> DashActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_Dash.IA_Dash'"));
+	if (DashActionRef.Object)
+	{
+		DashAction = DashActionRef.Object;
+	}
+
 	/* Mesh */
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/No-Face/Character/Mesh/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ParagonRevenant/Characters/Heroes/Revenant/Meshes/Revenant.Revenant'"));
 	if (MainMeshRef.Object)
 	{
 		GetMesh()->SetSkeletalMesh(MainMeshRef.Object);
@@ -123,7 +137,7 @@ ACharacterBase::ACharacterBase()
 
 	/* 스텟 */
 	Stat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stat"));
-
+	Stat->OnHpZero.AddUObject(this, &ACharacterBase::SetDead);
 
 	/* 무기 */
 	TakeItemDelegateArray.Add(FTakeItemDelegateWrapper(FTakeItemDelegate::CreateUObject(this, &ACharacterBase::EquipSword)));
@@ -133,19 +147,37 @@ ACharacterBase::ACharacterBase()
 	/* 컴포넌트 */
 	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("Skill"));
 	SkillComponent->ParryingSign.BindUObject(this, &ACharacterBase::ToggleParrying);
-
-	HitCheckComponent = CreateDefaultSubobject<UCharacterHitCheckComponent>(TEXT("Hit Checker"));
+	SkillComponent->ShieldSign.BindUObject(this, &ACharacterBase::StaffCreateShield);
 
 	AttackComponent = CreateDefaultSubobject<UCharacterDefaultAttackComponent>(TEXT("Attack"));
 
+	ShieldParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shiled Particle"));
+	ShieldParticleComponent->SetupAttachment(GetMesh());
+
+	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarp"));
+
+	SkillParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Skill Particle"));
+	SkillParticleComponent->SetupAttachment(GetMesh());
+	SkillParticleComponent->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+	SkillParticleComponent->bAutoActivate = false;
+
+
+	/* 스킬 UI */
+	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
+	if (SkillUIWidgetRef.Class)
+	{
+		SkillUIWidgetClass = SkillUIWidgetRef.Class;
+	}
+
 	/* 태그 */
 	Tags.Add(TEXT("Player"));
+
 }
 
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 	{
@@ -162,7 +194,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	
+
 	EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Started, this, &ACharacterBase::OnClickStart);
 	EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Triggered, this, &ACharacterBase::OnClicking);
 	EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Completed, this, &ACharacterBase::OnRelease);
@@ -174,23 +206,44 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	EnhancedInputComponent->BindAction(NextWeaponAction, ETriggerEvent::Started, this, &ACharacterBase::NextWeapon);
 	EnhancedInputComponent->BindAction(PrevWeaponAction, ETriggerEvent::Started, this, &ACharacterBase::PrevWeapon);
 	EnhancedInputComponent->BindAction(ZoomInOutAction, ETriggerEvent::Triggered, this, &ACharacterBase::ZoomInOut);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &ACharacterBase::Dash);
 
 	EnhancedInputComponent->BindAction(CancelAction, ETriggerEvent::Started, this, &ACharacterBase::CancelCasting);
+	EnhancedInputComponent->BindAction(DisplaySkillUIAction, ETriggerEvent::Started, this, &ACharacterBase::DisplaySkillUI);
+
+
 }
 
 float ACharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
+
 	if (bIsParrying)
 	{
 		SkillComponent->ParryingSuccess(DamageCauser);
 		return 0.f;
 	}
 
-	Stat->ApplyDamage(Damage);
+	if (CurrentStateType == EPlayerStateType::Common) {
+		Stat->ApplyDamage(Damage);
+		return Damage;
+	}
+	if (CurrentStateType == EPlayerStateType::Shield)
+	{
+		SkillComponent->SetShieldAmount(Damage);
+		if (SkillComponent->GetShieldThreshould() >= SkillComponent->GetShieldAmount())
+		{
+			return Damage;
+		}
+		else
+		{
+			Stat->ApplyDamage(SkillComponent->GetShieldAmount() - SkillComponent->GetShieldThreshould());
+			SkillComponent->SetShieldAmount(-SkillComponent->GetShieldAmount());
+			CurrentStateType = EPlayerStateType::Common;
+		}
+	}
 
-	return Damage;
+	return 0.f;
 }
 
 int ACharacterBase::GetWeaponType()
@@ -198,10 +251,27 @@ int ACharacterBase::GetWeaponType()
 	return WeaponIndex;
 }
 
+int ACharacterBase::GetPlayerState()
+{
+	if (CurrentStateType == EPlayerStateType::Common) {
+		return 0;
+	}
+	if (CurrentStateType == EPlayerStateType::Shield) {
+		return 1;
+	}
+	else return 2;
+}
+
+void ACharacterBase::StopMove()
+{
+	GetPlayerController()->StopMovement();
+}
+
 void ACharacterBase::Q_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_Q();
 }
 
@@ -209,6 +279,7 @@ void ACharacterBase::W_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_W();
 }
 
@@ -216,6 +287,7 @@ void ACharacterBase::E_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_E();
 }
 
@@ -223,6 +295,7 @@ void ACharacterBase::R_Skill()
 {
 	RotateToTarget();
 	OnClickStart();
+
 	SkillComponent->PlaySkill_R();
 }
 
@@ -254,7 +327,7 @@ void ACharacterBase::OnRelease()
 
 void ACharacterBase::OnAttackStart()
 {
-	if (TraceAttack() == false)
+	if (TraceAttack() == false || SkillComponent->GetSkillState() == ESkillState::Progress)
 	{
 		return;
 	}
@@ -281,6 +354,7 @@ bool ACharacterBase::TraceAttack()
 	return GetPlayerController()->GetHitResultUnderCursor(ECC_Visibility, true, AttackHitResult);
 }
 
+/* 캐릭터 돌아가는 함수 실행 */
 void ACharacterBase::RotateToTarget()
 {
 	if (RotateTimer.IsValid())
@@ -292,6 +366,7 @@ void ACharacterBase::RotateToTarget()
 
 }
 
+/* 캐릭터 돌아가는 함수, 현재 마우스 커서 위치로 캐릭터가 회전함 */
 void ACharacterBase::UpdateRotate()
 {
 	FHitResult TargetHitResult;
@@ -299,7 +374,7 @@ void ACharacterBase::UpdateRotate()
 
 	FRotator TargetRotation = (TargetHitResult.Location - GetActorLocation()).Rotation();
 	TargetRotation.Pitch = 0;
-	SetActorRelativeRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 20.0f));
+	SetActorRelativeRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 50.0f));
 
 	if (FMath::Abs((TargetRotation - GetActorRotation()).Yaw) < 1.0f)
 	{
@@ -311,7 +386,7 @@ void ACharacterBase::ZoomInOut(const FInputActionValue& Value)
 {
 	const float WheelValue = Value.Get<float>() * -50.f;
 
-	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 1200.f);
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + WheelValue, 200.f, 3000.f);
 }
 
 void ACharacterBase::CancelCasting()
@@ -326,6 +401,7 @@ void ACharacterBase::CancelCasting()
 		AnimInstance->StopAllMontages(0.1f);
 
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		SkillComponent->SetCanChangeWeapon(true);
 	}
 }
 
@@ -358,7 +434,7 @@ void ACharacterBase::PrevWeapon()
 	{
 		WeaponIndex = 2;
 	}
-	
+
 	ChangeWeapon();
 	AnimWeaponIndex();
 }
@@ -378,6 +454,7 @@ void ACharacterBase::ChangeWeapon()
 	AttackComponent->SetWeaponType(WeaponIndex);
 	TakeItemDelegateArray[WeaponIndex].TakeItemDelegate.ExecuteIfBound();
 	CurrentWeaponType = static_cast<EWeaponType>(WeaponIndex);
+	SignedChangeWeapon.Broadcast(WeaponIndex);
 }
 
 void ACharacterBase::EquipSword()
@@ -386,9 +463,10 @@ void ACharacterBase::EquipSword()
 	{
 		WeaponBase->Destroy();
 	}
-	
+
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
+	GetCharacterMovement()->MaxWalkSpeed = 650.f;
 
 	WeaponBase = GetWorld()->SpawnActor<ASword>(SwordClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_rSocket"));
@@ -403,6 +481,7 @@ void ACharacterBase::EquipBow()
 
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_lSocket_Bow"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_lSocket_Bow"));
+	GetCharacterMovement()->MaxWalkSpeed = 750.f;
 
 	WeaponBase = GetWorld()->SpawnActor<ABow>(BowClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_lSocket_Bow"));
@@ -422,6 +501,7 @@ void ACharacterBase::EquipStaff()
 
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
 	FRotator SpawnRotation = GetMesh()->GetSocketRotation(TEXT("hand_rSocket"));
+	GetCharacterMovement()->MaxWalkSpeed = 550.f;
 
 	WeaponBase = GetWorld()->SpawnActor<AStaff>(StaffClass, SpawnLocation, SpawnRotation);
 	WeaponBase->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_rSocket"));
@@ -433,6 +513,11 @@ void ACharacterBase::StopInput()
 	GetPlayerController()->DisableInput(GetPlayerController());
 }
 
+void ACharacterBase::Dash()
+{
+	SkillComponent->BeginDash();
+}
+
 void ACharacterBase::ToggleParrying()
 {
 	if (bIsParrying == false) bIsParrying = true;
@@ -441,15 +526,53 @@ void ACharacterBase::ToggleParrying()
 
 void ACharacterBase::SetupHUDWidget(UHUDWidget* InHUDWidget)
 {
-	if (InHUDWidget) 
+	IPlayerSkillUIInterface* SkillUIInterface = Cast<IPlayerSkillUIInterface>(SkillComponent);
+	if (SkillUIInterface)
 	{
-		InHUDWidget->SetMaxHp(Stat->GetMaxHp());
-		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
-		InHUDWidget->UpdateExpBar(Stat->GetCurrentExp());
-		Stat->OnHpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateHpBar);
-		Stat->OnExpChanged.AddUObject(InHUDWidget, &UHUDWidget::UpdateExpBar);
+		SkillUIInterface->SetupSkillUIWidget(InHUDWidget);
 	}
+}
 
+const FVector& ACharacterBase::GetWarpDirection()
+{
+	return WarpDirection;
+}
+
+void ACharacterBase::WarpEvent(const FVector& InWarpLocation)
+{
+	WarpDirection = InWarpLocation;
+}
+
+void ACharacterBase::StaffCreateShield()
+{
+	CurrentStateType = EPlayerStateType::Shield;
+}
+
+void ACharacterBase::DisplaySkillUI()
+{
+	if (SkillUIWidget && SkillUIWidget->IsInViewport())
+	{
+		SkillUIWidget->RemoveFromParent();
+	}
+	else
+	{
+		SkillUIWidget = CreateWidget<USkillUIWidget>(GetPlayerController(), SkillUIWidgetClass);
+		if (SkillUIWidget)
+		{
+			SkillUIWidget->AddToViewport();
+		}
+	}
+}
+
+void ACharacterBase::SetDead()
+{
+	SetActorEnableCollision(false);
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(DeadMontage);
+
+	GetPlayerController()->GameHasEnded(this, false);
+	GetPlayerController()->DisableInput(GetPlayerController());
 }
 
 ACPlayerController* ACharacterBase::GetPlayerController() const

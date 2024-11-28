@@ -21,6 +21,8 @@ public:
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
+	class ACharacter* GetTarget();
+
 /* Perception Sense 섹션 */
 private:
 	FAIStimulus CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense);

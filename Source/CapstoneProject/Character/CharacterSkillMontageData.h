@@ -24,4 +24,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Staff")
 	TArray<class UAnimMontage*> StaffMontages;
 
+	UPROPERTY(EditAnywhere, Category = "Common")
+	TArray<class UAnimMontage*> DashMontages;
+
 };

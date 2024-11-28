@@ -28,25 +28,25 @@ public:
 	virtual void Skill1ByAI() override;
 
 	/* 오버라이딩 섹션 */
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser, FName Type) override;
 	virtual float TakeExp() override;
 	virtual void Stun() override;
 	virtual void SetDead() override;
 
 
-	///* 속도 조절, PlayerController 에서 호출 */
-	//void SetWalkSpeed();
-	//void SetRunSpeed();
-
 private:
 	void BeginAttack();
 	void EndAttack(class UAnimMontage* Target, bool IsProperlyEnded);
+	bool AttackInRange();
 
 	void BeginHitAction();
+	void EndHitAction(class UAnimMontage* Target, bool IsProperlyEnded);
 
 	/* 스킬 함수들 */
-	void BeginSkill1();
-	void EndSkill1(class UAnimMontage* Target, bool IsProperlyEnded);
+	void BeginSkillDash();
+	void EndSkillDash(class UAnimMontage* Target, bool IsProperlyEnded);
+	void Skill_MotionWarpSet();
+	virtual void Skill_1_HitCheck();
 
 	/* 스턴 애니메이션 끝날 때 실행되는 함수 */
 	void EndStun(class UAnimMontage* Target, bool IsProperlyEnded);
@@ -78,5 +78,15 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<class UAnimMontage> Skill1Montage;
+
+/* 이펙트 섹션 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystem> Skill_1Effect;
+
+/* 모션 워핑 */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "MotionWarp")
+	TObjectPtr<class UMotionWarpingComponent> MotionWarp;
 
 };

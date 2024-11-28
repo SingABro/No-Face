@@ -22,22 +22,22 @@ public:
 
 
 private:
-	bool CheckInArea();
+	bool CheckInArea(TArray<FOverlapResult>& InOverlapResults);
 	void PullToCenter(float DeltaTime);
+
+	UFUNCTION()
+	void AreaDestroy(class UParticleSystemComponent* PSystem);
 
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USceneComponent> Root;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> Area;
-
-	TArray<FOverlapResult> OverlapResults;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
 
 	UPROPERTY(EditAnywhere, Category = "LifeTime")
 	float LifeTime;
 
-	float Damage;
 	float DamageTime;
 
 };

@@ -8,6 +8,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Damage.h"
+#include "GameFramework/Character.h"
 
 AAIControllerTanker::AAIControllerTanker()
 {
@@ -23,9 +24,9 @@ AAIControllerTanker::AAIControllerTanker()
 	}
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 800.f;
-	SightConfig->LoseSightRadius = 1200.f;
-	SightConfig->PeripheralVisionAngleDegrees = 60.f;
+	SightConfig->SightRadius = 1500.f;
+	SightConfig->LoseSightRadius = 2000.f;
+	SightConfig->PeripheralVisionAngleDegrees = 270.f;
 	SightConfig->SetMaxAge(5.f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = -1.f;
 
@@ -53,6 +54,11 @@ void AAIControllerTanker::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulu
 		Stimulus = CanSenseActor(Actor, EAIPerceptionSense::EPS_Damage);
 		HandleSenseDamage(Actor, Stimulus);
 	}
+}
+
+ACharacter* AAIControllerTanker::GetTarget()
+{
+	return CastChecked<ACharacter>(GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
 }
 
 FAIStimulus AAIControllerTanker::CanSenseActor(AActor* Actor, EAIPerceptionSense AIPerceptionSense)

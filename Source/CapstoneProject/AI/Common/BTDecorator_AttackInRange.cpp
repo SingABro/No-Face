@@ -35,7 +35,7 @@ bool UBTDecorator_AttackInRange::CalculateRawConditionValue(UBehaviorTreeCompone
 	}
 
 	float Distance = FVector::Distance(PossessedPawn->GetActorLocation(), Target->GetActorLocation());
-	DrawDebugSphere(GetWorld(), PossessedPawn->GetActorLocation(), Interface->GetAttackInRange(), 12, FColor::Green, false, 3.f);
+	//DrawDebugSphere(GetWorld(), PossessedPawn->GetActorLocation(), Interface->GetAttackInRange(), 12, FColor::Green, false, 3.f);
 
 	return Distance <= Interface->GetAttackInRange();
 }
