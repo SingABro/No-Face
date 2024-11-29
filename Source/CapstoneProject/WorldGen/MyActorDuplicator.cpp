@@ -6,6 +6,7 @@
 AMyActorDuplicator::AMyActorDuplicator()
 {
     PrimaryActorTick.bCanEverTick = false;
+
 }
 
 void AMyActorDuplicator::BeginPlay()
@@ -126,6 +127,9 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
             }
         }
     }
+
+  
+
     for (int i = -7; i < 8; i++)
     {
         for (int j = -7; j < 8; j++)
@@ -143,7 +147,13 @@ void AMyActorDuplicator::BuildActualStage(TMap<FIntPoint, FRoom> WMap)
 
 				ARoomActor* MinimapRoomActor = GetWorld()->SpawnActor<ARoomActor>(RoomActorClass, ((tmpRoom->Location)/10000.f*1850.f)*0.5+MinimapOffset , FRotator::ZeroRotator);
                 MinimapRoomActor->SetActorScale3D(FVector(0.5f));
-            }
+
+                UE_LOG(LogTemp, Display, TEXT("Identity: %d, Location: X = %f, Y = %f, Z = %f, Is Boss Room: %s, Is Start Room: %s"),
+                    tmpRoom->Identity,
+                    tmpRoom->Location.X, tmpRoom->Location.Y, tmpRoom->Location.Z,
+                    tmpRoom->bIsBossRoom ? TEXT("True") : TEXT("False"),
+                    tmpRoom->bIsStartRoom ? TEXT("True") : TEXT("False"));
+            }               
         }
     }
 

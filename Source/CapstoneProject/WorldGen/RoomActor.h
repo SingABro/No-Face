@@ -5,6 +5,7 @@
 #include "RoomActor.generated.h"
 
 DECLARE_DELEGATE(FOnStageChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FRoomActorEvent);
 
 USTRUCT(BlueprintType)
 struct FStageChangedDelegateWrapper
@@ -31,8 +32,25 @@ class CAPSTONEPROJECT_API ARoomActor : public AActor
 public:
     ARoomActor();
 
+    FOnStageChangedDelegate OnChangeDelegate;
+
+    FRoomActorEvent OnRoomActorEvent;
+
 /* 방 생성시 정보 초기화 */
     void SetRoomInfo(int32 InIdentity, const FVector& InLocation, bool InbIsEndRoom, bool bIsBossRoom, bool bIsStartRoom, int InStretch);
+
+    FVector GetLocation() { return Location; }
+    int GetIdentity() { return Identity; }
+    bool GetBossRoom() { return bIsBossRoom; }
+    int GetStageState() {
+        if (CurrentState == EStageState::READY)
+            return 0;
+        else if (CurrentState == EStageState::FIGHT)
+            return 1;
+        else if (CurrentState == EStageState::NEXT)
+            return 2;
+        else return -1;
+    }
 
 /* 스테이지 */
 private:

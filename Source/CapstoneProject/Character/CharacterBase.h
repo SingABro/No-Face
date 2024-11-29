@@ -128,6 +128,9 @@ private:
 	TObjectPtr<class UInputAction> DisplaySkillUIAction;
 
 	UPROPERTY(VisibleAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> DisplayWorldmapAction;
+
+	UPROPERTY(VisibleAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> DashAction;
 
 /* 마우스 우클릭을 통해 캐릭터 이동 기능을 실현하는 함수와 변수 */
@@ -222,11 +225,19 @@ private:
 private:
 	void DisplaySkillUI();
 
+	void DisplayWorldmap();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class USkillUIWidget> SkillUIWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkillUI", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USkillUIWidget> SkillUIWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapUI", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UWorldmapWidget> WorldmapWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MapUI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UWorldmapWidget> WorldmapWidget;
 
 /* 모션 워핑 섹션 */
 private:
