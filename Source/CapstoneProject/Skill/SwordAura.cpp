@@ -6,6 +6,8 @@
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 ASwordAura::ASwordAura()
 {
@@ -14,6 +16,10 @@ ASwordAura::ASwordAura()
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	RootComponent = Box;
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ASwordAura::OnBeginOverlap);
+
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Paticle Component"));
+	ParticleComponent->SetupAttachment(Box);
+	ParticleComponent->SetTemplate(Particle);
 
 	MoveDirection = FVector::ZeroVector;
 	MoveSpeed = 2000.f;
