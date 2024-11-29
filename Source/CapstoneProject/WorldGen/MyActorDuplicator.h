@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "MyActorDuplicator.generated.h"
 
+
 // 방의 방향을 나타내는 열거형
 UENUM()
 enum class EDirection : uint8
@@ -80,4 +81,7 @@ private:
 
 	// 미니맵 오프셋
 	FVector MinimapOffset = FVector(10000, 10000, 8000);
+
+    UPROPERTY(EditAnywhere, Category = "Map")
+    TSubclassOf<class UWorldmapWidget> WorldmapWidgetClass;
 };
