@@ -76,6 +76,7 @@ void ARoomActor::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedCompo
     if (bIsClearRoom == false)
     {
         SetState(EStageState::FIGHT);
+        OnRoomActorEvent.Broadcast();
     }
 
     TArray<AActor*> Enemys;
@@ -146,7 +147,7 @@ TArray<TObjectPtr<class UBoxComponent>> ARoomActor::GetGateOpenDirection()
     case 11:
         Answer.Add(GateTriggers[TEXT("+XGate")]);
         Answer.Add(GateTriggers[TEXT("-XGate")]);
-        Answer.Add(GateTriggers[TEXT("+YGate")]);
+        Answer.Add(GateTriggers[TEXT("-YGate")]);
         break;
     case 12:
         Answer.Add(GateTriggers[TEXT("-XGate")]);
@@ -225,7 +226,7 @@ TArray<TObjectPtr<class UStaticMeshComponent>> ARoomActor::GetGateOpen()
     case 11:
         Answer.Add(Gates[TEXT("+XGate")]);
         Answer.Add(Gates[TEXT("-XGate")]);
-        Answer.Add(Gates[TEXT("+YGate")]);
+        Answer.Add(Gates[TEXT("-YGate")]);
         break;
     case 12:
         Answer.Add(Gates[TEXT("-XGate")]);
@@ -353,6 +354,7 @@ void ARoomActor::DeadEnemy()
     CurrentEnemyNum--;
     if (CurrentEnemyNum == 0)
     {
+        OnRoomActorEvent.Broadcast();
         SetState(EStageState::NEXT);
         return;
     }

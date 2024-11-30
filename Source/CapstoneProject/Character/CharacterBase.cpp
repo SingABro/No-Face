@@ -24,6 +24,7 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/HUDWidget.h"
 #include "UI/SkillUIWidget.h"
+#include "UI/WorldmapWidget.h"
 #include "Interface/PlayerSkillUIInterface.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
@@ -125,6 +126,11 @@ ACharacterBase::ACharacterBase()
 	{
 		DashAction = DashActionRef.Object;
 	}
+	static ConstructorHelpers::FObjectFinder<UInputAction> DisplayWorldmapActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/No-Face/Input/InputAction/IA_DisplayWorldmapUI.IA_DisplayWorldmapUI'"));
+	if (DisplayWorldmapActionRef.Object)
+	{
+		DisplayWorldmapAction = DisplayWorldmapActionRef.Object;
+	}
 
 	/* Mesh */
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MainMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ParagonRevenant/Characters/Heroes/Revenant/Meshes/Revenant.Revenant'"));
@@ -165,11 +171,21 @@ ACharacterBase::ACharacterBase()
 	SkillParticleComponent->bAutoActivate = false;
 
 
-	/* 스킬 UI */
+	/* UI */
 	static ConstructorHelpers::FClassFinder<USkillUIWidget> SkillUIWidgetRef(TEXT("/Game/No-Face/UI/WBP_SkillUI.WBP_SkillUI_C"));
 	if (SkillUIWidgetRef.Class)
 	{
 		SkillUIWidgetClass = SkillUIWidgetRef.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UWorldmapWidget> WorldmapWidgetRef(TEXT("/Game/No-Face/UI/WBP_WorldMap.WBP_WorldMap_C"));
+	if (WorldmapWidgetRef.Class)
+	{
+		WorldmapWidgetClass = WorldmapWidgetRef.Class;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("WorldmapWidget class could not be found!"));
 	}
 
 	/* 태그 */
@@ -213,6 +229,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	EnhancedInputComponent->BindAction(CancelAction, ETriggerEvent::Started, this, &ACharacterBase::CancelCasting);
 	EnhancedInputComponent->BindAction(DisplaySkillUIAction, ETriggerEvent::Started, this, &ACharacterBase::DisplaySkillUI);
+	EnhancedInputComponent->BindAction(DisplayWorldmapAction, ETriggerEvent::Started, this, &ACharacterBase::DisplayWorldmap);
 
 
 }
@@ -558,6 +575,25 @@ void ACharacterBase::DisplaySkillUI()
 		if (SkillUIWidget)
 		{
 			SkillUIWidget->AddToViewport();
+		}
+	}
+}
+
+void ACharacterBase::DisplayWorldmap()
+{
+	if (WorldmapWidget && WorldmapWidget->IsInViewport())
+	{
+		
+		WorldmapWidget->SetVisibility(ESlateVisibility::Hidden);
+		WorldmapWidget->RemoveFromParent();
+	}
+	else
+	{
+		WorldmapWidget = CreateWidget<UWorldmapWidget>(GetPlayerController(), WorldmapWidgetClass);
+		if (WorldmapWidget)
+		{
+			WorldmapWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+			WorldmapWidget->AddToViewport();
 		}
 	}
 }
