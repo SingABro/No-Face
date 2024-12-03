@@ -53,7 +53,7 @@ void AMinimapFollow::BeginPlay()
 	Super::BeginPlay();
 
 	FTimerHandle Temp;
-	GetWorld()->GetTimerManager().SetTimer(Temp, this, &AMinimapFollow::Init, 1.5f, false);
+	GetWorld()->GetTimerManager().SetTimer(Temp, this, &AMinimapFollow::Init, 1.f, false);
 }
 
 void AMinimapFollow::Init()
