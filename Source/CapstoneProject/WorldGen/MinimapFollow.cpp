@@ -52,18 +52,8 @@ void AMinimapFollow::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (Player)
-	{
-		Player->OnWarpNextMap.AddUObject(this, &AMinimapFollow::WarpEvent);
-	}
-	else
-	{
-		FTimerHandle Temp;
-		GetWorld()->GetTimerManager().SetTimer(Temp, [&]()
-			{
-				Init();
-			}, 0.75f, false);
-	}
+	FTimerHandle Temp;
+	GetWorld()->GetTimerManager().SetTimer(Temp, this, &AMinimapFollow::Init, 1.5f, false);
 }
 
 void AMinimapFollow::Init()

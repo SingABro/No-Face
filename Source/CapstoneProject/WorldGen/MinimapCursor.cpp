@@ -58,18 +58,8 @@ void AMinimapCursor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (Player)
-	{
-		Player->OnWarpNextMap.AddUObject(this, &AMinimapCursor::WarpEvent);
-	}
-	else
-	{
-		FTimerHandle Temp;
-		GetWorld()->GetTimerManager().SetTimer(Temp, [&]()
-			{
-				Init();
-			}, 0.75f, false);
-	}
+	FTimerHandle Temp;
+	GetWorld()->GetTimerManager().SetTimer(Temp, this, &AMinimapCursor::Init, 1.5f, false);
 }
 
 void AMinimapCursor::Init()
