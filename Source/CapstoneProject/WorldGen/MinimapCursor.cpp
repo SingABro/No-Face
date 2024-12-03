@@ -59,7 +59,7 @@ void AMinimapCursor::BeginPlay()
 	Super::BeginPlay();
 	
 	FTimerHandle Temp;
-	GetWorld()->GetTimerManager().SetTimer(Temp, this, &AMinimapCursor::Init, 1.5f, false);
+	GetWorld()->GetTimerManager().SetTimer(Temp, this, &AMinimapCursor::Init, 1.f, false);
 }
 
 void AMinimapCursor::Init()
