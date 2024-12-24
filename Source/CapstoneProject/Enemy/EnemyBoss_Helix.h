@@ -35,9 +35,9 @@ public:
 	virtual void Skill3ByAI() override;
 	virtual void Skill4ByAI() override;
 
-	virtual void SetEnemySkill2Delegate(const FEnemySkill1Finished& InEnemySkill2Finished) override;
-	virtual void SetEnemySkill3Delegate(const FEnemySkill1Finished& InEnemySkill3Finished) override;
-	virtual void SetEnemySkill4Delegate(const FEnemySkill1Finished& InEnemySkill4Finished) override;
+	virtual void SetEnemySkill2Delegate(const FEnemySkill2Finished& InEnemySkill2Finished) override;
+	virtual void SetEnemySkill3Delegate(const FEnemySkill3Finished& InEnemySkill3Finished) override;
+	virtual void SetEnemySkill4Delegate(const FEnemySkill4Finished& InEnemySkill4Finished) override;
 
 	FEnemySkill2Finished EnemySkill2Finished;
 	FEnemySkill3Finished EnemySkill3Finished;

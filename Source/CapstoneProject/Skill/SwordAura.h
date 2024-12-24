@@ -30,7 +30,7 @@ private:
 	TObjectPtr<class UBoxComponent> Box;
 
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
-	TObjectPtr<class UParticleSystemComponent> ParticleComponent;
+	TObjectPtr<class UNiagaraComponent> NiagaraComponent;
 
 	FColor Color;
 	FVector MoveDirection;
