@@ -96,7 +96,12 @@ float AEnemyMelee_Common::TakeDamage(float Damage, FDamageEvent const& DamageEve
 
 	/* Hit Montage가 먼저 실행 되어야지 Dead 애니메이션이 잘 실행됨 */
 	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
-	BeginHitAction();
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (!AnimInstance->Montage_IsPlaying(DefaultAttackMontage))
+	{
+		BeginHitAction();
+	}
 
 	Stat->ApplyDamage(Damage);
 

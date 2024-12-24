@@ -116,17 +116,17 @@ void AEnemyBoss_Helix::Skill4ByAI()
 	BeginSkill_4();
 }
 
-void AEnemyBoss_Helix::SetEnemySkill2Delegate(const FEnemySkill1Finished& InEnemySkill2Finished)
+void AEnemyBoss_Helix::SetEnemySkill2Delegate(const FEnemySkill2Finished& InEnemySkill2Finished)
 {
 	EnemySkill2Finished = InEnemySkill2Finished;
 }
 
-void AEnemyBoss_Helix::SetEnemySkill3Delegate(const FEnemySkill1Finished& InEnemySkill3Finished)
+void AEnemyBoss_Helix::SetEnemySkill3Delegate(const FEnemySkill3Finished& InEnemySkill3Finished)
 {
 	EnemySkill3Finished = InEnemySkill3Finished;
 }
 
-void AEnemyBoss_Helix::SetEnemySkill4Delegate(const FEnemySkill1Finished& InEnemySkill4Finished)
+void AEnemyBoss_Helix::SetEnemySkill4Delegate(const FEnemySkill4Finished& InEnemySkill4Finished)
 {
 	EnemySkill4Finished = InEnemySkill4Finished;
 }

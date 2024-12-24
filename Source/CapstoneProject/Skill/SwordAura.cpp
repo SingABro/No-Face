@@ -6,8 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Stat/CharacterDataStat.h"
-#include "Particles/ParticleSystem.h"
-#include "Particles/ParticleSystemComponent.h"
+#include "NiagaraComponent.h"
 
 ASwordAura::ASwordAura()
 {
@@ -17,9 +16,8 @@ ASwordAura::ASwordAura()
 	RootComponent = Box;
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ASwordAura::OnBeginOverlap);
 
-	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Paticle Component"));
-	ParticleComponent->SetupAttachment(Box);
-	ParticleComponent->SetTemplate(Particle);
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
+	NiagaraComponent->SetupAttachment(Box);
 
 	MoveDirection = FVector::ZeroVector;
 	MoveSpeed = 2000.f;
@@ -47,7 +45,7 @@ void ASwordAura::Tick(float DeltaTime)
 		Destroy();	//LifeTime 동안 검기가 움직이도록 설정
 	}
 
-	DrawDebugBox(GetWorld(), GetActorLocation(), Box->GetScaledBoxExtent(), Color, false);
+	//DrawDebugBox(GetWorld(), GetActorLocation(), Box->GetScaledBoxExtent(), Color, false);
 }
 
 void ASwordAura::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

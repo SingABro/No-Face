@@ -96,7 +96,12 @@ float AEnemyMelee_Tanker::TakeDamage(float Damage, FDamageEvent const& DamageEve
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser, Type);
 
 	ImpactParticleComponent->SetTemplate(HitParticleCollection[Type]);
-	BeginHitAction();
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (!AnimInstance->Montage_IsPlaying(DefaultAttackMontage))
+	{
+		BeginHitAction();
+	}
 
 	Stat->ApplyDamage(Damage);
 

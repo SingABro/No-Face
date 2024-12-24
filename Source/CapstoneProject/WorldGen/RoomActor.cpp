@@ -368,6 +368,9 @@ void ARoomActor::BossClear()
     if (GameMode)
     {
         GameMode->GameEnd();
+        
+        ACharacterBase* Player = Cast<ACharacterBase>(UGameplayStatics::GetActorOfClass(GetWorld(), ACharacterBase::StaticClass()));
+        Player->DisableInput(GetWorld()->GetFirstPlayerController());
     }
 }
 
