@@ -16,8 +16,8 @@
 # Only allow .uasset and .umap files from /Content dir.
 # They're tracked by git-lfs, don't forget to track other
 # files if adding them here.
-!/Content/**/*.uasset
-!/Content/**/*.umap
+/Content/**/*.uasset
+/Content/**/*.umap
 
 # 임시 ignore
 /Content/MRPGT
